@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Frostfall v5.1 - Survivors & Fortified Camp</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #070f1e; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
+  #game { display: block; width: 100vw; height: 100vh; background: #b0d4de; }
+  
+  .hud { position: fixed; pointer-events: none; z-index: 10; color: white; font-weight: 700; }
+  #topbar { top: env(safe-area-inset-top, 16px); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+  
+  .stat-group { display: flex; flex-direction: column; gap: 8px; }
+  .stat { background: rgba(11, 22, 44, 0.85); padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; gap: 10px; font-size: 14px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); min-width: 110px; }
+  .stat-icon { font-size: 16px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+  .stat span:last-child { font-variant-numeric: tabular-nums; }
+  
+  #wave-info { background: rgba(11, 22, 44, 0.85); padding: 10px 20px; border-radius: 20px; font-size: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  #zone-name { font-size: 11px; opacity: 0.6; margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; color: #60a5fa; }
+  #chop-indicator { font-size: 11px; opacity: 1; margin-top: 5px; display: none; color: #fbbf24; animation: pulseGlow 1s infinite alternate; font-weight: 800; }
+  #chop-indicator.show { display: block; }
+  @keyframes pulseGlow { from { text-shadow: 0 0 2px #d97706; } to { text-shadow: 0 0 8px #fbbf24; } }
+  
+  .circle-btn { position: fixed; bottom: env(safe-area-inset-bottom, 24px); width: 64px; height: 64px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.9); color: white; font-size: 26px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 -4px 0 rgba(0,0,0,0.2); cursor: pointer; z-index: 11; display: flex; align-items: center; justify-content: center; pointer-events: auto; transition: transform 0.1s; }
+  .circle-btn:active { transform: scale(0.92); }
+  
+  #upgrade-btn { left: 24px; background: linear-gradient(135deg, #22c55e, #15803d); }
+  #upgrade-btn.pulse { animation: btnPulse 1.5s infinite; }
+  @keyframes btnPulse { 0%, 100% { transform: scale(1); box-shadow: 0 10px 25px rgba(34,197,94,0.4); } 50% { transform: scale(1.08); box-shadow: 0 14px 30px rgba(34,197,94,0.6); } }
+  
+  #build-btn { left: 104px; background: linear-gradient(135deg, #e67e22, #d35400); }
+  #build-btn.active { background: linear-gradient(135deg, #f1c40f, #f39c12); box-shadow: 0 0 20px #f1c40f; }
+  
+  #build-hint { position: fixed; top: 110px; left: 50%; transform: translateX(-50%); background: rgba(211, 84, 0, 0.95); color: white; padding: 10px 24px; border-radius: 30px; font-weight: 700; font-size: 13px; z-index: 11; display: none; pointer-events: auto; box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-align: center; border: 1px solid rgba(255,255,255,0.2); animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  #build-hint.show { display: block; }
+  @keyframes slideDown { from { transform: translate(-50%, -20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+  .build-options { display:flex; gap:8px; justify-content:center; margin:7px 0 4px; }
+  .build-choice { border:1px solid rgba(255,255,255,0.35); border-radius:999px; padding:6px 10px; background:rgba(255,255,255,0.08); color:white; font-size:12px; font-weight:900; cursor:pointer; pointer-events:auto; }
+  .build-choice.active { background:#fef3c7; color:#78350f; box-shadow:0 0 12px rgba(253,230,138,0.55); }
+  
+  #joystick { position: fixed; bottom: env(safe-area-inset-bottom, 30px); right: 30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(11, 22, 44, 0.5); border: 2px solid rgba(255,255,255,0.2); z-index: 11; pointer-events: auto; touch-action: none; backdrop-filter: blur(4px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  #joystick-knob { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, #ffffff, #cbd5e1); border: 1px solid white; pointer-events: none; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+  @media (hover: hover) and (pointer: fine) { #joystick { display: none; } }
+  
+  #panel { position: fixed; inset: 0; background: rgba(5, 10, 20, 0.85); z-index: 20; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(12px); }
+  #panel.open { display: flex; }
+  .panel-card { background: linear-gradient(145deg, #132239, #0a111e); border-radius: 24px; padding: 24px; max-width: 440px; width: 100%; max-height: 85vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.12); color: white; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+  .panel-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .panel-sub { font-size: 13px; opacity: 0.5; margin-bottom: 20px; }
+  
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 12px; }
+  .tab { flex: 1; padding: 10px; border-radius: 8px; color: rgba(255,255,255,0.5); font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .tab.active { background: rgba(255,255,255,0.1); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  
+  .upgrade { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s; }
+  .upgrade:hover, .upgrade:active { background: rgba(255,255,255,0.08); }
+  .upgrade.affordable { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.02); }
+  .upgrade.maxed { opacity: 0.3; cursor: default; }
+  .upgrade-icon { font-size: 26px; width: 46px; height: 46px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .upgrade-info { flex: 1; }
+  .upgrade-name { font-weight: 700; font-size: 15px; }
+  .upgrade-stat { font-size: 12px; opacity: 0.5; margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .upgrade-cost { background: #22c55e; color: #050a14; padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 13px; white-space: nowrap; }
+  .upgrade.maxed .upgrade-cost { background: #475569; color: white; }
+  .upgrade:not(.affordable):not(.maxed) .upgrade-cost { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+  
+  .zone-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 700; width: 100%; cursor: pointer; margin-bottom: 8px; box-shadow: 0 4px 14px rgba(59,130,246,0.3); }
+  .zone-btn:disabled { background: #334155; opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  
+  #close-panel { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: none; color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  
+  #game-over { position: fixed; inset: 0; background: rgba(6, 11, 22, 0.96); z-index: 30; display: none; align-items: center; justify-content: center; flex-direction: column; color: white; gap: 20px; backdrop-filter: blur(10px); }
+  #game-over.show { display: flex; }
+  #game-over h2 { font-size: 36px; font-weight: 900; color: #ef4444; text-shadow: 0 0 20px rgba(239,68,68,0.4); }
+  #game-over p { opacity: 0.6; text-align: center; padding: 0 20px; line-height: 1.6; }
+  #respawn-btn { background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: white; padding: 16px 40px; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 25px rgba(34,197,94,0.3); }
+  
+  #reset-btn { position: fixed; top: env(safe-area-inset-top, 16px); left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; z-index: 12; backdrop-filter: blur(4px); }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  
+  <div id="topbar" class="hud">
+    <div class="stat-group">
+      <div class="stat"><span class="stat-icon">💰</span><span id="money">0</span></div>
+      <div class="stat"><span class="stat-icon">🥩</span><span id="meat">0</span></div>
+      <div class="stat"><span class="stat-icon">🪵</span><span id="wood">0</span></div>
+      <div class="stat"><span class="stat-icon">❤️</span><span id="hp">100/100</span></div>
+    </div>
+    <div id="wave-info">
+      <div>Wave <span id="wave">1</span></div>
+      <div id="zone-name">Camp</div>
+      <div id="chop-indicator">🪓 CHOPPING...</div>
+    </div>
+  </div>
+  
+  <button id="upgrade-btn" class="circle-btn pulse">⚒️</button>
+  <button id="build-btn" class="circle-btn">🧱</button>
+  
+  <div id="build-hint">
+    🧱 BUILD MODE
+    <div class="build-options">
+      <button id="build-wall-choice" class="build-choice active">🧱 Wall · 10🪵</button>
+      <button id="build-tower-choice" class="build-choice">🏹 Tower · 30🪵 20🥩</button>
+    </div>
+    <span style="font-size:11px;opacity:0.8;font-weight:normal">Tap the map to place. Tap 🧱 again to exit.</span>
+  </div>
+  
+  <div id="joystick"><div id="joystick-knob"></div></div>
+  
+  <button id="reset-btn">RESET PROGRESS</button>
+  
+  <div id="panel">
+    <div class="panel-card">
+      <button id="close-panel">✕</button>
+      <div class="panel-title">⚒️ Tactical Forge</div>
+      <div class="panel-sub">Upgrade stats & unlock new sub-zero territories</div>
+      <div class="tabs">
+        <div class="tab active" data-tab="upgrades">Upgrades</div>
+        <div class="tab" data-tab="zones">Zones</div>
+      </div>
+      <div id="tab-upgrades"></div>
+      <div id="tab-zones" style="display:none"></div>
+    </div>
+  </div>
+  
+  <div id="game-over">
+    <h2>❄️ FROSTBITE ❄️</h2>
+    <p>The blizzard overran your defenses.<br>Your structures endure. Regroup and fight on.</p>
+    <button id="respawn-btn">Respawn Warrior</button>
+  </div>
+
+<script>
+const SAVE_KEY = 'frostfall-save-v5-1';
+
+const ZONES = [
+  { id: 0, name: 'Siberian Camp', cost: 0, beastHP: 30, beastDmg: 5, beastSpeed: 0.7, meatDrop: 1, moneyDrop: 8, bgGradient: ['#e4f0f6', '#c4dee9', '#a2cbdd'] },
+  { id: 1, name: 'Glacial Forest', cost: 500, beastHP: 85, beastDmg: 12, beastSpeed: 0.9, meatDrop: 2, moneyDrop: 20, bgGradient: ['#cee2eb', '#abc8d7', '#83abc1'] },
+  { id: 2, name: 'Forgotten Ice Caves', cost: 2500, beastHP: 220, beastDmg: 24, beastSpeed: 1.1, meatDrop: 4, moneyDrop: 45, bgGradient: ['#a9c0cd', '#81a1b4', '#598099'] }
+];
+
+const UPGRADES = [
+  { key: 'damage', icon: '⚔️', name: 'Axe Impact', base: 10, mult: 1.5, costBase: 25, costMult: 1.6, unit: 'dmg' },
+  { key: 'attackSpeed', icon: '⚡', name: 'Throw Rate', base: 1.0, mult: 1.15, costBase: 30, costMult: 1.7, unit: '/s', max: 15 },
+  { key: 'range', icon: '🎯', name: 'Orbit Radius', base: 85, mult: 1.12, costBase: 40, costMult: 1.7, unit: 'px', max: 10 },
+  { key: 'moveSpeed', icon: '👟', name: 'Agility', base: 2.6, mult: 1.08, costBase: 35, costMult: 1.6, unit: 'spd', max: 12 },
+  { key: 'maxHP', icon: '❤️', name: 'Vitality', base: 100, mult: 1.3, costBase: 30, costMult: 1.55, unit: 'hp' },
+  { key: 'regen', icon: '✨', name: 'Thermal Regen', base: 0.5, mult: 1.4, costBase: 50, costMult: 1.8, unit: '/s', max: 12 },
+  { key: 'chopSpeed', icon: '🪓', name: 'Lumberjack Skills', base: 1.0, mult: 1.3, costBase: 40, costMult: 1.6, unit: 'x', max: 10 },
+  { key: 'wallHP', icon: '🧱', name: 'Fortress Integrity', base: 120, mult: 1.4, costBase: 60, costMult: 1.7, unit: 'hp', max: 10 },
+  { key: 'meatValue', icon: '🥩', name: 'Ration Efficiency', base: 1, mult: 1.5, costBase: 60, costMult: 1.8, unit: 'x', max: 8 },
+  { key: 'moneyMult', icon: '💰', name: 'Gold Speculation', base: 1, mult: 1.4, costBase: 80, costMult: 1.8, unit: 'x', max: 10 },
+  { key: 'survivors', icon: '👥', name: 'Camp Survivors', base: 0, mult: 1, costBase: 150, costMult: 2.25, unit: 'worker', max: 4 }
+];
+
+const WALL_COST = 10;
+const TOWER_WOOD_COST = 30;
+const TOWER_MEAT_COST = 20;
+const TOWER_RANGE = 255;
+const TOWER_BASE_COOLDOWN = 1.15;
+const TOWER_DAMAGE_FACTOR = 0.75;
+const TREE_WOOD = 5;
+const TREE_HP = 100;
+const TREE_REGROW_TIME = 25;
+const GRID = 42;
+
+let state = {
+  money: 0, meat: 0, wood: 0, wave: 1, currentZone: 0,
+  zonesUnlocked: [true, false, false],
+  upgrades: { damage: 0, attackSpeed: 0, range: 0, moveSpeed: 0, maxHP: 0, regen: 0, chopSpeed: 0, wallHP: 0, meatValue: 0, moneyMult: 0, survivors: 0 },
+  hp: 100, walls: [], towers: []
+};
+
+function loadGame() {
+  try {
+    const saved = localStorage.getItem(SAVE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+      for (const u of UPGRADES) { if (state.upgrades[u.key] === undefined) state.upgrades[u.key] = 0; }
+      if (!state.walls) state.walls = [];
+      if (!state.towers) state.towers = [];
+    }
+  } catch (e) {}
+}
+function saveGame() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {} }
+function resetGame() {
+  if (confirm('Clear encampment data and restart?')) {
+    try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+    location.reload();
+  }
+}
+loadGame();
+
+function statValue(key) {
+  const u = UPGRADES.find(x => x.key === key);
+  if (!u) return 0;
+  if (key === 'survivors') return state.upgrades.survivors || 0;
+  return u.base * Math.pow(u.mult, state.upgrades[key]);
+}
+function upgradeCost(key) {
+  const u = UPGRADES.find(x => x.key === key);
+  return Math.floor(u.costBase * Math.pow(u.costMult, state.upgrades[key]));
+}
+function isMaxed(key) {
+  const u = UPGRADES.find(x => x.key === key);
+  return u.max && state.upgrades[key] >= u.max;
+}
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+const player = { x: 0, y: 0, angle: 0, attackTimer: 0, axeAngle: 0, hitFlash: 0, chopping: null, walkCycle: 0 };
+const beasts = [];
+const drops = [];
+const particles = [];
+const floatingTexts = [];
+const trees = [];
+const towerProjectiles = [];
+const survivors = [];
+
+function generateTrees() {
+  trees.length = 0;
+  for (let i = 0; i < 20; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 180 + Math.random() * 250;
+    trees.push({ x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, size: 22 + Math.random() * 8, hp: TREE_HP, maxHP: TREE_HP, alive: true, regrowTimer: 0, seed: Math.random() });
+  }
+  for (let i = 0; i < 45; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 450 + Math.random() * 700;
+    trees.push({ x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, size: 20 + Math.random() * 10, hp: TREE_HP, maxHP: TREE_HP, alive: true, regrowTimer: 0, seed: Math.random() });
+  }
+}
+generateTrees();
+
+function makeSurvivor(index) {
+  const angle = (index / Math.max(1, Math.floor(statValue('survivors')))) * Math.PI * 2;
+  return {
+    x: Math.cos(angle) * 34,
+    y: 28 + Math.sin(angle) * 18,
+    targetTree: null,
+    mode: 'searching',
+    woodCarried: 0,
+    walkCycle: Math.random() * 100,
+    chopTimer: 0,
+    index
+  };
+}
+
+function syncSurvivors(resetPositions = false) {
+  const wanted = Math.floor(statValue('survivors'));
+  if (resetPositions) survivors.length = 0;
+  while (survivors.length < wanted) survivors.push(makeSurvivor(survivors.length));
+  while (survivors.length > wanted) survivors.pop();
+}
+
+function treeClaimedByAnother(tree, survivor) {
+  return survivors.some(s => s !== survivor && s.targetTree === tree && (s.mode === 'walking_to_tree' || s.mode === 'chopping_tree'));
+}
+
+function findSurvivorTree(survivor) {
+  let bestTree = null;
+  let bestScore = Infinity;
+  for (const tree of trees) {
+    if (!tree.alive || treeClaimedByAnother(tree, survivor)) continue;
+    const d = Math.hypot(tree.x - survivor.x, tree.y - survivor.y);
+    if (d < bestScore) { bestScore = d; bestTree = tree; }
+  }
+  return bestTree;
+}
+
+function moveToward(actor, tx, ty, speed, dt) {
+  const dx = tx - actor.x, dy = ty - actor.y;
+  const d = Math.hypot(dx, dy) || 1;
+  if (d <= speed * dt) { actor.x = tx; actor.y = ty; return true; }
+  actor.x += (dx / d) * speed * dt;
+  actor.y += (dy / d) * speed * dt;
+  return false;
+}
+
+function updateSurvivors(dt) {
+  syncSurvivors();
+  for (const s of survivors) {
+    s.walkCycle += dt * 10;
+    if (s.mode === 'searching') {
+      const tree = findSurvivorTree(s);
+      if (tree) { s.targetTree = tree; s.mode = 'walking_to_tree'; }
+      else { s.mode = 'returning_idle'; }
+    } else if (s.mode === 'walking_to_tree') {
+      if (!s.targetTree || !s.targetTree.alive) { s.targetTree = null; s.mode = 'searching'; continue; }
+      if (moveToward(s, s.targetTree.x, s.targetTree.y, 78, dt)) { s.mode = 'chopping_tree'; s.chopTimer = 0; }
+    } else if (s.mode === 'chopping_tree') {
+      if (!s.targetTree || !s.targetTree.alive) { s.targetTree = null; s.mode = 'searching'; continue; }
+      s.chopTimer += dt;
+      s.targetTree.hp -= 13 * dt;
+      if (Math.random() < 0.18) {
+        particles.push({ x: s.targetTree.x + (Math.random()-0.5)*12, y: s.targetTree.y, vx: (Math.random()-0.5)*55, vy: -45-Math.random()*45, life: 0.45, maxLife: 0.45, color: '#a05a2c', size: 2 + Math.random()*2.5, type: 'wood' });
+      }
+      if (s.targetTree.hp <= 0) {
+        s.targetTree.alive = false;
+        s.targetTree.regrowTimer = TREE_REGROW_TIME;
+        s.targetTree.hp = 0;
+        s.woodCarried = TREE_WOOD;
+        s.targetTree = null;
+        s.mode = 'returning_with_wood';
+      }
+    } else if (s.mode === 'returning_with_wood') {
+      if (moveToward(s, -86, -26, 72, dt)) {
+        state.wood += s.woodCarried;
+        floatingTexts.push({ x: s.x, y: s.y - 18, text: `+${s.woodCarried}🪵`, life: 0.9, color: '#d97706', vy: -28 });
+        s.woodCarried = 0;
+        s.mode = 'searching';
+        saveGame();
+      }
+    } else if (s.mode === 'returning_idle') {
+      if (moveToward(s, 0, 34, 55, dt) || Math.random() < 0.01) s.mode = 'searching';
+    }
+  }
+}
+
+
+let waveBeastsRemaining = 0, waveSpawnTimer = 0, waveActive = false, waveCleared = false, interWaveTimer = 0;
+
+function spawnBeast(isBoss = false) {
+  const zone = ZONES[state.currentZone];
+  const waveMult = 1 + (state.wave - 1) * 0.15;
+  const angle = Math.random() * Math.PI * 2;
+  const dist = Math.max(W, H) * 0.7;
+  beasts.push({
+    x: player.x + Math.cos(angle) * dist, y: player.y + Math.sin(angle) * dist,
+    hp: zone.beastHP * waveMult * (isBoss ? 8 : 1),
+    maxHP: zone.beastHP * waveMult * (isBoss ? 8 : 1),
+    speed: zone.beastSpeed * (isBoss ? 0.75 : 1),
+    dmg: zone.beastDmg * waveMult * (isBoss ? 2 : 1),
+    size: isBoss ? 42 : 24,
+    attackCD: 0, isBoss, hitFlash: 0, target: null, targetCD: 0, legCycle: 0
+  });
+}
+
+function startWave() {
+  const isBossWave = state.wave % 5 === 0;
+  waveBeastsRemaining = isBossWave ? 1 : (4 + Math.floor(state.wave * 0.8));
+  waveSpawnTimer = 0; waveActive = true; waveCleared = false;
+}
+
+function updateWaves(dt) {
+  if (!waveActive && !waveCleared) startWave();
+  if (waveActive && waveBeastsRemaining > 0) {
+    waveSpawnTimer -= dt;
+    if (waveSpawnTimer <= 0) {
+      spawnBeast(state.wave % 5 === 0);
+      waveBeastsRemaining--;
+      waveSpawnTimer = Math.max(0.4, 1.3 - (state.wave * 0.03));
+    }
+  }
+  if (waveActive && waveBeastsRemaining <= 0 && beasts.length === 0) {
+    waveActive = false; waveCleared = true; interWaveTimer = 3.0;
+    state.wave++; saveGame();
+  }
+  if (waveCleared) {
+    interWaveTimer -= dt;
+    if (interWaveTimer <= 0) waveCleared = false;
+  }
+}
+
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+const joy = { active: false, dx: 0, dy: 0, startX: 0, startY: 0 };
+const joyEl = document.getElementById('joystick');
+const knobEl = document.getElementById('joystick-knob');
+
+function joyStart(e) {
+  e.preventDefault();
+  joy.active = true;
+  const rect = joyEl.getBoundingClientRect();
+  joy.startX = rect.left + rect.width/2;
+  joy.startY = rect.top + rect.height/2;
+  joyMove(e);
+}
+function joyMove(e) {
+  if (!joy.active) return;
+  e.preventDefault();
+  const t = e.touches ? e.touches[0] : e;
+  let dx = t.clientX - joy.startX;
+  let dy = t.clientY - joy.startY;
+  const len = Math.hypot(dx, dy);
+  const maxR = 40;
+  if (len > maxR) { dx = dx/len * maxR; dy = dy/len * maxR; }
+  joy.dx = dx / maxR; joy.dy = dy / maxR;
+  knobEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+}
+function joyEnd() {
+  joy.active = false; joy.dx = 0; joy.dy = 0;
+  knobEl.style.transform = 'translate(-50%, -50%)';
+}
+joyEl.addEventListener('touchstart', joyStart, { passive: false });
+joyEl.addEventListener('touchmove', joyMove, { passive: false });
+joyEl.addEventListener('touchend', joyEnd);
+joyEl.addEventListener('mousedown', joyStart);
+window.addEventListener('mousemove', e => { if (joy.active) joyMove(e); });
+window.addEventListener('mouseup', joyEnd);
+
+let buildMode = false;
+let buildType = 'wall';
+
+function setBuildType(type) {
+  buildType = type;
+  const wallChoice = document.getElementById('build-wall-choice');
+  const towerChoice = document.getElementById('build-tower-choice');
+  wallChoice.classList.toggle('active', buildType === 'wall');
+  towerChoice.classList.toggle('active', buildType === 'tower');
+}
+function toggleBuildMode() {
+  buildMode = !buildMode;
+  document.getElementById('build-btn').classList.toggle('active', buildMode);
+  document.getElementById('build-hint').classList.toggle('show', buildMode);
+}
+document.getElementById('build-btn').addEventListener('click', toggleBuildMode);
+document.getElementById('build-wall-choice').addEventListener('click', e => { e.stopPropagation(); setBuildType('wall'); });
+document.getElementById('build-tower-choice').addEventListener('click', e => { e.stopPropagation(); setBuildType('tower'); });
+
+canvas.addEventListener('click', (e) => {
+  if (!buildMode) return;
+  const rect = canvas.getBoundingClientRect();
+  const wx = (e.clientX - rect.left) - W/2 + player.x;
+  const wy = (e.clientY - rect.top) - H/2 + player.y;
+  placeStructure(wx, wy);
+});
+// FIX: touch support voor build mode (was weggevallen in Gemini's versie)
+canvas.addEventListener('touchend', (e) => {
+  if (!buildMode) return;
+  if (e.changedTouches.length === 0) return;
+  const t = e.changedTouches[0];
+  const target = document.elementFromPoint(t.clientX, t.clientY);
+  if (target && target.tagName === 'BUTTON') return;
+  const rect = canvas.getBoundingClientRect();
+  const wx = (t.clientX - rect.left) - W/2 + player.x;
+  const wy = (t.clientY - rect.top) - H/2 + player.y;
+  placeStructure(wx, wy);
+});
+
+function placeStructure(wx, wy) {
+  const gx = Math.round(wx / GRID);
+  const gy = Math.round(wy / GRID);
+  if (Math.hypot(gx*GRID - player.x, gy*GRID - player.y) < 28) return;
+  if (state.walls.find(w => w.gx === gx && w.gy === gy) || state.towers.find(t => t.gx === gx && t.gy === gy)) return;
+
+  if (buildType === 'tower') {
+    if (state.wood < TOWER_WOOD_COST || state.meat < TOWER_MEAT_COST) {
+      floatingTexts.push({ x: player.x, y: player.y - 30, text: 'Need 30🪵 + 20🥩', life: 1.2, color: '#f87171', vy: -25 });
+      return;
+    }
+    state.wood -= TOWER_WOOD_COST;
+    state.meat -= TOWER_MEAT_COST;
+    const hp = statValue('wallHP') * 1.35;
+    state.towers.push({ gx, gy, hp, maxHP: hp, shootCD: 0 });
+    floatingTexts.push({ x: gx*GRID, y: gy*GRID, text: '🏹 Tower Built', life: 0.8, color: '#60a5fa', vy: -15 });
+  } else {
+    if (state.wood < WALL_COST) {
+      floatingTexts.push({ x: player.x, y: player.y - 30, text: '🪵 Short on timber!', life: 1.2, color: '#f87171', vy: -25 });
+      return;
+    }
+    state.wood -= WALL_COST;
+    const hp = statValue('wallHP');
+    state.walls.push({ gx, gy, hp, maxHP: hp });
+    floatingTexts.push({ x: gx*GRID, y: gy*GRID, text: '🧱 Wall Built', life: 0.8, color: '#fbbf24', vy: -15 });
+  }
+
+  for(let i=0; i<8; i++) {
+    particles.push({ x: gx*GRID + (Math.random()-0.5)*22, y: gy*GRID + (Math.random()-0.5)*22, vx: (Math.random()-0.5)*55, vy: -10-Math.random()*35, life: 0.55, maxLife: 0.55, color: '#ffffff', size: 4+Math.random()*4, type: 'dust' });
+  }
+  saveGame();
+}
+
+function update(dt) {
+  let mx = 0, my = 0;
+  if (keys['arrowup'] || keys['w']) my -= 1;
+  if (keys['arrowdown'] || keys['s']) my += 1;
+  if (keys['arrowleft'] || keys['a']) mx -= 1;
+  if (keys['arrowright'] || keys['d']) mx += 1;
+  if (joy.active) { mx = joy.dx; my = joy.dy; }
+  
+  const len = Math.hypot(mx, my);
+  if (len > 0) { mx /= len; my /= len; player.walkCycle += dt * 12; }
+  
+  const moveSpeed = statValue('moveSpeed') * 60 * dt;
+  const wallAt = (x, y) => state.walls.find(w => w.gx === Math.round(x / GRID) && w.gy === Math.round(y / GRID)) || state.towers.find(t => t.gx === Math.round(x / GRID) && t.gy === Math.round(y / GRID));
+  
+  const newX = player.x + mx * moveSpeed;
+  const newY = player.y + my * moveSpeed;
+  if (!wallAt(newX, newY)) {
+    player.x = newX; player.y = newY;
+  } else {
+    if (!wallAt(newX, player.y)) player.x = newX;
+    if (!wallAt(player.x, newY)) player.y = newY;
+  }
+  
+  if (mx !== 0 || my !== 0) player.angle = Math.atan2(my, mx);
+  const isMoving = (mx !== 0 || my !== 0);
+  
+  const maxHP = statValue('maxHP');
+  state.hp = Math.min(maxHP, state.hp + statValue('regen') * dt);
+  if (player.hitFlash > 0) player.hitFlash -= dt;
+  player.axeAngle += dt * statValue('attackSpeed') * 5.5;
+  
+  const beastsNearby = beasts.some(b => Math.hypot(b.x - player.x, b.y - player.y) < statValue('range') + b.size + 30);
+  player.chopping = null;
+  
+  if (!isMoving && !beastsNearby) {
+    let nearestTree = null, nearestDist = 55;
+    for (const t of trees) {
+      if (!t.alive) continue;
+      const d = Math.hypot(t.x - player.x, t.y - player.y);
+      if (d < nearestDist) { nearestDist = d; nearestTree = t; }
+    }
+    if (nearestTree) {
+      player.chopping = nearestTree;
+      nearestTree.hp -= dt * statValue('chopSpeed') * statValue('damage') * 0.6;
+      if (Math.random() < 0.3) {
+        particles.push({ x: nearestTree.x + (Math.random()-0.5) * 10, y: nearestTree.y, vx: (player.x > nearestTree.x ? 1 : -1) * (30 + Math.random()*50), vy: -60 - Math.random() * 60, life: 0.5, maxLife: 0.5, color: '#a05a2c', size: 2 + Math.random()*3, type: 'wood' });
+      }
+      if (nearestTree.hp <= 0) {
+        nearestTree.alive = false;
+        nearestTree.regrowTimer = TREE_REGROW_TIME;
+        state.wood += TREE_WOOD;
+        floatingTexts.push({ x: nearestTree.x, y: nearestTree.y - 20, text: `+${TREE_WOOD}🪵`, life: 1, color: '#d97706', vy: -35 });
+        player.chopping = null;
+        saveGame();
+      }
+    }
+  }
+  document.getElementById('chop-indicator').classList.toggle('show', player.chopping !== null);
+  
+  for (const t of trees) {
+    if (!t.alive) {
+      t.regrowTimer -= dt;
+      if (t.regrowTimer <= 0) { t.alive = true; t.hp = t.maxHP; }
+    }
+  }
+  updateSurvivors(dt);
+  
+  player.attackTimer -= dt;
+  const range = statValue('range');
+  const damage = statValue('damage');
+  if (player.attackTimer <= 0) {
+    for (const b of beasts) {
+      const d = Math.hypot(b.x - player.x, b.y - player.y);
+      if (d < range + b.size) {
+        b.hp -= damage; b.hitFlash = 0.15;
+        for (let i = 0; i < 4; i++) {
+          particles.push({ x: b.x, y: b.y - b.size*0.3, vx: (Math.random() - 0.5) * 140, vy: (Math.random() - 0.5) * 140 - 30, life: 0.35, maxLife: 0.35, color: '#f59e0b', size: 2.5, type: 'spark' });
+        }
+      }
+    }
+    player.attackTimer = 1 / statValue('attackSpeed');
+  }
+
+  // Camp watchtowers: low-effort automated defense, paid with wood + meat.
+  for (const tower of state.towers) {
+    tower.shootCD = Math.max(0, (tower.shootCD || 0) - dt);
+    if (tower.shootCD > 0 || beasts.length === 0) continue;
+    const tx = tower.gx * GRID, ty = tower.gy * GRID - 24;
+    let target = null, best = TOWER_RANGE;
+    for (const b of beasts) {
+      const d = Math.hypot(b.x - tx, b.y - ty);
+      if (d < best) { best = d; target = b; }
+    }
+    if (target) {
+      towerProjectiles.push({ x: tx, y: ty, target, speed: 430, dmg: damage * TOWER_DAMAGE_FACTOR, life: 1.4 });
+      tower.shootCD = TOWER_BASE_COOLDOWN / Math.sqrt(statValue('attackSpeed'));
+    }
+  }
+
+  for (let i = towerProjectiles.length - 1; i >= 0; i--) {
+    const p = towerProjectiles[i];
+    p.life -= dt;
+    if (p.life <= 0 || !beasts.includes(p.target) || p.target.hp <= 0) { towerProjectiles.splice(i, 1); continue; }
+    const dx = p.target.x - p.x, dy = (p.target.y - p.target.size*0.25) - p.y;
+    const d = Math.hypot(dx, dy) || 1;
+    p.x += (dx/d) * p.speed * dt;
+    p.y += (dy/d) * p.speed * dt;
+    if (d < p.target.size + 6) {
+      p.target.hp -= p.dmg;
+      p.target.hitFlash = 0.15;
+      for (let k=0; k<3; k++) particles.push({ x: p.x, y: p.y, vx: (Math.random()-0.5)*90, vy: (Math.random()-0.5)*90, life: 0.25, maxLife: 0.25, color: '#fbbf24', size: 2.5, type: 'spark' });
+      towerProjectiles.splice(i, 1);
+    }
+  }
+  
+  for (let i = beasts.length - 1; i >= 0; i--) {
+    const b = beasts[i];
+    const dx = player.x - b.x, dy = player.y - b.y;
+    const distToPlayer = Math.hypot(dx, dy);
+    b.legCycle += dt * b.speed * 15;
+    
+    b.targetCD -= dt;
+    if (b.targetCD <= 0) {
+      b.target = null;
+      const steps = Math.ceil(distToPlayer / GRID);
+      for (let s = 1; s < steps; s++) {
+        const t = s / steps;
+        const gx = Math.round((b.x + dx * t) / GRID);
+        const gy = Math.round((b.y + dy * t) / GRID);
+        const struct = state.walls.find(w => w.gx === gx && w.gy === gy) || state.towers.find(t => t.gx === gx && t.gy === gy);
+        if (struct) { b.target = struct; break; }
+      }
+      b.targetCD = 0.25;
+    }
+    
+    if (b.target && b.target.hp > 0) {
+      const wx = b.target.gx * GRID, wy = b.target.gy * GRID;
+      const wdx = wx - b.x, wdy = wy - b.y;
+      const wd = Math.hypot(wdx, wdy);
+      if (wd > b.size + 10) {
+        b.x += (wdx/wd) * b.speed * 60 * dt;
+        b.y += (wdy/wd) * b.speed * 60 * dt;
+      } else {
+        b.attackCD -= dt;
+        if (b.attackCD <= 0) {
+          b.target.hp -= b.dmg;
+          b.attackCD = 1.0;
+          for(let k=0; k<3; k++) particles.push({ x: wx, y: wy, vx: (Math.random() - 0.5) * 90, vy: -40 - Math.random()*40, life: 0.4, maxLife: 0.4, color: '#d97706', size: 3, type: 'wood' });
+          if (b.target.hp <= 0) {
+            let idx = state.walls.indexOf(b.target);
+            if (idx >= 0) state.walls.splice(idx, 1);
+            else { idx = state.towers.indexOf(b.target); if (idx >= 0) state.towers.splice(idx, 1); }
+            floatingTexts.push({ x: wx, y: wy, text: '💥 Breach!', life: 0.8, color: '#ef4444', vy: -20 });
+            b.target = null;
+            saveGame();
+          }
+        }
+      }
+    } else {
+      if (distToPlayer > 1) {
+        b.x += (dx/distToPlayer) * b.speed * 60 * dt;
+        b.y += (dy/distToPlayer) * b.speed * 60 * dt;
+      }
+      b.attackCD -= dt;
+      if (distToPlayer < b.size + 18 && b.attackCD <= 0) {
+        state.hp -= b.dmg;
+        b.attackCD = 1.2;
+        player.hitFlash = 0.25;
+        floatingTexts.push({ x: player.x, y: player.y - 25, text: `-${Math.floor(b.dmg)} ❤️`, life: 0.8, color: '#f87171', vy: -30 });
+      }
+    }
+    if (b.hitFlash > 0) b.hitFlash -= dt;
+    
+    if (b.hp <= 0) {
+      const zone = ZONES[state.currentZone];
+      const bossMult = b.isBoss ? 5 : 1;
+      const moneyGain = Math.floor(zone.moneyDrop * bossMult * statValue('moneyMult'));
+      const meatGain = Math.floor(zone.meatDrop * bossMult * statValue('meatValue'));
+      drops.push({ x: b.x, y: b.y, type: 'money', value: moneyGain, life: 0, vy: -3 });
+      drops.push({ x: b.x + 14, y: b.y - 10, type: 'meat', value: meatGain, life: 0, vy: -4 });
+      for (let j = 0; j < (b.isBoss ? 25 : 10); j++) {
+        particles.push({ x: b.x, y: b.y, vx: (Math.random() - 0.5) * 180, vy: (Math.random() - 0.5) * 180 - 40, life: 0.7, maxLife: 0.7, color: '#b91c1c', size: 3 + Math.random()*3, type: 'blood' });
+      }
+      beasts.splice(i, 1);
+    }
+  }
+  
+  for (let i = drops.length - 1; i >= 0; i--) {
+    const d = drops[i];
+    d.life += dt;
+    const dx = player.x - d.x, dy = player.y - d.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 180) {
+      const pull = 340 * dt;
+      d.x += (dx/dist) * pull; d.y += (dy/dist) * pull;
+    } else {
+      d.y += d.vy; d.vy += 0.25;
+    }
+    if (dist < 25) {
+      if (d.type === 'money') {
+        state.money += d.value;
+        floatingTexts.push({ x: d.x, y: d.y, text: `+$${d.value}`, life: 0.8, color: '#4ade80', vy: -35 });
+      } else {
+        state.meat += d.value;
+        floatingTexts.push({ x: d.x, y: d.y, text: `+${d.value}🥩`, life: 0.8, color: '#f87171', vy: -35 });
+      }
+      drops.splice(i, 1);
+    }
+  }
+  
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.type === 'wood' || p.type === 'blood') p.vy += 220 * dt;
+    p.life -= dt;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+  for (let i = floatingTexts.length - 1; i >= 0; i--) {
+    const t = floatingTexts[i];
+    t.y += t.vy * dt; t.life -= dt;
+    if (t.life <= 0) floatingTexts.splice(i, 1);
+  }
+  
+  if (state.hp <= 0 && !gameOver) triggerGameOver();
+  
+  document.getElementById('money').textContent = Math.floor(state.money);
+  document.getElementById('meat').textContent = Math.floor(state.meat);
+  document.getElementById('wood').textContent = Math.floor(state.wood);
+  // FIX: was `Math.collapse ? '' : Math.floor(state.hp)` (Math.collapse bestaat niet)
+  document.getElementById('hp').textContent = `${Math.floor(state.hp)}/${Math.floor(maxHP)}`;
+  document.getElementById('wave').textContent = state.wave + (state.wave % 5 === 0 ? ' 👑' : '');
+  document.getElementById('zone-name').textContent = ZONES[state.currentZone].name;
+  
+  const canAfford = UPGRADES.some(u => !isMaxed(u.key) && state.money >= upgradeCost(u.key));
+  document.getElementById('upgrade-btn').classList.toggle('pulse', canAfford);
+}
+
+const snowflakes = [];
+for (let i = 0; i < 90; i++) snowflakes.push({ x: Math.random() * 2000 - 1000, y: Math.random() * 2000 - 1000, size: 1.5 + Math.random() * 2.5, speed: 40 + Math.random()*40 });
+
+function drawIsometricGrid(cx, cy) {
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+  ctx.lineWidth = 1;
+  const startX = Math.floor((player.x - W/2) / GRID) * GRID - GRID*2;
+  const startY = Math.floor((player.y - H/2) / GRID) * GRID - GRID*2;
+  for (let x = startX; x < player.x + W/2 + GRID*2; x += GRID) {
+    ctx.beginPath(); ctx.moveTo(x + cx, 0); ctx.lineTo(x + cx, H); ctx.stroke();
+  }
+  for (let y = startY; y < player.y + H/2 + GRID*2; y += GRID) {
+    ctx.beginPath(); ctx.moveTo(0, y + cy); ctx.lineTo(W, y + cy); ctx.stroke();
+  }
+}
+
+function drawTree(t, sx, sy) {
+  if (!t.alive) {
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath(); ctx.ellipse(sx, sy + 4, 12, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#5c3317';
+    ctx.fillRect(sx - 5, sy - 8, 10, 12);
+    ctx.fillStyle = '#8b5a2b';
+    ctx.beginPath(); ctx.ellipse(sx, sy - 8, 5, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+    return;
+  }
+  ctx.fillStyle = 'rgba(15, 35, 60, 0.2)';
+  ctx.beginPath(); ctx.ellipse(sx, sy + t.size*0.4, t.size * 1.2, t.size * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#4a2c11';
+  ctx.fillRect(sx - t.size * 0.15, sy - t.size * 0.2, t.size * 0.3, t.size * 0.6);
+  const layers = 3;
+  for(let i=0; i<layers; i++) {
+    const pct = i / layers;
+    const layerW = t.size * (1.4 - pct * 0.6);
+    const layerH = t.size * 0.7;
+    const ly = sy - t.size * 0.3 - (i * t.size * 0.4);
+    let g = ctx.createLinearGradient(sx - layerW, ly, sx + layerW, ly + layerH);
+    g.addColorStop(0, '#70a4b7'); g.addColorStop(0.4, '#54879b'); g.addColorStop(1, '#335f71');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(sx, ly - layerH);
+    ctx.lineTo(sx + layerW, ly + layerH);
+    ctx.lineTo(sx - layerW, ly + layerH);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(sx, ly - layerH);
+    ctx.lineTo(sx + layerW * 0.4, ly + layerH * 0.2);
+    ctx.lineTo(sx - layerW * 0.4, ly + layerH * 0.2);
+    ctx.closePath();
+    ctx.fill();
+  }
+  if (t.hp < t.maxHP) {
+    const barW = t.size * 1.6;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(sx - barW/2, sy - t.size * 1.8, barW, 4);
+    ctx.fillStyle = '#d97706';
+    ctx.fillRect(sx - barW/2, sy - t.size * 1.8, barW * (t.hp/t.maxHP), 4);
+  }
+}
+
+function drawWall(w, sx, sy) {
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.fillRect(sx - GRID/2 + 2, sy - GRID/2 + 6, GRID - 2, GRID);
+  let g = ctx.createLinearGradient(sx - GRID/2, sy - GRID/2, sx + GRID/2, sy + GRID/2);
+  g.addColorStop(0, '#8b5a2b'); g.addColorStop(1, '#5c3317');
+  ctx.fillStyle = g;
+  ctx.fillRect(sx - GRID/2 + 3, sy - GRID/2 - 12, GRID - 6, GRID + 12);
+  ctx.strokeStyle = '#3e220f'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(sx - GRID/2 + 3, sy - GRID/2 - 12, GRID - 6, GRID + 12);
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 2;
+  for (let i = 1; i <= 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(sx - GRID/2 + 3, sy - GRID/2 - 12 + i * (GRID/3));
+    ctx.lineTo(sx + GRID/2 - 3, sy - GRID/2 - 12 + i * (GRID/3));
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(sx - GRID/2 + 3, sy - GRID/2 - 16, GRID - 6, 5);
+  ctx.fillStyle = '#f59e0b';
+  for (let i = 0; i < 2; i++) {
+    const px = sx - GRID/2 + 12 + i * 18;
+    ctx.beginPath();
+    ctx.moveTo(px - 3, sy - GRID/2 - 12);
+    ctx.lineTo(px, sy - GRID/2 - 24);
+    ctx.lineTo(px + 3, sy - GRID/2 - 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+  if (w.hp < w.maxHP) {
+    const barW = GRID - 6;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(sx - barW/2, sy + 10, barW, 4);
+    ctx.fillStyle = '#22c55e';
+    ctx.fillRect(sx - barW/2, sy + 10, barW * (w.hp/w.maxHP), 4);
+  }
+}
+
+
+function drawTower(t, sx, sy) {
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
+  ctx.beginPath(); ctx.ellipse(sx, sy + 12, 24, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#3e220f'; ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(sx - 14, sy + 12); ctx.lineTo(sx - 7, sy - 22);
+  ctx.moveTo(sx + 14, sy + 12); ctx.lineTo(sx + 7, sy - 22);
+  ctx.moveTo(sx - 10, sy - 2); ctx.lineTo(sx + 10, sy - 12);
+  ctx.stroke();
+  let g = ctx.createLinearGradient(sx - 18, sy - 28, sx + 18, sy - 16);
+  g.addColorStop(0, '#b7791f'); g.addColorStop(1, '#78350f');
+  ctx.fillStyle = g; ctx.fillRect(sx - 18, sy - 28, 36, 12);
+  ctx.strokeStyle = '#3e220f'; ctx.lineWidth = 1.5; ctx.strokeRect(sx - 18, sy - 28, 36, 12);
+  ctx.fillStyle = '#eff6ff';
+  ctx.beginPath(); ctx.moveTo(sx, sy - 50); ctx.lineTo(sx + 24, sy - 34); ctx.lineTo(sx - 24, sy - 34); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#94a3b8'; ctx.stroke();
+  ctx.fillStyle = '#2563eb'; ctx.beginPath(); ctx.arc(sx, sy - 32, 6, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(sx + 3, sy - 32); ctx.lineTo(sx + 15, sy - 36); ctx.stroke();
+  if (t.hp < t.maxHP) {
+    const barW = GRID - 4;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(sx - barW/2, sy + 16, barW, 4);
+    ctx.fillStyle = '#60a5fa'; ctx.fillRect(sx - barW/2, sy + 16, barW * (t.hp/t.maxHP), 4);
+  }
+}
+
+function drawCampDecor(cx, cy) {
+  const wx = -86 + cx, wy = -26 + cy;
+  const woodRows = Math.min(5, Math.ceil(state.wood / 15));
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(wx, wy + 18, 48, 16, 0, 0, Math.PI*2); ctx.fill();
+  for (let r=0; r<woodRows; r++) {
+    const logs = Math.min(6, 2 + Math.floor(state.wood / 20));
+    for (let i=0; i<logs; i++) {
+      const lx = wx - 28 + i*11 + (r%2)*4, ly = wy + 16 - r*8;
+      ctx.fillStyle = '#8b5a2b'; ctx.fillRect(lx, ly, 24, 7);
+      ctx.fillStyle = '#f1c27d'; ctx.beginPath(); ctx.arc(lx + 24, ly + 3.5, 3.6, 0, Math.PI*2); ctx.fill();
+    }
+  }
+  ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('WOOD', wx, wy + 42);
+
+  const mx = 92 + cx, my = -28 + cy;
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(mx, my + 22, 44, 14, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#78350f'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(mx - 34, my + 22); ctx.lineTo(mx - 30, my - 16); ctx.moveTo(mx + 34, my + 22); ctx.lineTo(mx + 30, my - 16); ctx.moveTo(mx - 34, my - 12); ctx.lineTo(mx + 34, my - 12); ctx.stroke();
+  const meatCount = Math.min(12, Math.floor(state.meat / 4));
+  for (let i=0; i<meatCount; i++) {
+    const px = mx - 26 + (i%6)*10, py = my - 8 + Math.floor(i/6)*12;
+    ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.ellipse(px, py, 6, 8, 0.6, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fecaca'; ctx.beginPath(); ctx.arc(px - 2, py - 2, 2, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('MEAT', mx, my + 46);
+
+  const gx = -76 + cx, gy = 58 + cy;
+  ctx.save();
+  ctx.translate(gx, gy); ctx.rotate(-0.08);
+  ctx.fillStyle = 'rgba(15,23,42,0.82)'; ctx.fillRect(-28, -18, 56, 36);
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 2; ctx.strokeRect(-28, -18, 56, 36);
+  const cash = Math.min(5, Math.floor(state.money / 80));
+  for (let i=0; i<cash; i++) { ctx.fillStyle = '#22c55e'; ctx.fillRect(-18 + i*7, -8 - i*2, 28, 12); ctx.fillStyle = '#dcfce7'; ctx.font = '900 10px system-ui'; ctx.fillText('$', -4 + i*7, 2 - i*2); }
+  ctx.restore();
+}
+
+
+function getCampDecorations(cx, cy) {
+  return [
+    {
+      y: -26,
+      draw: () => {
+        const wx = -86 + cx, wy = -26 + cy;
+        const woodRows = Math.min(5, Math.ceil(state.wood / 15));
+        ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(wx, wy + 18, 48, 16, 0, 0, Math.PI*2); ctx.fill();
+        for (let r=0; r<woodRows; r++) {
+          const logs = Math.min(6, 2 + Math.floor(state.wood / 20));
+          for (let i=0; i<logs; i++) {
+            const lx = wx - 28 + i*11 + (r%2)*4, ly = wy + 16 - r*8;
+            ctx.fillStyle = '#8b5a2b'; ctx.fillRect(lx, ly, 24, 7);
+            ctx.fillStyle = '#f1c27d'; ctx.beginPath(); ctx.arc(lx + 24, ly + 3.5, 3.6, 0, Math.PI*2); ctx.fill();
+          }
+        }
+        ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText('WOOD', wx, wy + 42);
+      }
+    },
+    {
+      y: -28,
+      draw: () => {
+        const mx = 92 + cx, my = -28 + cy;
+        ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.beginPath(); ctx.ellipse(mx, my + 22, 44, 14, 0, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#78350f'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(mx - 34, my + 22); ctx.lineTo(mx - 30, my - 16); ctx.moveTo(mx + 34, my + 22); ctx.lineTo(mx + 30, my - 16); ctx.moveTo(mx - 34, my - 12); ctx.lineTo(mx + 34, my - 12); ctx.stroke();
+        const meatCount = Math.min(12, Math.floor(state.meat / 4));
+        for (let i=0; i<meatCount; i++) {
+          const px = mx - 26 + (i%6)*10, py = my - 8 + Math.floor(i/6)*12;
+          ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.ellipse(px, py, 6, 8, 0.6, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#fecaca'; ctx.beginPath(); ctx.arc(px - 2, py - 2, 2, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText('MEAT', mx, my + 46);
+      }
+    },
+    {
+      y: 58,
+      draw: () => {
+        const gx = -76 + cx, gy = 58 + cy;
+        ctx.save();
+        ctx.translate(gx, gy); ctx.rotate(-0.08);
+        ctx.fillStyle = 'rgba(15,23,42,0.82)'; ctx.fillRect(-28, -18, 56, 36);
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 2; ctx.strokeRect(-28, -18, 56, 36);
+        const cash = Math.min(5, Math.floor(state.money / 80));
+        for (let i=0; i<cash; i++) { ctx.fillStyle = '#22c55e'; ctx.fillRect(-18 + i*7, -8 - i*2, 28, 12); ctx.fillStyle = '#dcfce7'; ctx.font = '900 10px system-ui'; ctx.fillText('$', -4 + i*7, 2 - i*2); }
+        ctx.restore();
+      }
+    }
+  ];
+}
+
+function drawPlayer(sx, sy) {
+  const bob = Math.sin(player.walkCycle) * 3;
+  ctx.fillStyle = 'rgba(15, 35, 60, 0.25)';
+  ctx.beginPath(); ctx.ellipse(sx, sy + 14, 16, 6, 0, 0, Math.PI * 2); ctx.fill();
+  
+  const range = statValue('range');
+  for (let i = 0; i < 5; i++) {
+    const a = player.axeAngle + (i / 5) * Math.PI * 2;
+    const ax = sx + Math.cos(a) * range * 0.72;
+    const ay = sy + Math.sin(a) * range * 0.72 + bob*0.3;
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.rotate(a + Math.PI/2 + player.walkCycle*0.1);
+    ctx.fillStyle = '#78350f';
+    ctx.fillRect(-2, -14, 4, 26);
+    let gAxe = ctx.createLinearGradient(-8, -14, 8, -6);
+    gAxe.addColorStop(0, '#f1f5f9'); gAxe.addColorStop(1, '#64748b');
+    ctx.fillStyle = gAxe;
+    ctx.beginPath();
+    ctx.moveTo(-2, -14);
+    ctx.bezierCurveTo(8, -16, 12, -8, 6, -2);
+    ctx.lineTo(-2, -6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath(); ctx.arc(sx, sy + 6, range, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  
+  ctx.save();
+  ctx.translate(sx, sy + bob);
+  const flash = player.hitFlash > 0;
+  let gBody = ctx.createLinearGradient(-14, -10, 14, 14);
+  gBody.addColorStop(0, flash ? '#fca5a5' : '#2563eb');
+  gBody.addColorStop(1, flash ? '#ef4444' : '#1d4ed8');
+  ctx.fillStyle = gBody;
+  ctx.beginPath(); ctx.arc(0, 4, 13, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath(); ctx.arc(0, -5, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#1e3a8a';
+  ctx.beginPath(); ctx.arc(0, -5, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fed7aa';
+  ctx.beginPath(); ctx.arc(0, -4, 4.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-2, -5, 1.2, 2);
+  ctx.fillRect(1, -5, 1.2, 2);
+  ctx.restore();
+}
+
+
+function drawSurvivor(s, cx, cy) {
+  const sx = s.x + cx, sy = s.y + cy;
+  const bob = Math.sin(s.walkCycle) * 2.5;
+  ctx.fillStyle = 'rgba(15,35,60,0.18)'; ctx.beginPath(); ctx.ellipse(sx, sy + 10, 12, 4.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.save(); ctx.translate(sx, sy + bob);
+  ctx.fillStyle = '#d97706'; ctx.beginPath(); ctx.arc(0, 2, 9, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#78350f'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = '#f8fafc'; ctx.beginPath(); ctx.arc(0, -5, 7, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -4, 3.7, 0, Math.PI*2); ctx.fill();
+  if (s.mode === 'chopping_tree') {
+    ctx.strokeStyle = '#78350f'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(14, -8); ctx.stroke();
+    ctx.fillStyle = '#cbd5e1'; ctx.fillRect(12, -12, 8, 4);
+  }
+  if (s.woodCarried > 0) {
+    ctx.save(); ctx.rotate(-0.4);
+    ctx.fillStyle = '#8b5a2b'; ctx.fillRect(-9, -18, 18, 6);
+    ctx.fillStyle = '#f1c27d'; ctx.beginPath(); ctx.arc(9, -15, 3, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function drawBeast(b, sx, sy) {
+  const legBob = Math.sin(b.legCycle) * 3;
+  const flash = b.hitFlash > 0;
+  ctx.fillStyle = 'rgba(15, 35, 60, 0.22)';
+  ctx.beginPath(); ctx.ellipse(sx, sy + b.size*0.4, b.size * 1.1, b.size * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+  
+  ctx.save();
+  ctx.translate(sx, sy);
+  ctx.fillStyle = b.isBoss ? '#cbd5e1' : '#e2e8f0';
+  ctx.fillRect(-b.size*0.6, b.size*0.2 + legBob, b.size*0.25, b.size*0.35);
+  ctx.fillRect(-b.size*0.2, b.size*0.2 - legBob, b.size*0.25, b.size*0.35);
+  ctx.fillRect(b.size*0.1, b.size*0.2 + legBob, b.size*0.25, b.size*0.35);
+  ctx.fillRect(b.size*0.4, b.size*0.2 - legBob, b.size*0.25, b.size*0.35);
+  
+  let gBeast = ctx.createLinearGradient(-b.size, -b.size*0.5, b.size, b.size*0.5);
+  gBeast.addColorStop(0, flash ? '#fca5a5' : (b.isBoss ? '#e2e8f0' : '#ffffff'));
+  gBeast.addColorStop(1, flash ? '#ef4444' : (b.isBoss ? '#94a3b8' : '#cbd5e1'));
+  ctx.fillStyle = gBeast;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, b.size, b.size * 0.68, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = b.isBoss ? '#475569' : '#94a3b8';
+  ctx.lineWidth = b.isBoss ? 3 : 1.5;
+  ctx.stroke();
+  
+  const dirX = player.x > b.x ? 1 : -1;
+  ctx.save();
+  ctx.translate(b.size * 0.6 * dirX, -b.size * 0.3);
+  ctx.fillStyle = flash ? '#fca5a5' : (b.isBoss ? '#e2e8f0' : '#ffffff');
+  ctx.beginPath(); ctx.arc(0, 0, b.size * 0.42, 0, Math.PI * 2); ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#e2e8f0';
+  ctx.beginPath(); ctx.ellipse(b.size*0.25*dirX, b.size*0.1, b.size*0.18, b.size*0.12, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath(); ctx.arc(b.size*0.32*dirX, b.size*0.06, 2, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = b.isBoss ? '#ef4444' : '#1e293b';
+  ctx.beginPath(); ctx.arc(-2*dirX, -3, b.isBoss ? 3 : 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  ctx.restore();
+  
+  const barW = b.size * 1.8;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(sx - barW/2, sy - b.size - 14, barW, 5);
+  ctx.fillStyle = b.isBoss ? '#ef4444' : '#22c55e';
+  ctx.fillRect(sx - barW/2, sy - b.size - 14, barW * (b.hp/b.maxHP), 5);
+}
+
+function render() {
+  const zone = ZONES[state.currentZone];
+  let bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, zone.bgGradient[0]);
+  bg.addColorStop(0.5, zone.bgGradient[1]);
+  bg.addColorStop(1, zone.bgGradient[2]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+  
+  const cx = W / 2 - player.x;
+  const cy = H / 2 - player.y;
+  
+  for (const s of snowflakes) {
+    const sx = ((s.x + cx * 0.4) % 2000 + 2000) % 2000 - 1000 + W/2;
+    const sy = ((s.y + cy * 0.4 + (performance.now()*0.001*s.speed)) % 2000 + 2000) % 2000 - 1000 + H/2;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.beginPath(); ctx.arc(sx, sy, s.size, 0, Math.PI * 2); ctx.fill();
+  }
+  
+  if (buildMode) drawIsometricGrid(cx, cy);
+  
+  const fireX = 0 + cx, fireY = 0 + cy;
+  if (fireX > -100 && fireX < W + 100 && fireY > -100 && fireY < H + 100) {
+    ctx.fillStyle = 'rgba(15, 35, 60, 0.3)';
+    ctx.beginPath(); ctx.ellipse(fireX, fireY + 8, 36, 14, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(fireX - 16, fireY - 32, 32, 36);
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(fireX - 18, fireY - 36, 36, 6);
+    let glow = ctx.createRadialGradient(fireX, fireY - 12, 2, fireX, fireY - 12, 14 + Math.sin(Date.now()/90)*3);
+    glow.addColorStop(0, '#fff7ed');
+    glow.addColorStop(0.3, '#f59e0b');
+    glow.addColorStop(1, 'rgba(239,68,68,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(fireX, fireY - 12, 20, 0, Math.PI * 2); ctx.fill();
+  }
+  
+  const renderables = [];
+  for (const d of getCampDecorations(cx, cy)) renderables.push(d);
+  for (const t of trees) renderables.push({ y: t.y, draw: () => drawTree(t, t.x + cx, t.y + cy) });
+  for (const w of state.walls) renderables.push({ y: w.gy * GRID, draw: () => drawWall(w, w.gx * GRID + cx, w.gy * GRID + cy) });
+  for (const t of state.towers) renderables.push({ y: t.gy * GRID, draw: () => drawTower(t, t.gx * GRID + cx, t.gy * GRID + cy) });
+  for (const d of drops) renderables.push({ y: d.y, draw: () => {
+    const sx = d.x + cx, sy = d.y + cy;
+    const bob = Math.sin(d.life * 5) * 3;
+    if (d.type === 'money') {
+      ctx.fillStyle = '#22c55e'; ctx.fillRect(sx - 9, sy - 6 + bob, 18, 12);
+      ctx.fillStyle = '#16803d'; ctx.fillRect(sx - 7, sy - 4 + bob, 14, 8);
+      ctx.fillStyle = '#ffffff'; ctx.font = '900 11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('$', sx, sy + 3 + bob);
+    } else {
+      // FIX: was `ctx.circle ? ctx.circle(...) : ctx.arc(...)` (ctx.circle bestaat niet)
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath(); ctx.ellipse(sx, sy + bob, 9, 7, Math.PI/4, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fee2e2';
+      ctx.beginPath(); ctx.arc(sx - 2, sy - 2 + bob, 2, 0, Math.PI*2); ctx.fill();
+    }
+  }});
+  for (const b of beasts) renderables.push({ y: b.y, draw: () => drawBeast(b, b.x + cx, b.y + cy) });
+  for (const s of survivors) renderables.push({ y: s.y, draw: () => drawSurvivor(s, cx, cy) });
+  renderables.push({ y: player.y, draw: () => drawPlayer(W/2, H/2) });
+  renderables.sort((a, b) => a.y - b.y);
+  for (const r of renderables) r.draw();
+  
+  for (const p of towerProjectiles) {
+    const sx = p.x + cx, sy = p.y + cy;
+    ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - 12, sy + 3); ctx.stroke();
+    ctx.fillStyle = '#fef3c7'; ctx.beginPath(); ctx.moveTo(sx + 6, sy - 1); ctx.lineTo(sx + 14, sy + 2); ctx.lineTo(sx + 6, sy + 5); ctx.closePath(); ctx.fill();
+  }
+  
+  for (const p of particles) {
+    ctx.globalAlpha = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    if (p.type === 'dust') {
+      ctx.beginPath(); ctx.arc(p.x + cx, p.y + cy, p.size, 0, Math.PI*2); ctx.fill();
+    } else {
+      ctx.fillRect(p.x + cx - p.size/2, p.y + cy - p.size/2, p.size, p.size);
+    }
+  }
+  ctx.globalAlpha = 1;
+  
+  for (const t of floatingTexts) {
+    ctx.globalAlpha = Math.min(1, t.life * 2.5);
+    ctx.fillStyle = t.color;
+    ctx.font = '900 15px system-ui';
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = '#050a14';
+    ctx.lineWidth = 4;
+    ctx.strokeText(t.text, t.x + cx, t.y + cy);
+    ctx.fillText(t.text, t.x + cx, t.y + cy);
+  }
+  ctx.globalAlpha = 1;
+  
+  if (waveCleared) {
+    ctx.fillStyle = 'rgba(11, 22, 44, 0.8)';
+    ctx.fillRect(0, H/2 - 40, W, 80);
+    ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, H/2 - 40); ctx.lineTo(W, H/2 - 40); ctx.moveTo(0, H/2 + 40); ctx.lineTo(W, H/2 + 40); ctx.stroke();
+    ctx.fillStyle = '#22c55e';
+    ctx.font = '900 24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`✓ BLIZZARD SURVIVED`, W/2, H/2 + 8);
+  }
+}
+
+let gameOver = false;
+function triggerGameOver() {
+  gameOver = true;
+  document.getElementById('game-over').classList.add('show');
+}
+function respawn() {
+  state.hp = statValue('maxHP');
+  state.wave = Math.max(1, state.wave - 1);
+  beasts.length = 0; drops.length = 0; towerProjectiles.length = 0;
+  player.x = 0; player.y = 0;
+  waveActive = false; waveCleared = false;
+  gameOver = false;
+  document.getElementById('game-over').classList.remove('show');
+  syncSurvivors(true);
+  saveGame();
+}
+document.getElementById('respawn-btn').addEventListener('click', respawn);
+
+function renderUpgrades() {
+  const list = document.getElementById('tab-upgrades');
+  list.innerHTML = '';
+  for (const u of UPGRADES) {
+    const lvl = state.upgrades[u.key];
+    const cost = upgradeCost(u.key);
+    const maxed = isMaxed(u.key);
+    const afford = state.money >= cost && !maxed;
+    const val = statValue(u.key);
+    const div = document.createElement('div');
+    div.className = 'upgrade' + (afford ? ' affordable' : '') + (maxed ? ' maxed' : '');
+    div.innerHTML = `
+      <div class="upgrade-icon">${u.icon}</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">${u.name} <span style="opacity:0.4;font-size:12px;font-weight:normal">Lv.${lvl}${u.max ? '/'+u.max : ''}</span></div>
+        <div class="upgrade-stat">${val.toFixed(1)} ${u.unit}</div>
+      </div>
+      <div class="upgrade-cost">${maxed ? 'MAX' : '$'+cost}</div>
+    `;
+    if (afford) {
+      div.addEventListener('click', () => {
+        state.money -= cost;
+        const oldVal = statValue(u.key);
+        state.upgrades[u.key]++;
+        if (u.key === 'maxHP') state.hp += statValue('maxHP') - oldVal;
+        if (u.key === 'wallHP') {
+          const newMax = statValue('wallHP');
+          for (const w of state.walls) { w.maxHP = newMax; w.hp = newMax; }
+          for (const t of state.towers) { t.maxHP = newMax * 1.35; t.hp = t.maxHP; }
+        }
+        if (u.key === 'survivors') syncSurvivors(true);
+        saveGame(); renderUpgrades(); renderZones();
+      });
+    }
+    list.appendChild(div);
+  }
+}
+
+function renderZones() {
+  const section = document.getElementById('tab-zones');
+  section.innerHTML = '';
+  for (let i = 0; i < ZONES.length; i++) {
+    const z = ZONES[i];
+    const unlocked = state.zonesUnlocked[i];
+    const isCurrent = state.currentZone === i;
+    const canUnlock = !unlocked && state.money >= z.cost;
+    const btn = document.createElement('button');
+    btn.className = 'zone-btn';
+    if (isCurrent) {
+      btn.textContent = `📍 Encamped at ${z.name}`;
+      btn.disabled = true;
+    } else if (unlocked) {
+      btn.textContent = `Deploy to ${z.name}`;
+      btn.addEventListener('click', () => {
+        state.currentZone = i;
+        beasts.length = 0; drops.length = 0; towerProjectiles.length = 0;
+        waveActive = false; waveCleared = false;
+        saveGame(); closePanel(); renderZones();
+      });
+    } else {
+      btn.textContent = `🔒 Secure ${z.name} — $${z.cost}`;
+      btn.disabled = !canUnlock;
+      if (canUnlock) {
+        btn.addEventListener('click', () => {
+          state.money -= z.cost;
+          state.zonesUnlocked[i] = true;
+          saveGame(); renderUpgrades(); renderZones();
+        });
+      }
+    }
+    section.appendChild(btn);
+  }
+  const infoBox = document.createElement('div');
+  infoBox.style.cssText = 'margin-top:20px;padding:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:14px;font-size:12px;opacity:0.7;line-height:1.6;';
+  infoBox.innerHTML = `⚙️ <strong>Survival Guide:</strong><br>• Walls built: ${state.walls.length}<br>• Watchtowers built: ${state.towers.length}<br>• Survivors hired: ${survivors.length}<br>• Max Wall HP: ${Math.floor(statValue('wallHP'))}<br><br><em>Stand still near a snowcovered pine tree when no monsters are nearby to auto-harvest logs. Survivors collect timber automatically, and towers provide passive defense.</em>`;
+  section.appendChild(infoBox);
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const tab = t.dataset.tab;
+    document.getElementById('tab-upgrades').style.display = tab === 'upgrades' ? 'block' : 'none';
+    document.getElementById('tab-zones').style.display = tab === 'zones' ? 'block' : 'none';
+  });
+});
+
+const panel = document.getElementById('panel');
+document.getElementById('upgrade-btn').addEventListener('click', () => {
+  renderUpgrades(); renderZones();
+  panel.classList.add('open');
+});
+document.getElementById('close-panel').addEventListener('click', closePanel);
+panel.addEventListener('click', e => { if (e.target === panel) closePanel(); });
+function closePanel() { panel.classList.remove('open'); }
+document.getElementById('reset-btn').addEventListener('click', resetGame);
+
+let lastTime = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - lastTime) / 1000);
+  lastTime = now;
+  if (!gameOver && !panel.classList.contains('open')) {
+    updateWaves(dt);
+    update(dt);
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+if (state.hp <= 0) state.hp = statValue('maxHP');
+syncSurvivors(true);
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
