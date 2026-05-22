@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v7.1 - Rebalanced Bestiary</title>
+<title>Frostfall v7.2 - Cache & Balance Hotfix</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -86,7 +86,7 @@
     <img src="icon-192.png" alt="Frostfall" style="width:100%;height:100%;display:block;image-rendering:pixelated;" onerror="this.style.display='none'" />
   </div>
   <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FROSTFALL</div>
-  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.0 · Bestiary expanded</div>
+  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.2 · Cache & balance hotfix</div>
   <div style="width:220px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
     <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;transition:width .25s ease;"></div>
   </div>
@@ -160,8 +160,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v6-7-sprite-axes';
-const LEGACY_KEYS=['frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v7-2-balance-hotfix';
+const LEGACY_KEYS=['frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','bear','brute','wolf','yeti','tree','tower','ice_tower','meat','campfire','mat_wood','mat_meat','mat_money','axe'];
 let spritesLoaded=0;
@@ -203,7 +203,7 @@ setTimeout(()=>{
 const ZONES=[
 {id:0,name:'Siberian Camp',cost:0,beastHP:30,beastDmg:5,beastSpeed:.70,meatDrop:1,moneyDrop:9,bg:['#e4f0f6','#c4dee9','#a2cbdd']},
 {id:1,name:'Glacial Forest',cost:500,beastHP:60,beastDmg:8,beastSpeed:.84,meatDrop:2,moneyDrop:24,bg:['#cee2eb','#abc8d7','#83abc1']},
-{id:2,name:'Forgotten Ice Caves',cost:2500,beastHP:135,beastDmg:16,beastSpeed:.96,meatDrop:4,moneyDrop:58,bg:['#a9c0cd','#81a1b4','#598099']}
+{id:2,name:'Forgotten Ice Caves',cost:2500,beastHP:125,beastDmg:15,beastSpeed:.94,meatDrop:4,moneyDrop:55,bg:['#a9c0cd','#81a1b4','#598099']}
 ];
 const UPGRADES=[
 {key:'damage',icon:'⚔️',name:'Bijl Kracht',base:10,mult:1.50,costBase:25,costMult:1.60,unit:'dmg'},
@@ -278,11 +278,11 @@ function spawnBeast(kind='bear'){ const z=ZONES[state.currentZone], waveMult=1+(
   // World-tier scaling: more zones unlocked = harder spawns even in base camp
   const unlockedCount=state.zonesUnlocked.filter(Boolean).length;
   const tierMult=1;
-  let hpMult=1,dmgMult=1,speedMult=1,size=24,wallDmgMult=1,moneyMult=1,meatMult=1; if(kind==='brute'){hpMult=2.1;dmgMult=1.15;speedMult=.68;size=33;wallDmgMult=1.75;moneyMult=1.9;meatMult=2.2;} if(kind==='wolf'){hpMult=.45;dmgMult=.55;speedMult=1.25;size=19;wallDmgMult=.45;moneyMult=1.15;meatMult=.9;} if(kind==='yeti'){hpMult=9;dmgMult=1.7;speedMult=.50;size=50;wallDmgMult=2.1;moneyMult=14;meatMult=12;} if(kind==='boss'){hpMult=6;dmgMult=1.6;speedMult=.72;size=42;wallDmgMult=1.25;moneyMult=5;meatMult=5;} const a=Math.random()*Math.PI*2, dist=Math.max(W,H)*.72+80; beasts.push({kind,x:player.x+Math.cos(a)*dist,y:player.y+Math.sin(a)*dist,hp:z.beastHP*waveMult*hpMult*tierMult,maxHP:z.beastHP*waveMult*hpMult*tierMult,speed:z.beastSpeed*speedMult,baseSpeed:z.beastSpeed*speedMult,slowTimer:0,dmg:z.beastDmg*waveMult*dmgMult*tierMult,wallDmgMult,size,moneyMult,meatMult,attackCD:0,isBoss:kind==='boss'||kind==='yeti',hitFlash:0,target:null,targetCD:0,legCycle:0,face:Math.cos(a)<0?1:-1}); }
+  let hpMult=1,dmgMult=1,speedMult=1,size=24,wallDmgMult=1,moneyMult=1,meatMult=1; if(kind==='brute'){hpMult=2.0;dmgMult=1.1;speedMult=.68;size=33;wallDmgMult=1.55;moneyMult=1.8;meatMult=2.0;} if(kind==='wolf'){hpMult=.42;dmgMult=.50;speedMult=1.18;size=19;wallDmgMult=.40;moneyMult=1.1;meatMult=.9;} if(kind==='yeti'){hpMult=7.5;dmgMult=1.45;speedMult=.50;size=50;wallDmgMult=1.7;moneyMult=10;meatMult=8;} if(kind==='boss'){hpMult=5.5;dmgMult=1.45;speedMult=.72;size=42;wallDmgMult=1.15;moneyMult=4.5;meatMult=4.5;} const a=Math.random()*Math.PI*2, dist=Math.max(W,H)*.72+80; beasts.push({kind,x:player.x+Math.cos(a)*dist,y:player.y+Math.sin(a)*dist,hp:z.beastHP*waveMult*hpMult*tierMult,maxHP:z.beastHP*waveMult*hpMult*tierMult,speed:z.beastSpeed*speedMult,baseSpeed:z.beastSpeed*speedMult,slowTimer:0,dmg:z.beastDmg*waveMult*dmgMult*tierMult,wallDmgMult,size,moneyMult,meatMult,attackCD:0,isBoss:kind==='boss'||kind==='yeti',hitFlash:0,target:null,targetCD:0,legCycle:0,face:Math.cos(a)<0?1:-1}); }
 function spawnWolfPack(){ const count=1+Math.floor(Math.random()*2); for(let i=0;i<count;i++) spawnBeast('wolf'); }
-function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); if(yeti){ waveBeastsRemaining=3; addText(player.x,player.y-80,'❄️ YETI INCOMING ❄️','#67e8f9',-15,2.5); playSound('gameover'); } else { waveBeastsRemaining=boss?1:(3+Math.floor(state.wave*.65)); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
+function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); if(yeti){ waveBeastsRemaining=2; addText(player.x,player.y-80,'❄️ YETI INCOMING ❄️','#67e8f9',-15,2.5); playSound('gameover'); } else { waveBeastsRemaining=boss?1:(3+Math.floor(state.wave*.60)); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
 function updateWaves(dt){ if(waveCleared){ interWaveTimer-=dt; if(interWaveTimer<=0){waveCleared=false; interWaveTimer=0;} } else if(!waveActive){ interWaveTimer-=dt; if(interWaveTimer<=0) startWave(); } if(waveActive&&waveBeastsRemaining>0){ waveSpawnTimer-=dt; if(waveSpawnTimer<=0){ if(waveIsYeti){ if(!waveYetiSpawned){ spawnBeast('yeti'); waveYetiSpawned=true; waveBeastsRemaining--; } else { // Spawn 1-2 wolves or brutes als support, met variatie
-        const support=pickBeastKind(); if(support==='wolf') spawnWolfPack(); else spawnBeast(support); waveBeastsRemaining--; } } else { const kind=state.wave%5===0?'boss':pickBeastKind(); if(kind==='wolf'){ spawnWolfPack(); } else { spawnBeast(kind); } waveBeastsRemaining--; } waveSpawnTimer=Math.max(.55,1.45-state.wave*.02); }} if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){ waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame(); } }
+        const support=pickBeastKind(); if(support==='wolf') spawnWolfPack(); else spawnBeast(support); waveBeastsRemaining--; } } else { const kind=state.wave%5===0?'boss':pickBeastKind(); if(kind==='wolf'){ spawnWolfPack(); } else { spawnBeast(kind); } waveBeastsRemaining--; } waveSpawnTimer=Math.max(.62,1.50-state.wave*.018); }} if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){ waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame(); } }
 const keys={}; window.addEventListener('keydown',e=>{initAudio();keys[e.key.toLowerCase()]=true;}); window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
 const joy={active:false,dx:0,dy:0,startX:0,startY:0}, joyEl=document.getElementById('joystick'), knobEl=document.getElementById('joystick-knob');
 function joyStart(e){ initAudio(); e.preventDefault(); joy.active=true; const r=joyEl.getBoundingClientRect(); joy.startX=r.left+r.width/2; joy.startY=r.top+r.height/2; joyMove(e); }
@@ -313,7 +313,7 @@ for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if
 for(let i=beasts.length-1;i>=0;i--){ const b=beasts[i]; if(b.slowTimer>0){b.slowTimer-=dt;b.speed=b.baseSpeed*.6;} else b.speed=b.baseSpeed; const dx=player.x-b.x,dy=player.y-b.y,distToPlayer=Math.hypot(dx,dy)||1; b.legCycle+=dt*b.speed*15; b.hitFlash=Math.max(0,b.hitFlash-dt); b.targetCD-=dt; if(b.targetCD<=0){ b.target=b.kind==='brute'?(findBruteTarget(b)||findBlockingStructure(b,distToPlayer)):findBlockingStructure(b,distToPlayer); b.targetCD=.25; } if(b.target&&b.target.hp>0){ const sx=b.target.gx*GRID, sy=b.target.gy*GRID, sdx=sx-b.x, sdy=sy-b.y, sd=Math.hypot(sdx,sdy)||1; if(sd>b.size+11){ if(Math.abs(sdx)>1) b.face=sdx>0?1:-1; b.x+=sdx/sd*b.speed*60*dt; b.y+=sdy/sd*b.speed*60*dt;} else { b.attackCD-=dt; if(b.attackCD<=0){ b.target.hp-=b.dmg*b.wallDmgMult; b.attackCD=b.kind==='brute'?1.15:1; for(let k=0;k<3;k++) addParticle(sx,sy,b.kind==='brute'?'#ef4444':'#d97706','wood'); if(b.target.hp<=0){ const idx=state.structures.indexOf(b.target); if(idx>=0) state.structures.splice(idx,1); addText(sx,sy,b.kind==='brute'?'💥 BRUTE BREACH!':'💥 Breach!','#ef4444',-22,.9); b.target=null; saveGame(); } } } } else { if(Math.abs(dx)>1) b.face=dx>0?1:-1; b.x+=dx/distToPlayer*b.speed*60*dt; b.y+=dy/distToPlayer*b.speed*60*dt; b.attackCD-=dt; if(distToPlayer<b.size+18&&b.attackCD<=0){state.hp-=b.dmg; player.hitFlash=.25; b.attackCD=1.2; addText(player.x,player.y-25,`-${Math.floor(b.dmg)} ❤️`,'#f87171',-30,.8);} } if(b.hp<=0){ const z=ZONES[state.currentZone]; const moneyGain=Math.floor(z.moneyDrop*b.moneyMult*statValue('moneyMult')), meatGain=Math.floor(z.meatDrop*b.meatMult*statValue('meatValue')); drops.push({x:b.x,y:b.y,type:'money',value:moneyGain,life:0,vy:-3}); drops.push({x:b.x+14,y:b.y-10,type:'meat',value:meatGain,life:0,vy:-4}); for(let j=0;j<(b.isBoss?24:(b.kind==='brute'?14:9));j++) addParticle(b.x,b.y,b.kind==='brute'?'#7f1d1d':'#b91c1c','blood'); beasts.splice(i,1); }}
 for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.life+=dt; const dx=player.x-d.x,dy=player.y-d.y,dist=Math.hypot(dx,dy)||1; if(dist<180){d.x+=dx/dist*340*dt; d.y+=dy/dist*340*dt;} else {d.y+=d.vy; d.vy+=.25;} if(dist<25){ if(d.type==='money'){state.money+=d.value;addText(d.x,d.y,`+$${d.value}`,'#4ade80',-35,.8);} else {state.meat+=d.value;addText(d.x,d.y,`+${d.value}🥩`,'#f87171',-35,.8);} drops.splice(i,1); }}
 for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.type==='wood'||p.type==='blood') p.vy+=220*dt; p.life-=dt; if(p.life<=0) particles.splice(i,1); } for(let i=floatingTexts.length-1;i>=0;i--){ const t=floatingTexts[i]; t.y+=t.vy*dt; t.life-=dt; if(t.life<=0) floatingTexts.splice(i,1); } if(state.hp<=0&&!gameOver) triggerGameOver(); updateHUD(); }
-function calculateRepairCost(){ return state.structures.reduce((sum,s)=>sum+(s.hp<s.maxHP?12:0),0); }
+function calculateRepairCost(){ return state.structures.reduce((sum,s)=>sum+(s.hp<s.maxHP?10:0),0); }
 function updateHUD(){ const maxHP=statValue('maxHP'); document.getElementById('money').textContent=Math.floor(state.money); document.getElementById('meat').textContent=Math.floor(state.meat); document.getElementById('wood').textContent=Math.floor(state.wood); document.getElementById('hp').textContent=`${Math.max(0,Math.floor(state.hp))}/${Math.floor(maxHP)}`; const yetiNext=state.currentZone>=2&&state.wave>=25&&state.wave%10===0; document.getElementById('wave').textContent=state.wave+(yetiNext?' ❄️':(state.wave%5===0?' 👑':'')); document.getElementById('zone-name').textContent=ZONES[state.currentZone].name; const status=document.getElementById('wave-status'); if(waveActive) status.textContent=waveIsYeti?(waveYetiSpawned?`Yeti + ${waveBeastsRemaining} support`:'YETI APPROACHING!'):(waveBeastsRemaining>0?`${waveBeastsRemaining} incoming`:`${beasts.length} remaining`); else if(waveCleared||interWaveTimer>0) status.textContent=`Prep ${Math.ceil(Math.max(0,interWaveTimer))}s`; else status.textContent='Ready'; document.getElementById('upgrade-btn').classList.toggle('pulse',UPGRADES.some(u=>canAffordUpgrade(u.key))); const rc=calculateRepairCost(), rBtn=document.getElementById('repair-btn-action'); if(rBtn){rBtn.textContent=`Repareer Alles ($${rc})`; rBtn.disabled=rc===0||state.money<rc;} }
 const snowflakes=[]; for(let i=0;i<90;i++) snowflakes.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,size:1.4+Math.random()*2.6,speed:35+Math.random()*45});
 function drawGrid(cx,cy){ ctx.strokeStyle='rgba(255,255,255,.045)'; ctx.lineWidth=1; const startX=Math.floor((player.x-W/2)/GRID)*GRID-GRID*2,endX=player.x+W/2+GRID*2,startY=Math.floor((player.y-H/2)/GRID)*GRID-GRID*2,endY=player.y+H/2+GRID*2; for(let x=startX;x<endX;x+=GRID){ctx.beginPath();ctx.moveTo(x+cx,0);ctx.lineTo(x+cx,H);ctx.stroke();} for(let y=startY;y<endY;y+=GRID){ctx.beginPath();ctx.moveTo(0,y+cy);ctx.lineTo(W,y+cy);ctx.stroke();} }
@@ -587,8 +587,8 @@ document.getElementById('repair-btn-action').addEventListener('click',()=>{const
 const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },
   { kind:'brute', name:'Brute Bear', icon:'💢', desc:'Taai en traag, maar slaat muren met 2.5x kracht en kiest zwakste muur.', unlockedFrom:'Vanaf Wave 8' },
-  { kind:'wolf', name:'Frost Wolf', icon:'🐺', desc:'Snel, lager HP, jaagt in groepjes van 2-3. Negeert muren makkelijker dankzij hoge snelheid.', unlockedFrom:'Glacial Forest', zoneIdx:1 },
-  { kind:'yeti', name:'Yeti', icon:'❄️', desc:'Boss-event. Verschijnt elke 10e wave. Massief, vernietigt muren met 3.2x kracht. Geeft 12x goud bij dood.', unlockedFrom:'Ice Caves (elke 10e wave)', zoneIdx:2 }
+  { kind:'wolf', name:'Frost Wolf', icon:'🐺', desc:'Snel, lager HP, jaagt meestal solo of met één extra wolf. Minder muurschade, maar kan je verrassen door snelheid.', unlockedFrom:'Glacial Forest', zoneIdx:1 },
+  { kind:'yeti', name:'Yeti', icon:'❄️', desc:'Boss-event. Verschijnt vanaf wave 25 elke 10e wave in Ice Caves. Massief, maar iets eerlijker gebalanceerd. Geeft hoge, maar niet economie-brekende beloning.', unlockedFrom:'Ice Caves (elke 10e wave)', zoneIdx:2 }
 ];
 function isBestiaryUnlocked(entry){
   if(entry.kind==='bear') return true;
@@ -598,7 +598,7 @@ function isBestiaryUnlocked(entry){
 }
 function renderZones(){
   const section=document.getElementById('tab-zones');
-  section.innerHTML='<div style="margin-bottom:12px;font-size:13px;opacity:.65;line-height:1.5">Vijanden die in jouw spawn-pool zitten. Ontgrendel zones om nieuwe vijand-types aan de pool toe te voegen — ze blijven daarna voor altijd opduiken.</div>';
+  section.innerHTML='<div style="margin-bottom:12px;font-size:13px;opacity:.65;line-height:1.5">Vijanden die in jouw huidige of toekomstige spawn-pool zitten. Nieuwe vijanden zijn zone-gebonden, zodat een unlock niet meteen oude zones moeilijker maakt.</div>';
   // Bestiary entries
   for(const entry of BESTIARY){
     const unlocked=isBestiaryUnlocked(entry);
