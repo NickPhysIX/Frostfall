@@ -1,0 +1,8 @@
+Frostfall v7.7 - Victory Screen Update
+
+- Added dedicated victory-screen.png endscreen asset to the package.
+- Reworked the victory modal to use the spring meadow background provided for the finale.
+- Added a stat overlay summary for waves survived, kills, structures built, wood, meat and gold collected.
+- Added a larger themed "Nieuwe Run Starten" button to reset and start a fresh run.
+- Bumped service worker cache so the new asset and HTML refresh correctly.
+- Save migration: v7.7 reads existing v7.6 saves automatically.

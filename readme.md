@@ -18,6 +18,11 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
 - PWA/web-app support met manifest, app iconen en service worker.
 - LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.
+- Pauzescherm met veilige reset-flow.
+
+- Endgame-finale vanaf wave 50: **Winter’s End**.
+- Sequentiële Alpha Boss Rush: Alpha Wolf, Alpha Brute Bear en Alpha Yeti.
+- Victory-scherm met run-statistieken en een veilige Nieuwe Run-knop.
 
 ## Starten
 
@@ -55,6 +60,7 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 ### Mobiel / touchscreen
 
 - Gebruik de joystick rechtsonder om te bewegen.
+- Tik op **⏸ PAUZE** bovenin om het spel tijdelijk stil te zetten of veilig opnieuw te starten.
 - Tik op de groene upgradeknop linksonder om de Tactical Forge te openen.
 - Tik op de oranje buildknop om build mode aan of uit te zetten.
 - Kies in build mode wat je wilt plaatsen: muur, toren of ijstoren.
@@ -67,6 +73,22 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 - Bewegen met WASD of pijltjestoetsen.
 - Klik op de upgradeknop voor upgrades.
 - Klik op de buildknop om build mode te gebruiken.
+- Pauzeren met de **⏸ PAUZE** knop, **P** of **Escape**.
+
+
+## Endgame: Winter’s End
+
+Wanneer je **Forgotten Ice Caves** hebt ontgrendeld en wave 50 bereikt, start de finale. Normale waves stoppen en je krijgt drie Alpha-bazen achter elkaar:
+
+1. **Alpha Wolf** — snel en agressief.
+2. **Alpha Brute Bear** — breekt hard door muren en torens.
+3. **Alpha Yeti** — de eindbaas van de run.
+
+Versla je de Alpha Yeti, dan verschijnt het victory-scherm **De winter is voorbij** met een korte eindstand. De knop **Nieuwe Run Starten** wist de save en begint opnieuw.
+
+## Pauze en reset
+
+De oude losse resetknop is vervangen door een veiliger pauzescherm. Tik of klik op **⏸ PAUZE**. Daar kun je **Doorspelen** kiezen of **Spel opnieuw starten**. Bij opnieuw starten krijg je eerst een extra waarschuwing; pas na **Ja, reset** wordt de localStorage-save gewist.
 
 ## Resources
 
@@ -188,3 +210,7 @@ Belangrijke bestanden in deze build:
 ## Ontwikkelnotitie
 
 De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk te uploaden naar GitHub Pages en makkelijk te tweaken. Bij verdere groei kan het nuttig worden om de code op te splitsen in modules, bijvoorbeeld `entities.js`, `rendering.js`, `balance.js`, `input.js` en `assets.js`.
+
+
+## Latest version
+Current packaged build: **v7.7 – Victory Screen Update**.

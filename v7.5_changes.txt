@@ -1,0 +1,15 @@
+Frostfall v7.5 - Pause & Fair Scaling
+
+- Removed the always-visible RESET button from the main play screen.
+- Added a dedicated pause button in the top-center HUD.
+- Added a full-screen pause menu with:
+  - Doorspelen
+  - Spel opnieuw starten
+- Added a second confirmation step before wiping progress.
+- "Nee, terug naar huidige spel" closes the reset warning and resumes the current game.
+- Desktop shortcut support: P or Escape toggles pause; Escape/P also backs out of the reset warning.
+- Game loop now pauses cleanly while the pause menu or reset confirmation is open.
+- Adaptive threat scaling tuned upward in late game so maxed players/towers no longer delete enemies before they can enter the visible play space.
+- Enemy level labels added to make scaled enemies understandable rather than feeling invisibly tougher.
+- SAVE_KEY bumped to frostfall-save-v7-5-pause-fair-scaling with v7.4 included as a legacy migration key.
+- Service worker cache bumped to frostfall-v7-5.

@@ -1,16 +1,75 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten en assets die in deze ChatGPT-sessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.4**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.7**.
+
+Attributie-conventie:
+
+- Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
+- Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
+- Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
+
+## v7.7 — Victory Screen Update
+
+- Nieuw illustrated **victory endscreen asset** toegevoegd: `victory-screen.png`.
+- Victory modal omgebouwd naar een pixel-art lente-eindscherm met de tekst **DE WINTER IS VOORBIJ**.
+- De finale gebruikt nu een warme lenteweide als visueel contrast met de winterse gameplay.
+- Victory overlay toont run-statistieken:
+  - Waves overleefd
+  - Vijanden verslagen
+  - Gebouwde structuren
+  - Hout verzameld
+  - Vlees verzameld
+  - Goud verzameld
+- Prominente knop **NIEUWE RUN STARTEN** toegevoegd om na de overwinning opnieuw te beginnen.
+- Victory reset gebruikt dezelfde veilige resetlogica als de rest van de game.
+- `index.html` bijgewerkt naar de v7.7 victory-modal structuur en styling.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v7-7`.
+- `victory-screen.png` toegevoegd aan de service-worker pre-cache.
+- Save-migratie behouden: v7.7 kan bestaande v7.6-saves lezen.
+- `release_notes_v7.7.md` en `v7.7_changes.txt` toegevoegd.
+
+## v7.6 — Winter's End
+
+- Echte endgame-finale toegevoegd vanaf **wave 50**, zodra Forgotten Ice Caves is ontgrendeld.
+- Normale wave-spawning stopt tijdens de finale.
+- Nieuwe sequentiële **Alpha Boss Rush** toegevoegd:
+  - **Alpha Wolf**: snelle opener en movement-check.
+  - **Alpha Brute Bear**: zware siege boss met extra muurschade.
+  - **Alpha Yeti**: grote eindbaas met slow-resistance en extra visuele dreiging.
+- Alpha bosses krijgen eigen `alpha` / `finaleBoss` metadata.
+- Alpha bosses hebben grotere render-scale, aangepaste tint/filter, paarse HP-bar en naamlabel boven de healthbar.
+- Ice tower slow werkt nog steeds op Alpha bosses, maar met gedeeltelijke slow-resistance.
+- Finale wordt aangekondigd met **WINTER'S END** en per boss met floating-text cues.
+- Na het verslaan van de Alpha Yeti verschijnt het victory-scherm.
+- Run-statistieken toegevoegd aan `state.stats` met migratie voor oudere saves.
+- Save key bijgewerkt naar `frostfall-save-v7-6-winters-end`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v7-6`.
+
+## v7.5 — Pause & Fair Scaling
+
+- Losse **RESET**-knop verwijderd uit het normale speelscherm.
+- Nieuwe **PAUZE**-knop toegevoegd midden bovenin.
+- Nieuw pauzescherm toegevoegd met:
+  - **Doorspelen**
+  - **Spel opnieuw starten**
+- Reset is nu een tweestaps-flow: eerst pauze, daarna expliciete waarschuwing dat alle voortgang verloren gaat.
+- **Nee, terug naar huidige spel** sluit de waarschuwing en hervat het huidige spel.
+- Desktop shortcuts toegevoegd: **P** of **Escape** pauzeert; dezelfde toetsen sluiten ook reset-waarschuwingen.
+- Game-loop pauzeert nu expliciet bij pauze, Tactical Forge, resetbevestiging en victory modal.
+- Adaptive threat scaling aangescherpt zodat late-game/maxed spelers vijanden minder snel buiten beeld wegpoetsen.
+- Vijanden tonen een klein **Lv.** label wanneer adaptive scaling zichtbaar boven basisniveau uitkomt, zodat sterker geschaalde enemies begrijpelijker aanvoelen.
+- `index.html` bijgewerkt naar **Frostfall v7.5 - Pause & Fair Scaling**.
+- Save key bijgewerkt naar `frostfall-save-v7-5-pause-fair-scaling`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v7-5`.
 
 ## v7.4 — Adaptive Threat Scaling
 
-- Vijanden schalen nu adaptief mee met de effectieve kracht van de speler.
+- Vijanden schalen adaptief mee met de effectieve kracht van de speler.
 - De scaling kijkt naar speler-DPS, attack speed, bereik en de praktische bijdrage van torens.
 - Enemy HP krijgt een minimum time-to-live per type, zodat enemies bij hoge upgrades niet meer allemaal buiten beeld verdwijnen.
 - Enemy damage schaalt slechts mild mee, zodat de aanpassing vooral voorkomt dat de speler god-tier wordt zonder de game meteen oneerlijk dodelijk te maken.
 - Rewards schalen beperkt mee met de hogere HP, zodat sterkere enemies niet puur als tijdstraf voelen.
-- `index.html` bijgewerkt naar **Frostfall v7.4 - Adaptive Threat Scaling**.
-- Save key bijgewerkt naar `frostfall-save-v7-4-adaptive-scaling`; eerdere v7.3-save wordt automatisch gemigreerd.
+- Save key bijgewerkt naar `frostfall-save-v7-4-adaptive-scaling`.
 - `sw.js` cache-versie bijgewerkt naar `frostfall-v7-4`.
 
 ## v7.3.1 — Resource Sprite Hotfix
@@ -51,10 +110,6 @@ Dit changelog is samengesteld op basis van de versies, codefragmenten en assets 
   - 150–349: grote stapel
   - 350+: maximale geldzakken/stapel
 - Omgevallen bomen krijgen nu een willekeurige stump-sprite, zodat het veld minder repetitief oogt.
-
-### Code en cache
-
-- `index.html` bijgewerkt naar **Frostfall v7.3 - Resource Sprite Update**.
 - Nieuwe sprite keys toegevoegd aan de sprite-loader.
 - Nieuwe helperdata toegevoegd voor pile tiers en stump selectie.
 - Save key bijgewerkt naar `frostfall-save-v7-3-resource-sprites`.
@@ -63,10 +118,10 @@ Dit changelog is samengesteld op basis van de versies, codefragmenten en assets 
 - Nieuwe sprites toegevoegd aan de service-worker pre-cache.
 - `v7.3_changes.txt` toegevoegd als korte delta-notitie.
 
-## v7.2 — Balance hotfix
+## v7.2 — Balance Hotfix
 
-- Rebalance toegepast na de introductie van zones, wolves en yeti’s, omdat de speler in hogere zones te snel underpowered raakte.
-- Tower-bereik en tower damage zijn merkbaar verhoogd ten opzichte van de eerdere v7.x-balans.
+- Rebalance toegepast na introductie van zones, wolves en yeti's, omdat de speler in hogere zones te snel underpowered raakte.
+- Tower-bereik en tower damage merkbaar verhoogd ten opzichte van eerdere v7.x-balans.
 - Ice tower damage iets versterkt, terwijl de slow-functie behouden bleef.
 - Houtopbrengst per boom verhoogd.
 - Player chopping iets verbeterd.
@@ -89,7 +144,7 @@ Dit changelog is samengesteld op basis van de versies, codefragmenten en assets 
 - Tactical Forge uitgebreid met een bestiary-/zone-overzicht.
 - Service-worker versie en cache-inhoud aangepast aan de nieuwe assets.
 
-## v7.0 — Wolf & Yeti expansion
+## v7.0 — Wolf & Yeti Expansion
 
 - Nieuwe enemy sprites toegevoegd:
   - `wolf.png`
@@ -99,10 +154,44 @@ Dit changelog is samengesteld op basis van de versies, codefragmenten en assets 
 - Yeti/wolf sprites gemaakt met transparante achtergrond en passend bij de bestaande pixel-art ijsberen.
 - Eerste versie waarin Forgotten Ice Caves duidelijk een eigen dreigingsprofiel kreeg.
 
-## v6.8 — Survivor facing & app icon
+### [Claude] Bestiary architectuur en spawn-systeem
+
+- Roguelike-style spawn pool ontworpen in plaats van mutually-exclusive biome-zones: zone-unlocks voegen vijand-types toe aan de spawnpool in plaats van de speler te dwingen tussen biomes te kiezen.
+- Unlocks zijn cumulatief en permanent.
+- `pickBeastKind()` herschreven als weighted random pool die uitbreidt op basis van `state.zonesUnlocked` en `state.wave`.
+- Bear-weight schaalt naar beneden naarmate er meer types worden ontgrendeld, zodat variety natuurlijk toeneemt.
+- **Wolf mechanic**: `spawnWolfPack()` spawnt 2–3 wolves per spawn-event. Stats: lage HP, hoge snelheid, pack pressure, beperkte wall damage.
+- **Yeti boss event**: `isYetiWave()` triggert periodiek als Ice Caves unlocked is.
+- Yeti-wave gebruikt 1 yeti plus support-beasts uit de unlocked pool.
+- Yeti kreeg eigen announcement, HP-bar-kleur, render-scale en boss-achtige beloning.
+- Per-kind render-scale toegevoegd zodat yeti, brute, wolf en bear visueel onderscheidender zijn.
+- Vector-fallbacks voor wolf en yeti toegevoegd zodat het spel speelbaar blijft voordat sprites geladen zijn.
+- World-tier scaling toegevoegd: ontgrendelde zones maken de spawnpool zwaarder in plaats van gratis variety te geven.
+- Bestiary tab UI gemaakt: vijand-types met icon, beschrijving en unlock-conditie; locked entries worden gedimd weergegeven.
+- Yeti wave indicator in HUD: wave-counter toont een extra cue bij yeti-waves.
+
+## v6.9 — PWA Offline
+
+### [Claude] Service worker + loading splash
+
+- `sw.js` toegevoegd voor echte offline/PWA-functionaliteit:
+  - Pre-cache van assets bij installatie.
+  - Cache-first strategy voor assets.
+  - Network-first strategy voor HTML.
+  - Auto-cleanup van oude cache-versies bij activate.
+  - `CACHE_VERSION` bumpen forceert re-cache van assets.
+- Service-worker registration in `index.html` achter `if ('serviceWorker' in navigator)`.
+- Loading splash screen met progress bar toegevoegd:
+  - Splash met app-icoon, Frostfall branding en groene progress bar.
+  - Sprite-loading indicator.
+  - Fade-out animatie.
+  - Fallback timeout zodat de splash niet kan blijven hangen.
+- Sprite-loading verbouwd naar lijst-gebaseerde aanpak, zodat latere uitbreidingen makkelijker worden.
+
+## v6.8 — Survivor Facing & App Icon
 
 - Survivors draaien nu visueel mee met hun bewegingsrichting.
-- Web-app/PWA iconen toegevoegd:
+- Web-app/PWA-iconen toegevoegd:
   - `icon-192.png`
   - `icon-512.png`
   - `icon-1024.png`
@@ -110,87 +199,167 @@ Dit changelog is samengesteld op basis van de versies, codefragmenten en assets 
   - `favicon-32.png`
 - `manifest.webmanifest` toegevoegd of bijgewerkt voor installatie als web-app.
 - iOS/iPadOS homescreen support verbeterd met Apple meta-tags en touch icon.
-- Loading splash toegevoegd met app-icoon en Frostfall branding.
-- Service worker toegevoegd of uitgebreid voor PWA/offline-achtige caching.
 
 ## v6.7 — Sprite Axes
 
-- Ronddraaiende vector-bijlen rond de speler vervangen door een echte axe sprite.
-- `axe.png` toegevoegd.
-- Axe sprite draait zelfstandig tijdens de orbit rond de speler.
+### [Gemini] Geanimeerde sprite-axes
+
+- Ronddraaiende vector-bijlen rond de speler vervangen door echte axe sprite (`axe.png`).
+- Axe sprite draait zelfstandig (`axeSpin`) tijdens de orbit rond de speler voor extra dynamiek.
 - Fallback vectorbijl behouden voor wanneer de sprite nog niet geladen is.
 - Player sprite blijft spiegelen op basis van bewegingsrichting.
 - Bears/brutes gebruiken eveneens facing logic zodat ze naar hun doel bewegen/kijken.
 
 ## v6.6 — Camp Decor
 
+### [Gemini] Kampverfraaiing en opslag-mats
+
 - Camp-decoraties vervangen door sprites waar mogelijk:
   - `campfire.png`
   - `mat_wood.png`
   - `mat_meat.png`
   - `mat_money.png`
-- Kampvuur kreeg spriteweergave plus pulserende gloed om het levendiger te laten voelen.
-- Resource-opslag voor hout, vlees en geld visueel sterker gemaakt.
-- Reset-modal toegevoegd met expliciete bevestiging voordat progressie wordt gewist.
+- Kampvuur kreeg spriteweergave plus dynamische canvas-glow over het plaatje heen om het statische vuur levendig te laten voelen.
+- Resource-opslag voor hout, vlees en geld visueel sterker gemaakt doordat resources bovenop mat-sprites worden getekend.
 - Reset-knop visueel verplaatst richting midden bovenaan, zodat hij minder over de statuskaart rechtsboven valt.
 
-## v6.5 / v6.4 — Sprite Perfection & creature facing
+## v6.5 — Reset Modal & Fixes
 
-- Player, survivor, bear, brute, tree, tower, ice tower en meat als PNG-sprites verwerkt.
-- JPEG-achtige achtergronden van sprites verwijderd en vervangen door transparante PNG’s.
-- Sprite-loader toegevoegd met fallback naar vector/canvas drawing.
+### [Claude] Reset infrastructuur + bugfixes
+
+- Reset-modal toegevoegd ter vervanging van browser `confirm()`-popup.
+- Twee-stappen-bevestiging met in-game styling, waarschuwingstekst en duidelijke cancel/confirm-knoppen.
+- Reset-logica wist current `SAVE_KEY` plus alle `LEGACY_KEYS` en herlaadt daarna de game.
+- `interWaveTimer` double-decrement bug gefixt door `updateWaves()` op te schonen met een `if/else-if` chain.
+- Squared-distance optimalisatie voor de "kan ik nog hakken?"-check.
+- `SAVE_KEY` gebumpt naar `frostfall-save-v6-5` met v6.4 toegevoegd aan `LEGACY_KEYS`.
+
+## v6.4 — Sprite Perfection & Creature Facing
+
+### [Gemini] Transparante sprites & status filters
+
+- Player, survivor, bear, brute, tree, tower, ice tower en meat als transparante PNG-sprites verwerkt.
+- Sprite-loader met fallback drawing toegevoegd zodat de game altijd werkt, ook bij trage verbinding.
+- Canvas filters toegevoegd voor status-effecten:
+  - `hitFlash` rood/sepia filter.
+  - `slowTimer` blauw ijs-filter voor beesten.
 - Player sprite spiegelt links/rechts op basis van beweging.
-- Bears/brutes spiegelen ook op basis van hun bewegingsrichting of doel.
+- Bears/brutes spiegelen op basis van bewegingsrichting of doel.
 - Ronddraaiende bijlen rond de speler opnieuw toegevoegd nadat ze door sprite-integratie verdwenen waren.
 - Build-preview met groen/rood plaatsingsvak toegevoegd of aangescherpt.
-- Reset-knop en modal verbeterd.
 
 ## v6.2 / v6.0 — Tactics & Sound
 
-- Game loop uitgebreid naar een tactischer base-defense/idle-survival model.
-- Survivors/dorpsbewoners toegevoegd; zij zoeken bomen, hakken hout en brengen dat terug naar het kamp.
-- Build mode uitgebreid met meerdere constructies:
-  - muur
-  - toren
-  - ijstoren
-- Towers schieten automatisch op vijanden binnen bereik.
-- Ice towers vertragen vijanden tijdelijk.
-- Repair-systeem toegevoegd om muren/torens in één keer te herstellen tegen geldkosten.
-- Audio-synthese toegevoegd voor onder andere hakken, hits, schieten, upgrades en game-over.
-- Zonesysteem toegevoegd of verder uitgewerkt:
+### [Gemini] Tactiek, audio & repair mechanics
+
+- Web Audio API-integratie toegevoegd voor retro/8-bit geluidseffecten:
+  - hakken
+  - hits
+  - schieten
+  - upgrades
+  - game-over
+- Ice Tower toegevoegd aan build mode; deze schiet ijskristallen die vijanden tijdelijk vertragen.
+- Reparatiesysteem geïmplementeerd: **Repareer Alles** inclusief dynamische kostenberekening in de Tactical Forge.
+- Game loop uitgebreid naar tactischer base-defense/idle-survival model.
+- Survivors/dorpsbewoners toegevoegd; NPC's zoeken bomen, hakken hout en brengen dat terug naar het kamp.
+- Zonesysteem verder uitgewerkt:
   - Siberian Camp
   - Glacial Forest
   - Forgotten Ice Caves
-- Save-migratie toegevoegd voor oudere save-formats, inclusief omzetting van oude `walls`/`towers` arrays naar `structures`.
+- Save-migratie toegevoegd voor oudere save-formats, inclusief omzetting van oude `walls` / `towers` arrays naar `structures`.
 - Start-grant/timber-fix toegevoegd zodat spelers niet vastlopen zonder hout.
 - Mobiele joystick, HUD en upgradepanel verder gepolijst.
 
-## v5.x — Timber / Survivors foundation
+## v5.x — Timber / Survivors Foundation
 
 - Hout als aparte resource toegevoegd of belangrijker gemaakt.
 - Trees kregen HP, regrow timers en chop logic.
 - Player kan automatisch hakken wanneer hij stilstaat bij een boom en er geen vijand te dichtbij is.
-- Eerste basis voor survivors/automatische houtproductie zichtbaar in de latere v5/v6-lijn.
+- Eerste basis voor survivors / automatische houtproductie zichtbaar in de latere v5/v6-lijn.
 - Save compatibility vanaf v5-serie bleef meegenomen in latere versies.
 
-## v4.1 — Camp Upgrade Edition
+## v4 — Turrets & Merger
 
-- Kern van het upgradepaneel, zones en bouwmechaniek werd uitgewerkt.
-- Muren en torens als plaatsbare structuren toegevoegd of verstevigd.
-- Tactical Forge / tabsysteem voor upgrades en zones verscheen in herkenbare vorm.
-- Resource economy met money, meat, wood en HP werd herkenbaar als huidige basisloop.
+### [Claude] Eerste turret-implementatie + bugfixes op Gemini's variant
 
-## Eerdere prototypes
+- Gemini's v4-concept geïntegreerd in een werkende basis:
+  - Build-mode met muur/toren-keuze.
+  - Tower kost hout + vlees.
+  - Towers schieten automatisch op nearest beast in range.
+  - Projectile-systeem met velocity, lifetime en hit-detection.
+  - Tower damage en attack speed schalen mee met speler-upgrades.
+- Bugfixes op de v4-variant:
+  - Ontbrekende tree constants toegevoegd.
+  - `moneyMult` en `meatValue` upgrades teruggezet omdat ze nog gebruikt werden.
+  - `closePanel()` geïmplementeerd.
+  - Touch-handler voor build-type wisselen toegevoegd.
+  - HP-init-check toegevoegd voor corrupte/lege saves.
+- Camp visual elements toegevoegd:
+  - houtstapel naast vuur
+  - vleesrek
+  - kookpot/kampvuur
+  - geldstapel/tile
+- Eerste duidelijke "progress is visible in the camp"-mechanic, later uitgebouwd met tiered sprites.
 
-- Basis canvas-game met speler, golven, vijanden, resources en upgrades.
-- Player movement via toetsenbord en later joystick.
-- Eerste polar-bear achtige vijanden, wave progression, drops en eenvoudige combat.
-- Visuele sneeuw/ijsstijl en HUD opgebouwd richting de huidige Frostfall-identiteit.
+## v3 — Visual Upgrade
+
+### [Gemini] Y-sorted depth + getekende creatures
+
+- Y-sorted depth rendering: entities worden op Y-coördinaat getekend zodat objecten correct overlappen.
+- Gelaagde dennenbomen met gradient en sneeuwkap.
+- Polar bear met poot-animatie en koprichting.
+- Parka-stijl character met bontkraag/hood.
+- Background gradient per zone.
+- Geanimeerde sneeuwval met parallax-drift.
+- Kampvuur/oven met radiale glow.
+- Glas/blur UI met betere knoppen en stat-kaarten.
+
+### [Claude] Bugfixes op Gemini's v3
+
+- `Math.collapse` bug vervangen door correcte `Math.floor(state.hp)`-achtige logica.
+- Onjuiste `ctx.circle` fallback vervangen door directe `ctx.arc()` calls.
+- Touch-handler voor muur plaatsen toegevoegd; mobiel werkte anders niet goed.
+
+## v2 — Wood Chopping & Wall Building
+
+### [Claude]
+
+- Hout-resource toegevoegd met eigen tracker in de HUD.
+- Auto-chop bomen: speler hakt automatisch als hij stilstaat naast een boom en geen beasts in de buurt zijn.
+- Boom-HP-bar, wood-chip particles en houtopbrengst bij omhakken toegevoegd.
+- Bomen groeien terug na cooldown.
+- Build mode met grid-overlay toegevoegd.
+- Tap/click een tile om een muur te plaatsen.
+- Wall collision met X/Y-as splitsing zodat de speler niet vastloopt tegen muren.
+- Beest target-finding: beasts kiezen muren op het pad naar de speler als prioriteit en breken die af.
+- Wall Strength upgrade werkt ook op bestaande muren.
+- HP-bars op damaged walls.
+
+## v1 — Initial PoC
+
+### [Claude] Eerste werkende prototype
+
+Eerste werkende single-file HTML/Canvas prototype, geïnspireerd door Whiteout Survival reclame-screenshots. Mechanics die in deze versie al stonden:
+
+- Auto-attack met ronddraaiende bijlen rond de speler.
+- Top-down view met camera-volgt-speler.
+- Joystick voor touch + WASD/pijltjes voor desktop.
+- Drie zones met verschillende stats.
+- Wave systeem met geleidelijke moeilijkheidsgraad.
+- Boss-wave elke vijfde wave.
+- Polar-bear-achtige vijanden met HP-bars, damage en hit-flash.
+- Resource drops met magnetisme naar de speler.
+- Upgradepaneel met meerdere paden.
+- Persistent save via localStorage.
+- Game over + respawn mechanic.
+- Pulse-animation op upgrade-knop als er iets betaalbaar is.
 
 ## Bekende aandachtspunten / later mooi om te doen
 
-- De game is nog één grote HTML/JS-file; prima voor een prototype, maar later kan opsplitsen in modules handig zijn.
-- Balans blijft gevoelig door het samenspel tussen upgrades, towers, survivors, zones en boss-waves.
-- Resource displays zijn nu veel mooier, maar kunnen later nog nog sterker worden door kleine animaties of highlights bij resource gain.
-- Save migratie is breed, maar bij grote toekomstige wijzigingen blijft het verstandig om save reset of save-versioning expliciet te testen.
+- De game is nog één grote HTML/JS-file; prima voor een prototype, maar opsplitsen in modules kan later handig zijn.
+- Balans blijft gevoelig door het samenspel tussen upgrades, towers, survivors, zones, adaptive scaling en boss-waves.
+- Resource displays zijn nu veel mooier, maar kunnen later nog sterker worden door kleine animaties of highlights bij resource gain.
+- Save-migratie is breed, maar bij grote toekomstige wijzigingen blijft expliciet testen verstandig.
 - PWA/service-worker caching kan bij GitHub Pages soms een harde refresh of cache bump nodig hebben als assets veranderen.
+- `mat_wood.png` en `mat_money.png` zijn sinds v7.3 niet meer functioneel nodig door het tiered pile-systeem, maar kunnen nog in de assets-map staan. Schoonmaak-kandidaat.
+- Vlees-opslag gebruikt nog het oude `mat_meat.png` systeem; consistent zou zijn om dat later ook naar een tiered pile-systeem te brengen.

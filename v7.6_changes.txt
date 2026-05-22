@@ -1,0 +1,9 @@
+Frostfall v7.6 — Winter’s End
+
+- Added final endgame trigger at wave 50 when Forgotten Ice Caves is unlocked.
+- Added sequential Alpha Boss Rush: Alpha Wolf, Alpha Brute Bear, Alpha Yeti.
+- Added Alpha boss metadata, visual tinting, HP-bar color, labels and slow resistance.
+- Added victory modal “De winter is voorbij” with run stats.
+- Added state.stats migration and counters for kills, wood, meat, money and structures built.
+- Updated save key to frostfall-save-v7-6-winters-end.
+- Updated service worker cache to frostfall-v7-6.
