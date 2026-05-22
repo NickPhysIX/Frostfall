@@ -14,6 +14,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes.
+- Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
 - PWA/web-app support met manifest, app iconen en service worker.
 - LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.

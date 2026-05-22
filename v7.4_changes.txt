@@ -1,0 +1,13 @@
+Frostfall v7.4 - Adaptive Threat Scaling
+
+Deze hotfix/balance-update voorkomt dat hoge upgrades en torens alle enemies buiten beeld verwijderen.
+
+Belangrijkste wijzigingen:
+- Nieuwe adaptive threat scaling op basis van effectieve speler-/toren-DPS.
+- Enemy HP schaalt met een minimum time-to-live per vijandtype.
+- Enemy damage schaalt slechts mild mee.
+- Rewards schalen beperkt mee met de verhoogde HP.
+- SAVE_KEY: frostfall-save-v7-4-adaptive-scaling
+- Service worker cache: frostfall-v7-4
+
+Upload minstens index.html en sw.js opnieuw. Door de service worker kan een harde refresh of app-herstart nodig zijn.

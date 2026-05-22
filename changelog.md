@@ -1,6 +1,23 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten en assets die in deze ChatGPT-sessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.3**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten en assets die in deze ChatGPT-sessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.4**.
+
+## v7.4 — Adaptive Threat Scaling
+
+- Vijanden schalen nu adaptief mee met de effectieve kracht van de speler.
+- De scaling kijkt naar speler-DPS, attack speed, bereik en de praktische bijdrage van torens.
+- Enemy HP krijgt een minimum time-to-live per type, zodat enemies bij hoge upgrades niet meer allemaal buiten beeld verdwijnen.
+- Enemy damage schaalt slechts mild mee, zodat de aanpassing vooral voorkomt dat de speler god-tier wordt zonder de game meteen oneerlijk dodelijk te maken.
+- Rewards schalen beperkt mee met de hogere HP, zodat sterkere enemies niet puur als tijdstraf voelen.
+- `index.html` bijgewerkt naar **Frostfall v7.4 - Adaptive Threat Scaling**.
+- Save key bijgewerkt naar `frostfall-save-v7-4-adaptive-scaling`; eerdere v7.3-save wordt automatisch gemigreerd.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v7-4`.
+
+## v7.3.1 — Resource Sprite Hotfix
+
+- Hotfix voor een ontbrekende `drawOrbitingAxes()` functie waardoor v7.3 kon crashen bij het renderen van de speler.
+- Ronddraaiende axe sprite/fallback teruggezet.
+- Service-worker cache bump naar `frostfall-v7-3-1`.
 
 ## v7.3 — Resource Sprite Update
 
