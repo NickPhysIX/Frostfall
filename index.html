@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v6.2 - Balance & Polish</title>
+<title>Frostfall v6.4 - Sprite Perfection</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body {
@@ -12,170 +12,67 @@
     user-select:none; -webkit-user-select:none; touch-action:none;
   }
   #game { display:block; width:100vw; height:100vh; background:#b0d4de; }
-
   .hud { position:fixed; pointer-events:none; z-index:10; color:white; font-weight:800; }
-  #topbar {
-    top:env(safe-area-inset-top,16px); left:16px; right:16px;
-    display:flex; justify-content:space-between; align-items:flex-start;
-  }
+  #topbar { top:env(safe-area-inset-top,16px); left:16px; right:16px; display:flex; justify-content:space-between; align-items:flex-start; }
   .stat-group { display:flex; flex-direction:column; gap:8px; }
-  .stat {
-    min-width:112px; display:flex; align-items:center; gap:10px;
-    padding:8px 14px; border-radius:20px;
-    background:rgba(11,22,44,.85); border:1px solid rgba(255,255,255,.11);
-    box-shadow:0 8px 24px rgba(0,0,0,.22); backdrop-filter:blur(8px);
-    font-size:14px; font-variant-numeric:tabular-nums;
-  }
+  .stat { min-width:112px; display:flex; align-items:center; gap:10px; padding:8px 14px; border-radius:20px; background:rgba(11,22,44,.85); border:1px solid rgba(255,255,255,.11); box-shadow:0 8px 24px rgba(0,0,0,.22); backdrop-filter:blur(8px); font-size:14px; font-variant-numeric:tabular-nums; }
   .stat-icon { font-size:16px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
-
-  #wave-info {
-    min-width:160px; padding:10px 18px; border-radius:20px;
-    background:rgba(11,22,44,.85); border:1px solid rgba(255,255,255,.11);
-    box-shadow:0 8px 24px rgba(0,0,0,.22); backdrop-filter:blur(8px);
-    font-size:15px; text-align:center;
-  }
+  #wave-info { min-width:160px; padding:10px 18px; border-radius:20px; background:rgba(11,22,44,.85); border:1px solid rgba(255,255,255,.11); box-shadow:0 8px 24px rgba(0,0,0,.22); backdrop-filter:blur(8px); font-size:15px; text-align:center; }
   #zone-name { margin-top:3px; font-size:11px; opacity:.65; text-transform:uppercase; letter-spacing:1px; color:#60a5fa; }
   #wave-status { margin-top:4px; font-size:11px; opacity:.75; color:#cbd5e1; }
   #chop-indicator { display:none; margin-top:5px; color:#fbbf24; font-size:11px; font-weight:900; animation:pulseGlow 1s infinite alternate; }
   #chop-indicator.show { display:block; }
   @keyframes pulseGlow { from { text-shadow:0 0 2px #d97706; } to { text-shadow:0 0 10px #fbbf24; } }
-
-  .circle-btn {
-    position:fixed; bottom:env(safe-area-inset-bottom,24px);
-    width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.9);
-    color:white; font-size:26px; font-weight:900; cursor:pointer; z-index:11;
-    display:flex; align-items:center; justify-content:center; pointer-events:auto;
-    box-shadow:0 10px 25px rgba(0,0,0,.42), inset 0 -4px 0 rgba(0,0,0,.22);
-    transition:transform .1s;
-  }
+  .circle-btn { position:fixed; bottom:env(safe-area-inset-bottom,24px); width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.9); color:white; font-size:26px; font-weight:900; cursor:pointer; z-index:11; display:flex; align-items:center; justify-content:center; pointer-events:auto; box-shadow:0 10px 25px rgba(0,0,0,.42), inset 0 -4px 0 rgba(0,0,0,.22); transition:transform .1s; }
   .circle-btn:active { transform:scale(.92); }
   #upgrade-btn { left:24px; background:linear-gradient(135deg,#22c55e,#15803d); }
   #upgrade-btn.pulse { animation:btnPulse 1.5s infinite; }
-  @keyframes btnPulse {
-    0%,100% { transform:scale(1); box-shadow:0 10px 25px rgba(34,197,94,.4); }
-    50% { transform:scale(1.07); box-shadow:0 14px 30px rgba(34,197,94,.62); }
-  }
+  @keyframes btnPulse { 0%,100% { transform:scale(1); box-shadow:0 10px 25px rgba(34,197,94,.4); } 50% { transform:scale(1.07); box-shadow:0 14px 30px rgba(34,197,94,.62); } }
   #build-btn { left:104px; background:linear-gradient(135deg,#e67e22,#d35400); }
   #build-btn.active { background:linear-gradient(135deg,#f1c40f,#f39c12); box-shadow:0 0 20px #f1c40f; }
-
-  #build-hint {
-    position:fixed; top:110px; left:50%; transform:translateX(-50%);
-    z-index:11; display:none; pointer-events:auto;
-    padding:11px 22px; border-radius:28px; text-align:center;
-    color:white; font-weight:800; font-size:13px;
-    background:rgba(211,84,0,.95); border:1px solid rgba(255,255,255,.22);
-    box-shadow:0 8px 20px rgba(0,0,0,.33);
-  }
+  #build-hint { position:fixed; top:110px; left:50%; transform:translateX(-50%); z-index:11; display:none; pointer-events:auto; padding:11px 22px; border-radius:28px; text-align:center; color:white; font-weight:800; font-size:13px; background:rgba(211,84,0,.95); border:1px solid rgba(255,255,255,.22); box-shadow:0 8px 20px rgba(0,0,0,.33); }
   #build-hint.show { display:block; }
   .build-options { display:flex; gap:8px; justify-content:center; margin:7px 0 4px; flex-wrap:wrap; }
-  .build-choice {
-    pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,.35);
-    border-radius:999px; padding:7px 10px; background:rgba(255,255,255,.08);
-    color:white; font-size:12px; font-weight:900;
-  }
+  .build-choice { pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:7px 10px; background:rgba(255,255,255,.08); color:white; font-size:12px; font-weight:900; }
   .build-choice.active { background:#fef3c7; color:#78350f; box-shadow:0 0 12px rgba(253,230,138,.55); }
-
-  #joystick {
-    position:fixed; bottom:env(safe-area-inset-bottom,30px); right:30px;
-    width:120px; height:120px; border-radius:50%;
-    background:rgba(11,22,44,.5); border:2px solid rgba(255,255,255,.2);
-    z-index:11; pointer-events:auto; touch-action:none; backdrop-filter:blur(4px);
-    box-shadow:0 8px 24px rgba(0,0,0,.33);
-  }
-  #joystick-knob {
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:54px; height:54px; border-radius:50%;
-    background:linear-gradient(135deg,#fff,#cbd5e1); border:1px solid white;
-    pointer-events:none; box-shadow:0 4px 10px rgba(0,0,0,.42);
-  }
+  #joystick { position:fixed; bottom:env(safe-area-inset-bottom,30px); right:30px; width:120px; height:120px; border-radius:50%; background:rgba(11,22,44,.5); border:2px solid rgba(255,255,255,.2); z-index:11; pointer-events:auto; touch-action:none; backdrop-filter:blur(4px); box-shadow:0 8px 24px rgba(0,0,0,.33); }
+  #joystick-knob { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,#fff,#cbd5e1); border:1px solid white; pointer-events:none; box-shadow:0 4px 10px rgba(0,0,0,.42); }
   @media (hover:hover) and (pointer:fine) { #joystick { display:none; } }
-
-  #panel {
-    position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center;
-    padding:20px; background:rgba(5,10,20,.86); backdrop-filter:blur(12px);
-  }
+  #panel { position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(5,10,20,.86); backdrop-filter:blur(12px); }
   #panel.open { display:flex; }
-  .panel-card {
-    position:relative; width:100%; max-width:455px; max-height:85vh; overflow-y:auto;
-    padding:24px; border-radius:24px; color:white;
-    background:linear-gradient(145deg,#132239,#0a111e);
-    border:1px solid rgba(255,255,255,.12); box-shadow:0 20px 50px rgba(0,0,0,.62);
-  }
-  #close-panel {
-    position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%;
-    border:0; color:white; font-size:16px; cursor:pointer; background:rgba(255,255,255,.06);
-  }
-  .panel-title {
-    font-size:24px; font-weight:900; margin-bottom:4px;
-    background:linear-gradient(90deg,#fff,#94a3b8);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
+  .panel-card { position:relative; width:100%; max-width:455px; max-height:85vh; overflow-y:auto; padding:24px; border-radius:24px; color:white; background:linear-gradient(145deg,#132239,#0a111e); border:1px solid rgba(255,255,255,.12); box-shadow:0 20px 50px rgba(0,0,0,.62); }
+  #close-panel { position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; border:0; color:white; font-size:16px; cursor:pointer; background:rgba(255,255,255,.06); }
+  .panel-title { font-size:24px; font-weight:900; margin-bottom:4px; background:linear-gradient(90deg,#fff,#94a3b8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   .panel-sub { font-size:13px; opacity:.55; margin-bottom:20px; }
   .tabs { display:flex; gap:8px; margin-bottom:18px; background:rgba(0,0,0,.22); padding:4px; border-radius:12px; }
   .tab { flex:1; padding:10px; border-radius:8px; color:rgba(255,255,255,.55); font-weight:800; font-size:13px; cursor:pointer; text-align:center; }
   .tab.active { background:rgba(255,255,255,.11); color:white; box-shadow:0 4px 12px rgba(0,0,0,.15); }
-
-  .repair-box {
-    margin-bottom:14px; padding:12px; border-radius:14px;
-    background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.3);
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-  }
-  #repair-btn-action {
-    border:0; padding:8px 14px; border-radius:10px; background:#3b82f6; color:white;
-    font-weight:900; font-size:12px; cursor:pointer;
-  }
+  .repair-box { margin-bottom:14px; padding:12px; border-radius:14px; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.3); display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  #repair-btn-action { border:0; padding:8px 14px; border-radius:10px; background:#3b82f6; color:white; font-weight:900; font-size:12px; cursor:pointer; }
   #repair-btn-action:disabled { background:#475569; opacity:.5; cursor:not-allowed; }
-
-  .upgrade {
-    display:flex; align-items:center; gap:14px; margin-bottom:10px; padding:14px;
-    border-radius:16px; cursor:pointer; transition:background .15s, transform .15s;
-    background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.065);
-  }
+  .upgrade { display:flex; align-items:center; gap:14px; margin-bottom:10px; padding:14px; border-radius:16px; cursor:pointer; transition:background .15s, transform .15s; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.065); }
   .upgrade:hover, .upgrade:active { background:rgba(255,255,255,.085); }
   .upgrade.affordable { border-color:rgba(34,197,94,.4); background:rgba(34,197,94,.025); }
   .upgrade.maxed { opacity:.35; cursor:default; }
-  .upgrade-icon {
-    width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center;
-    font-size:26px; background:rgba(255,255,255,.055);
-  }
+  .upgrade-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; background:rgba(255,255,255,.055); }
   .upgrade-info { flex:1; }
   .upgrade-name { font-weight:800; font-size:15px; }
   .upgrade-stat { margin-top:3px; font-size:12px; opacity:.55; font-variant-numeric:tabular-nums; }
   .upgrade-cost { padding:8px 12px; border-radius:10px; background:#22c55e; color:#050a14; font-weight:900; font-size:13px; white-space:nowrap; }
   .upgrade:not(.affordable):not(.maxed) .upgrade-cost { background:rgba(255,255,255,.09); color:rgba(255,255,255,.45); }
   .upgrade.maxed .upgrade-cost { background:#475569; color:white; }
-
-  .zone-btn {
-    width:100%; margin-bottom:8px; padding:16px; border:0; border-radius:14px; cursor:pointer;
-    color:white; font-size:15px; font-weight:800;
-    background:linear-gradient(135deg,#3b82f6,#1d4ed8); box-shadow:0 4px 14px rgba(59,130,246,.3);
-  }
+  .zone-btn { width:100%; margin-bottom:8px; padding:16px; border:0; border-radius:14px; cursor:pointer; color:white; font-size:15px; font-weight:800; background:linear-gradient(135deg,#3b82f6,#1d4ed8); box-shadow:0 4px 14px rgba(59,130,246,.3); }
   .zone-btn:disabled { background:#334155; opacity:.55; cursor:not-allowed; box-shadow:none; }
-
-  #game-over {
-    position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center;
-    flex-direction:column; gap:20px; color:white; text-align:center;
-    background:rgba(6,11,22,.96); backdrop-filter:blur(10px);
-  }
+  #game-over { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center; flex-direction:column; gap:20px; color:white; text-align:center; background:rgba(6,11,22,.96); backdrop-filter:blur(10px); }
   #game-over.show { display:flex; }
   #game-over h2 { font-size:36px; font-weight:900; color:#ef4444; text-shadow:0 0 20px rgba(239,68,68,.45); }
   #game-over p { opacity:.7; line-height:1.55; padding:0 20px; }
-  #respawn-btn {
-    border:0; color:white; padding:16px 40px; border-radius:14px; cursor:pointer;
-    font-size:16px; font-weight:800; background:linear-gradient(135deg,#22c55e,#16a34a);
-    box-shadow:0 10px 25px rgba(34,197,94,.32);
-  }
-  #reset-btn {
-    position:fixed; top:env(safe-area-inset-top,16px); left:50%; transform:translateX(-50%);
-    z-index:12; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45);
-    background:rgba(255,255,255,.055); padding:6px 12px; border-radius:10px;
-    font-size:11px; font-weight:700; cursor:pointer; backdrop-filter:blur(4px);
-  }
+  #respawn-btn { border:0; color:white; padding:16px 40px; border-radius:14px; cursor:pointer; font-size:16px; font-weight:800; background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 10px 25px rgba(34,197,94,.32); }
+  #reset-btn { position:fixed; top:env(safe-area-inset-top,16px); left:50%; transform:translateX(-50%); z-index:12; border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.45); background:rgba(255,255,255,.055); padding:6px 12px; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer; backdrop-filter:blur(4px); }
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
-
 <div id="topbar" class="hud">
   <div class="stat-group">
     <div class="stat"><span class="stat-icon">💰</span><span id="money">0</span></div>
@@ -190,10 +87,8 @@
     <div id="chop-indicator">🪓 HAKKEN...</div>
   </div>
 </div>
-
 <button id="upgrade-btn" class="circle-btn pulse" aria-label="Upgrades">⚒️</button>
 <button id="build-btn" class="circle-btn" aria-label="Build mode">🧱</button>
-
 <div id="build-hint">
   🧱 BUILD MODE
   <div class="build-options">
@@ -203,10 +98,8 @@
   </div>
   <span style="font-size:11px;opacity:.82;font-weight:normal">Groen = kan plaatsen. Rood = geblokkeerd/te weinig resources.</span>
 </div>
-
 <div id="joystick"><div id="joystick-knob"></div></div>
 <button id="reset-btn">RESET PROGRESS</button>
-
 <div id="panel">
   <div class="panel-card">
     <button id="close-panel">✕</button>
@@ -217,895 +110,136 @@
       <div class="tab" data-tab="zones">Zones</div>
     </div>
     <div id="tab-upgrades">
-      <div class="repair-box">
-        <span style="font-size:13px;font-weight:800;">🛠️ Fortificaties repareren</span>
-        <button id="repair-btn-action">Repareer Alles ($0)</button>
-      </div>
+      <div class="repair-box"><span style="font-size:13px;font-weight:800;">🛠️ Fortificaties repareren</span><button id="repair-btn-action">Repareer Alles ($0)</button></div>
       <div id="upgrade-list-container"></div>
     </div>
     <div id="tab-zones" style="display:none"></div>
   </div>
 </div>
-
 <div id="game-over">
   <h2>❄️ FROSTBITE ❄️</h2>
   <p>De blizzard heeft je kamp overspoeld.<br>Je muren en torens blijven staan. Probeer het opnieuw.</p>
   <button id="respawn-btn">Respawn</button>
 </div>
-
 <script>
 'use strict';
-
-const SAVE_KEY = 'frostfall-save-v6-2-polish';
-const LEGACY_KEYS = [
-  'frostfall-save-v6-0-tactics',
-  'frostfall-save-v5-2-timber',
-  'frostfall-save-v5-1',
-  'frostfall-save-v5-final',
-  'frostfall-save-v4-1'
+const SAVE_KEY='frostfall-save-v6-4-sprites';
+const LEGACY_KEYS=['frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const images={};
+function loadSprite(key,src){ const img=new Image(); img.loaded=false; img.onload=()=>{img.loaded=true;}; img.onerror=()=>{img.loaded=false;}; img.src=src; images[key]=img; }
+loadSprite('player','player.png'); loadSprite('survivor','survivor.png'); loadSprite('bear','bear.png'); loadSprite('brute','brute.png'); loadSprite('tree','tree.png'); loadSprite('tower','tower.png'); loadSprite('ice_tower','ice_tower.png'); loadSprite('meat','meat.png');
+const ZONES=[
+{id:0,name:'Siberian Camp',cost:0,beastHP:30,beastDmg:5,beastSpeed:.70,meatDrop:1,moneyDrop:8,bg:['#e4f0f6','#c4dee9','#a2cbdd']},
+{id:1,name:'Glacial Forest',cost:500,beastHP:85,beastDmg:12,beastSpeed:.90,meatDrop:2,moneyDrop:20,bg:['#cee2eb','#abc8d7','#83abc1']},
+{id:2,name:'Forgotten Ice Caves',cost:2500,beastHP:220,beastDmg:24,beastSpeed:1.10,meatDrop:4,moneyDrop:45,bg:['#a9c0cd','#81a1b4','#598099']}
 ];
-
-const ZONES = [
-  { id:0, name:'Siberian Camp', cost:0, beastHP:30, beastDmg:5, beastSpeed:.70, meatDrop:1, moneyDrop:8, bg:['#e4f0f6','#c4dee9','#a2cbdd'] },
-  { id:1, name:'Glacial Forest', cost:500, beastHP:85, beastDmg:12, beastSpeed:.90, meatDrop:2, moneyDrop:20, bg:['#cee2eb','#abc8d7','#83abc1'] },
-  { id:2, name:'Forgotten Ice Caves', cost:2500, beastHP:220, beastDmg:24, beastSpeed:1.10, meatDrop:4, moneyDrop:45, bg:['#a9c0cd','#81a1b4','#598099'] }
+const UPGRADES=[
+{key:'damage',icon:'⚔️',name:'Bijl Kracht',base:10,mult:1.50,costBase:25,costMult:1.60,unit:'dmg'},
+{key:'attackSpeed',icon:'⚡',name:'Gooi Snelheid',base:1.0,mult:1.15,costBase:30,costMult:1.70,unit:'/s',max:15},
+{key:'range',icon:'🎯',name:'Bijl Bereik',base:85,mult:1.12,costBase:40,costMult:1.70,unit:'px',max:10},
+{key:'moveSpeed',icon:'👟',name:'Snelheid',base:2.6,mult:1.08,costBase:35,costMult:1.60,unit:'spd',max:12},
+{key:'maxHP',icon:'❤️',name:'Gezondheid',base:100,mult:1.30,costBase:30,costMult:1.55,unit:'hp'},
+{key:'regen',icon:'✨',name:'HP Herstel',base:.50,mult:1.40,costBase:50,costMult:1.80,unit:'/s',max:12},
+{key:'chopSpeed',icon:'🪓',name:'Hout Hakken',base:1.0,mult:1.30,costBase:40,costMult:1.60,unit:'x',max:10},
+{key:'wallHP',icon:'🧱',name:'Muur/Toren HP',base:120,mult:1.40,costBase:60,costMult:1.70,unit:'hp',max:10},
+{key:'meatValue',icon:'🥩',name:'Vlees Opbrengst',base:1.0,mult:1.40,costBase:55,costMult:1.75,unit:'x',max:8},
+{key:'moneyMult',icon:'💰',name:'Goud Koers',base:1.0,mult:1.40,costBase:70,costMult:1.75,unit:'x',max:10},
+{key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4}
 ];
-
-const UPGRADES = [
-  { key:'damage', icon:'⚔️', name:'Bijl Kracht', base:10, mult:1.50, costBase:25, costMult:1.60, unit:'dmg' },
-  { key:'attackSpeed', icon:'⚡', name:'Gooi Snelheid', base:1.0, mult:1.15, costBase:30, costMult:1.70, unit:'/s', max:15 },
-  { key:'range', icon:'🎯', name:'Bijl Bereik', base:85, mult:1.12, costBase:40, costMult:1.70, unit:'px', max:10 },
-  { key:'moveSpeed', icon:'👟', name:'Snelheid', base:2.6, mult:1.08, costBase:35, costMult:1.60, unit:'spd', max:12 },
-  { key:'maxHP', icon:'❤️', name:'Gezondheid', base:100, mult:1.30, costBase:30, costMult:1.55, unit:'hp' },
-  { key:'regen', icon:'✨', name:'HP Herstel', base:.50, mult:1.40, costBase:50, costMult:1.80, unit:'/s', max:12 },
-  { key:'chopSpeed', icon:'🪓', name:'Hout Hakken', base:1.0, mult:1.30, costBase:40, costMult:1.60, unit:'x', max:10 },
-  { key:'wallHP', icon:'🧱', name:'Muur/Toren HP', base:120, mult:1.40, costBase:60, costMult:1.70, unit:'hp', max:10 },
-  { key:'meatValue', icon:'🥩', name:'Vlees Opbrengst', base:1.0, mult:1.40, costBase:55, costMult:1.75, unit:'x', max:8 },
-  { key:'moneyMult', icon:'💰', name:'Goud Koers', base:1.0, mult:1.40, costBase:70, costMult:1.75, unit:'x', max:10 },
-  { key:'survivors', icon:'👥', name:'Dorpsbewoners', base:0, mult:1.0, costBase:150, costMult:2.30, meatCostBase:10, meatCostAdd:12, unit:'werker', max:4 }
-];
-
-const GRID = 42;
-const WALL_COST = 10;
-const TOWER_WOOD_COST = 30;
-const TOWER_MEAT_COST = 20;
-const ICE_TOWER_WOOD_COST = 40;
-const ICE_TOWER_MEAT_COST = 15;
-const TOWER_RANGE = 255;
-const TOWER_BASE_COOLDOWN = 1.18;
-const TOWER_DAMAGE_FACTOR = .72;
-const ICE_TOWER_DAMAGE_FACTOR = .44;
-
-const TREE_HP = 100;
-const TREE_WOOD = 10;
-const TREE_REGROW_TIME = 24;
-const PLAYER_CHOP_RADIUS = 115;
-const PLAYER_CHOP_DPS = 34;
-const ENEMY_CHOP_INTERRUPT_RADIUS = 82;
-const CULL_MARGIN = 260;
-
-let state = {
-  money:0, meat:0, wood:0, wave:1, currentZone:0,
-  zonesUnlocked:[true,false,false],
-  upgrades:{ damage:0, attackSpeed:0, range:0, moveSpeed:0, maxHP:0, regen:0, chopSpeed:0, wallHP:0, meatValue:0, moneyMult:0, survivors:0 },
-  hp:100,
-  structures:[],
-  _v62StartGrant:false
-};
-
-let audioCtx = null;
-function initAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
-function playSound(type) {
-  if (!audioCtx) return;
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-    if (type === 'chop') {
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(140, now); osc.frequency.exponentialRampToValueAtTime(45, now + .10);
-      gain.gain.setValueAtTime(.22, now); gain.gain.exponentialRampToValueAtTime(.01, now + .10); osc.start(now); osc.stop(now + .10);
-    } else if (type === 'hit') {
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.linearRampToValueAtTime(80, now + .12);
-      gain.gain.setValueAtTime(.16, now); gain.gain.exponentialRampToValueAtTime(.01, now + .12); osc.start(now); osc.stop(now + .12);
-    } else if (type === 'upgrade') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.setValueAtTime(450, now + .08); osc.frequency.setValueAtTime(600, now + .16);
-      gain.gain.setValueAtTime(.13, now); gain.gain.exponentialRampToValueAtTime(.01, now + .28); osc.start(now); osc.stop(now + .28);
-    } else if (type === 'shoot') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(150, now + .15);
-      gain.gain.setValueAtTime(.08, now); gain.gain.exponentialRampToValueAtTime(.01, now + .15); osc.start(now); osc.stop(now + .15);
-    } else if (type === 'gameover') {
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, now); osc.frequency.linearRampToValueAtTime(60, now + .6);
-      gain.gain.setValueAtTime(.30, now); gain.gain.exponentialRampToValueAtTime(.01, now + .6); osc.start(now); osc.stop(now + .6);
-    }
-  } catch(e) {}
-}
-
-function loadGame() {
-  let saved = null;
-  try { saved = localStorage.getItem(SAVE_KEY); } catch(e) {}
-  if (!saved) {
-    for (const key of LEGACY_KEYS) {
-      try { saved = localStorage.getItem(key); } catch(e) {}
-      if (saved) break;
-    }
-  }
-  if (!saved) return;
-  try {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed.walls) || Array.isArray(parsed.towers)) {
-      parsed.structures = [
-        ...(parsed.walls || []).map(w => ({ ...w, type:'wall' })),
-        ...(parsed.towers || []).map(t => ({ ...t, type:'tower', shootCD:t.shootCD || 0 }))
-      ];
-      delete parsed.walls; delete parsed.towers;
-    }
-    state = { ...state, ...parsed };
-    state.upgrades = { ...state.upgrades, ...(parsed.upgrades || {}) };
-    if (state.upgrades.survis !== undefined && !state.upgrades.survivors) state.upgrades.survivors = state.upgrades.survis;
-    for (const u of UPGRADES) if (state.upgrades[u.key] === undefined) state.upgrades[u.key] = 0;
-    if (!Array.isArray(state.structures)) state.structures = [];
-    if (!Array.isArray(state.zonesUnlocked)) state.zonesUnlocked = [true,false,false];
-  } catch(e) { console.warn('Save load failed:', e); }
-}
-function saveGame() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(e) {} }
+const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
+const TOWER_RANGE=255, TOWER_BASE_COOLDOWN=1.18, TOWER_DAMAGE_FACTOR=.72, ICE_TOWER_DAMAGE_FACTOR=.44;
+const TREE_HP=100, TREE_WOOD=10, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=115, PLAYER_CHOP_DPS=34, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
+let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],_v64StartGrant:false};
+let audioCtx=null;
+function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+function playSound(type){ if(!audioCtx) return; try{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now=audioCtx.currentTime; if(type==='chop'){osc.type='triangle';osc.frequency.setValueAtTime(140,now);osc.frequency.exponentialRampToValueAtTime(45,now+.10);gain.gain.setValueAtTime(.22,now);gain.gain.exponentialRampToValueAtTime(.01,now+.10);osc.start(now);osc.stop(now+.10);} else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.16,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);} else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);} else if(type==='shoot'){osc.type='sine';osc.frequency.setValueAtTime(400,now);osc.frequency.exponentialRampToValueAtTime(150,now+.15);gain.gain.setValueAtTime(.08,now);gain.gain.exponentialRampToValueAtTime(.01,now+.15);osc.start(now);osc.stop(now+.15);} else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);} }catch(e){} }
+function loadGame(){ let saved=null; try{saved=localStorage.getItem(SAVE_KEY);}catch(e){} if(!saved){ for(const key of LEGACY_KEYS){ try{saved=localStorage.getItem(key);}catch(e){} if(saved) break; }} if(!saved) return; try{ const parsed=JSON.parse(saved); if(Array.isArray(parsed.walls)||Array.isArray(parsed.towers)){ parsed.structures=[...(parsed.walls||[]).map(w=>({...w,type:'wall'})),...(parsed.towers||[]).map(t=>({...t,type:'tower',shootCD:t.shootCD||0}))]; delete parsed.walls; delete parsed.towers; } state={...state,...parsed}; state.upgrades={...state.upgrades,...(parsed.upgrades||{})}; if(state.upgrades.survis!==undefined && !state.upgrades.survivors) state.upgrades.survivors=state.upgrades.survis; for(const u of UPGRADES) if(state.upgrades[u.key]===undefined) state.upgrades[u.key]=0; if(!Array.isArray(state.structures)) state.structures=[]; if(!Array.isArray(state.zonesUnlocked)) state.zonesUnlocked=[true,false,false]; }catch(e){ console.warn('Save load failed:',e); } }
+function saveGame(){ try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){} }
 loadGame();
-
-if (!state._v62StartGrant) {
-  state.wood = Math.max(Number(state.wood) || 0, 20);
-  state.meat = Math.max(Number(state.meat) || 0, 5);
-  state._v62StartGrant = true;
-  saveGame();
-}
-
-function statValue(key) {
-  const u = UPGRADES.find(x => x.key === key);
-  if (!u) return 0;
-  if (key === 'survivors') return Math.floor(state.upgrades.survivors || 0);
-  return u.base * Math.pow(u.mult, state.upgrades[key] || 0);
-}
-function upgradeCosts(key) {
-  const u = UPGRADES.find(x => x.key === key);
-  const lvl = state.upgrades[key] || 0;
-  const money = Math.floor(u.costBase * Math.pow(u.costMult, lvl));
-  const meat = u.meatCostBase !== undefined ? Math.floor(u.meatCostBase + (u.meatCostAdd || 0) * lvl) : 0;
-  return { money, meat };
-}
-function costLabel(c) { return c.meat > 0 ? `$${c.money} + ${c.meat}🥩` : `$${c.money}`; }
-function canAffordUpgrade(key) {
-  const c = upgradeCosts(key);
-  return state.money >= c.money && state.meat >= c.meat && !isMaxed(key);
-}
-function isMaxed(key) {
-  const u = UPGRADES.find(x => x.key === key);
-  return !!(u.max && (state.upgrades[key] || 0) >= u.max);
-}
-function normalizeStructures() {
-  const wallHP = statValue('wallHP');
-  for (const s of state.structures) {
-    if (!s.type) s.type = 'wall';
-    if (!Number.isFinite(s.shootCD)) s.shootCD = 0;
-    if (!Number.isFinite(s.maxHP) || !Number.isFinite(s.hp)) {
-      const mult = s.type === 'tower' ? 1.35 : (s.type === 'ice_tower' ? 1.2 : 1);
-      s.maxHP = wallHP * mult; s.hp = s.maxHP;
-    }
-  }
-}
-normalizeStructures();
-if (!Number.isFinite(state.hp) || state.hp <= 0) state.hp = statValue('maxHP');
-
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-let W = 0, H = 0, DPR = 1;
-function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth; H = window.innerHeight;
-  canvas.width = Math.floor(W * DPR); canvas.height = Math.floor(H * DPR);
-  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-}
-window.addEventListener('resize', resize); resize();
-
-const player = { x:0, y:0, angle:0, attackTimer:0, axeAngle:0, hitFlash:0, chopping:null, walkCycle:0 };
-const beasts = [];
-const drops = [];
-const particles = [];
-const floatingTexts = [];
-const trees = [];
-const projectiles = [];
-const survivors = [];
-
-function generateTrees() {
-  trees.length = 0;
-  const starterAngles = [-.75, .55, 2.35, 3.7];
-  for (let i=0; i<starterAngles.length; i++) {
-    const angle = starterAngles[i]; const dist = 105 + i * 18;
-    trees.push({ id:i, x:Math.cos(angle)*dist, y:Math.sin(angle)*dist, size:24 + Math.random()*5, hp:TREE_HP, maxHP:TREE_HP, alive:true, regrowTimer:0, seed:Math.random() });
-  }
-  for (let i=4; i<28; i++) {
-    const angle = Math.random() * Math.PI * 2; const dist = 145 + Math.random() * 285;
-    trees.push({ id:i, x:Math.cos(angle)*dist, y:Math.sin(angle)*dist, size:21 + Math.random()*9, hp:TREE_HP, maxHP:TREE_HP, alive:true, regrowTimer:0, seed:Math.random() });
-  }
-  for (let i=28; i<68; i++) {
-    const angle = Math.random() * Math.PI * 2; const dist = 450 + Math.random() * 750;
-    trees.push({ id:i, x:Math.cos(angle)*dist, y:Math.sin(angle)*dist, size:20 + Math.random()*10, hp:TREE_HP, maxHP:TREE_HP, alive:true, regrowTimer:0, seed:Math.random() });
-  }
-}
+if(!state._v64StartGrant){ state.wood=Math.max(Number(state.wood)||0,20); state.meat=Math.max(Number(state.meat)||0,5); state._v64StartGrant=true; saveGame(); }
+function statValue(key){ const u=UPGRADES.find(x=>x.key===key); if(!u) return 0; if(key==='survivors') return Math.floor(state.upgrades.survivors||0); return u.base*Math.pow(u.mult,state.upgrades[key]||0); }
+function upgradeCosts(key){ const u=UPGRADES.find(x=>x.key===key), lvl=state.upgrades[key]||0; return {money:Math.floor(u.costBase*Math.pow(u.costMult,lvl)), meat:u.meatCostBase!==undefined?Math.floor(u.meatCostBase+(u.meatCostAdd||0)*lvl):0}; }
+function costLabel(c){ return c.meat>0?`$${c.money} + ${c.meat}🥩`:`$${c.money}`; }
+function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key); return !!(u.max && (state.upgrades[key]||0)>=u.max); }
+function canAffordUpgrade(key){ const c=upgradeCosts(key); return state.money>=c.money && state.meat>=c.meat && !isMaxed(key); }
+function normalizeStructures(){ const wallHP=statValue('wallHP'); for(const s of state.structures){ if(!s.type) s.type='wall'; if(!Number.isFinite(s.shootCD)) s.shootCD=0; if(!Number.isFinite(s.maxHP)||!Number.isFinite(s.hp)){ const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1); s.maxHP=wallHP*mult; s.hp=s.maxHP; } } }
+normalizeStructures(); if(!Number.isFinite(state.hp)||state.hp<=0) state.hp=statValue('maxHP');
+const canvas=document.getElementById('game'), ctx=canvas.getContext('2d'); let W=0,H=0,DPR=1;
+function resize(){ DPR=Math.min(window.devicePixelRatio||1,2); W=window.innerWidth; H=window.innerHeight; canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR); canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); }
+window.addEventListener('resize',resize); resize();
+const player={x:0,y:0,angle:0,attackTimer:0,axeAngle:0,hitFlash:0,chopping:null,walkCycle:0};
+const beasts=[], drops=[], particles=[], floatingTexts=[], trees=[], projectiles=[], survivors=[];
+function generateTrees(){ trees.length=0; const starterAngles=[-.75,.55,2.35,3.7]; for(let i=0;i<starterAngles.length;i++){ const angle=starterAngles[i], dist=105+i*18; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:24+Math.random()*5,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } for(let i=4;i<28;i++){ const angle=Math.random()*Math.PI*2, dist=145+Math.random()*285; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:21+Math.random()*9,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } for(let i=28;i<68;i++){ const angle=Math.random()*Math.PI*2, dist=450+Math.random()*750; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:20+Math.random()*10,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } }
 generateTrees();
-
-function structureAtGrid(gx, gy) { return state.structures.find(s => s.gx === gx && s.gy === gy); }
-function structureAtWorld(x, y) { return structureAtGrid(Math.round(x / GRID), Math.round(y / GRID)); }
-function addText(x, y, text, color = '#fff', vy = -30, life = 1) { floatingTexts.push({ x, y, text, color, vy, life }); }
-function addParticle(x, y, color = '#fff', type = 'dust') {
-  particles.push({ x, y, vx:(Math.random()-.5)*90, vy:-25 - Math.random()*65, life:.45, maxLife:.45, color, size:2 + Math.random()*4, type });
-}
-function inView(x, y, margin = CULL_MARGIN) { return x > player.x - W/2 - margin && x < player.x + W/2 + margin && y > player.y - H/2 - margin && y < player.y + H/2 + margin; }
-
-function makeSurvivor(index) {
-  const total = Math.max(1, statValue('survivors'));
-  const a = (index / total) * Math.PI * 2;
-  return { x:Math.cos(a)*34, y:28 + Math.sin(a)*18, targetTree:null, mode:'searching', woodCarried:0, walkCycle:Math.random()*100, thinkTimer:0 };
-}
-function syncSurvivors(reset = false) {
-  const wanted = statValue('survivors');
-  if (reset) survivors.length = 0;
-  while (survivors.length < wanted) survivors.push(makeSurvivor(survivors.length));
-  while (survivors.length > wanted) survivors.pop();
-}
-function treeClaimedByAnother(tree, survivor) {
-  return survivors.some(s => s !== survivor && s.targetTree === tree && (s.mode === 'walking' || s.mode === 'chopping'));
-}
-function findSurvivorTree(s) {
-  let best = null, score = Infinity;
-  for (const t of trees) {
-    if (!t.alive || treeClaimedByAnother(t, s)) continue;
-    const d = Math.hypot(t.x - s.x, t.y - s.y);
-    if (d < score) { score = d; best = t; }
-  }
-  return best;
-}
-function moveToward(actor, tx, ty, speed, dt) {
-  const dx = tx - actor.x, dy = ty - actor.y; const d = Math.hypot(dx, dy) || 1;
-  if (d <= speed * dt) { actor.x = tx; actor.y = ty; return true; }
-  actor.x += dx / d * speed * dt; actor.y += dy / d * speed * dt; return false;
-}
-function updateSurvivors(dt) {
-  syncSurvivors();
-  for (const s of survivors) {
-    s.walkCycle += dt * 10;
-    s.thinkTimer -= dt;
-    if (s.mode === 'searching' && s.thinkTimer <= 0) {
-      const tree = findSurvivorTree(s);
-      if (tree) { s.targetTree = tree; s.mode = 'walking'; }
-      else s.mode = 'idle';
-      s.thinkTimer = .35 + Math.random() * .35;
-    } else if (s.mode === 'idle') {
-      if (moveToward(s, 0, 34, 55, dt) || Math.random() < .01) s.mode = 'searching';
-    } else if (s.mode === 'walking') {
-      if (!s.targetTree || !s.targetTree.alive) { s.targetTree = null; s.mode = 'searching'; continue; }
-      if (moveToward(s, s.targetTree.x, s.targetTree.y, 78, dt)) s.mode = 'chopping';
-    } else if (s.mode === 'chopping') {
-      if (!s.targetTree || !s.targetTree.alive) { s.targetTree = null; s.mode = 'searching'; continue; }
-      s.targetTree.hp -= 13 * dt;
-      if (Math.random() < .16) {
-        addParticle(s.targetTree.x + (Math.random()-.5)*12, s.targetTree.y, '#a05a2c', 'wood');
-        if (Math.random() < .045) playSound('chop');
-      }
-      if (s.targetTree.hp <= 0) {
-        s.targetTree.alive = false; s.targetTree.regrowTimer = TREE_REGROW_TIME; s.targetTree.hp = 0;
-        s.woodCarried = TREE_WOOD; s.targetTree = null; s.mode = 'returning';
-      }
-    } else if (s.mode === 'returning') {
-      if (moveToward(s, -86, -26, 72, dt)) {
-        state.wood += s.woodCarried;
-        addText(s.x, s.y - 18, `+${s.woodCarried}🪵`, '#d97706', -28, .9);
-        s.woodCarried = 0; s.mode = 'searching'; saveGame();
-      }
-    }
-  }
-}
-
-let waveBeastsRemaining = 0, waveSpawnTimer = 0, waveActive = false, waveCleared = false, interWaveTimer = 1.5;
-function pickBeastKind() {
-  if (state.wave >= 8 && Math.random() < Math.min(.18 + state.wave * .006, .34)) return 'brute';
-  return 'bear';
-}
-function spawnBeast(kind = 'bear') {
-  const z = ZONES[state.currentZone];
-  const waveMult = 1 + (state.wave - 1) * .15;
-  let hpMult = 1, dmgMult = 1, speedMult = 1, size = 24, wallDmgMult = 1, moneyMult = 1, meatMult = 1;
-  if (kind === 'brute') { hpMult = 2.55; dmgMult = 1.35; speedMult = .62; size = 35; wallDmgMult = 2.5; moneyMult = 1.7; meatMult = 2.1; }
-  if (kind === 'boss') { hpMult = 8; dmgMult = 2; speedMult = .75; size = 44; wallDmgMult = 1.6; moneyMult = 5; meatMult = 5; }
-  const a = Math.random() * Math.PI * 2;
-  const dist = Math.max(W, H) * .72 + 80;
-  beasts.push({
-    kind,
-    x:player.x + Math.cos(a)*dist, y:player.y + Math.sin(a)*dist,
-    hp:z.beastHP * waveMult * hpMult, maxHP:z.beastHP * waveMult * hpMult,
-    speed:z.beastSpeed * speedMult, baseSpeed:z.beastSpeed * speedMult, slowTimer:0,
-    dmg:z.beastDmg * waveMult * dmgMult, wallDmgMult, size, moneyMult, meatMult,
-    attackCD:0, isBoss:kind === 'boss', hitFlash:0, target:null, targetCD:0, legCycle:0
-  });
-}
-function startWave() {
-  const boss = state.wave % 5 === 0;
-  waveBeastsRemaining = boss ? 1 : (4 + Math.floor(state.wave * .78));
-  waveSpawnTimer = 0; waveActive = true; waveCleared = false;
-}
-function updateWaves(dt) {
-  if (!waveActive && !waveCleared) {
-    interWaveTimer -= dt;
-    if (interWaveTimer <= 0) startWave();
-  }
-  if (waveActive && waveBeastsRemaining > 0) {
-    waveSpawnTimer -= dt;
-    if (waveSpawnTimer <= 0) {
-      spawnBeast(state.wave % 5 === 0 ? 'boss' : pickBeastKind());
-      waveBeastsRemaining--;
-      waveSpawnTimer = Math.max(.42, 1.32 - state.wave * .03);
-    }
-  }
-  if (waveActive && waveBeastsRemaining <= 0 && beasts.length === 0) {
-    waveActive = false; waveCleared = true; interWaveTimer = 5.0; state.wave++; saveGame();
-  }
-  if (waveCleared) {
-    interWaveTimer -= dt;
-    if (interWaveTimer <= 0) { waveCleared = false; interWaveTimer = 0; }
-  }
-}
-
-const keys = {};
-window.addEventListener('keydown', e => { initAudio(); keys[e.key.toLowerCase()] = true; });
-window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
-
-const joy = { active:false, dx:0, dy:0, startX:0, startY:0 };
-const joyEl = document.getElementById('joystick');
-const knobEl = document.getElementById('joystick-knob');
-function joyStart(e) {
-  initAudio(); e.preventDefault(); joy.active = true;
-  const r = joyEl.getBoundingClientRect(); joy.startX = r.left + r.width / 2; joy.startY = r.top + r.height / 2; joyMove(e);
-}
-function joyMove(e) {
-  if (!joy.active) return; e.preventDefault();
-  const t = e.touches ? e.touches[0] : e;
-  let dx = t.clientX - joy.startX, dy = t.clientY - joy.startY;
-  const len = Math.hypot(dx, dy), maxR = 40;
-  if (len > maxR) { dx = dx / len * maxR; dy = dy / len * maxR; }
-  joy.dx = dx / maxR; joy.dy = dy / maxR;
-  knobEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-}
-function joyEnd() { joy.active = false; joy.dx = 0; joy.dy = 0; knobEl.style.transform = 'translate(-50%, -50%)'; }
-joyEl.addEventListener('touchstart', joyStart, { passive:false });
-joyEl.addEventListener('touchmove', joyMove, { passive:false });
-joyEl.addEventListener('touchend', joyEnd); joyEl.addEventListener('touchcancel', joyEnd);
-joyEl.addEventListener('mousedown', joyStart);
-window.addEventListener('mousemove', e => { if (joy.active) joyMove(e); });
-window.addEventListener('mouseup', joyEnd);
-
-let buildMode = false;
-let buildType = 'wall';
-let buildPointer = { active:false, x:0, y:0 };
-function setBuildType(type) {
-  buildType = type;
-  document.getElementById('build-wall-choice').classList.toggle('active', type === 'wall');
-  document.getElementById('build-tower-choice').classList.toggle('active', type === 'tower');
-  document.getElementById('build-ice-choice').classList.toggle('active', type === 'ice_tower');
-}
-function toggleBuildMode() {
-  initAudio(); buildMode = !buildMode;
-  document.getElementById('build-btn').classList.toggle('active', buildMode);
-  document.getElementById('build-hint').classList.toggle('show', buildMode);
-  buildPointer.active = false;
-}
-document.getElementById('build-btn').addEventListener('click', toggleBuildMode);
-for (const [id, type] of [['build-wall-choice','wall'], ['build-tower-choice','tower'], ['build-ice-choice','ice_tower']]) {
-  const el = document.getElementById(id);
-  el.addEventListener('click', e => { e.stopPropagation(); setBuildType(type); });
-  el.addEventListener('touchend', e => { e.preventDefault(); e.stopPropagation(); setBuildType(type); }, { passive:false });
-}
-function canvasToWorld(clientX, clientY) {
-  const r = canvas.getBoundingClientRect();
-  return { x:(clientX - r.left) - W/2 + player.x, y:(clientY - r.top) - H/2 + player.y };
-}
-function updateBuildPointer(clientX, clientY) { const p = canvasToWorld(clientX, clientY); buildPointer = { active:true, x:p.x, y:p.y }; }
-canvas.addEventListener('pointermove', e => { if (buildMode) updateBuildPointer(e.clientX, e.clientY); });
-canvas.addEventListener('pointerleave', () => { buildPointer.active = false; });
-function buildCostAvailable(type) {
-  if (type === 'tower') return state.wood >= TOWER_WOOD_COST && state.meat >= TOWER_MEAT_COST;
-  if (type === 'ice_tower') return state.wood >= ICE_TOWER_WOOD_COST && state.meat >= ICE_TOWER_MEAT_COST;
-  return state.wood >= WALL_COST;
-}
-function canPlaceAt(gx, gy) {
-  if (Math.hypot(gx * GRID - player.x, gy * GRID - player.y) < 30) return false;
-  if (structureAtGrid(gx, gy)) return false;
-  return buildCostAvailable(buildType);
-}
-function placeStructure(wx, wy) {
-  const gx = Math.round(wx / GRID), gy = Math.round(wy / GRID);
-  if (Math.hypot(gx * GRID - player.x, gy * GRID - player.y) < 30) return;
-  if (structureAtGrid(gx, gy)) return;
-  if (buildType === 'tower') {
-    if (state.wood < TOWER_WOOD_COST || state.meat < TOWER_MEAT_COST) { addText(player.x, player.y - 30, 'Nodig: 30🪵 + 20🥩', '#f87171', -25, 1.2); return; }
-    state.wood -= TOWER_WOOD_COST; state.meat -= TOWER_MEAT_COST;
-    const hp = statValue('wallHP') * 1.35;
-    state.structures.push({ type:'tower', gx, gy, hp, maxHP:hp, shootCD:0 });
-    addText(gx*GRID, gy*GRID, '🏹 Toren', '#60a5fa', -15, .85);
-  } else if (buildType === 'ice_tower') {
-    if (state.wood < ICE_TOWER_WOOD_COST || state.meat < ICE_TOWER_MEAT_COST) { addText(player.x, player.y - 30, 'Nodig: 40🪵 + 15🥩', '#f87171', -25, 1.2); return; }
-    state.wood -= ICE_TOWER_WOOD_COST; state.meat -= ICE_TOWER_MEAT_COST;
-    const hp = statValue('wallHP') * 1.2;
-    state.structures.push({ type:'ice_tower', gx, gy, hp, maxHP:hp, shootCD:0 });
-    addText(gx*GRID, gy*GRID, '❄️ IJstoren', '#38bdf8', -15, .85);
-  } else {
-    if (state.wood < WALL_COST) { addText(player.x, player.y - 30, '🪵 Te weinig hout!', '#f87171', -25, 1.2); return; }
-    state.wood -= WALL_COST;
-    const hp = statValue('wallHP');
-    state.structures.push({ type:'wall', gx, gy, hp, maxHP:hp });
-    addText(gx*GRID, gy*GRID, '🧱 Muur', '#fbbf24', -15, .85);
-  }
-  playSound('upgrade');
-  for (let i=0; i<8; i++) addParticle(gx*GRID + (Math.random()-.5)*24, gy*GRID + (Math.random()-.5)*24, '#fff', 'dust');
-  saveGame(); updateHUD();
-}
-canvas.addEventListener('click', e => { if (!buildMode) return; const p = canvasToWorld(e.clientX, e.clientY); placeStructure(p.x, p.y); });
-canvas.addEventListener('touchend', e => {
-  if (!buildMode || e.changedTouches.length === 0) return;
-  const t = e.changedTouches[0];
-  const target = document.elementFromPoint(t.clientX, t.clientY);
-  if (target && (target.tagName === 'BUTTON' || target.closest('#build-hint'))) return;
-  updateBuildPointer(t.clientX, t.clientY);
-  const p = canvasToWorld(t.clientX, t.clientY); placeStructure(p.x, p.y);
-}, { passive:false });
-
-function findBlockingStructure(b, distToPlayer) {
-  if (state.structures.length === 0) return null;
-  const dx = player.x - b.x, dy = player.y - b.y;
-  const steps = Math.ceil(distToPlayer / GRID);
-  for (let i=1; i<steps; i++) {
-    const t = i / steps;
-    const gx = Math.round((b.x + dx * t) / GRID);
-    const gy = Math.round((b.y + dy * t) / GRID);
-    const s = structureAtGrid(gx, gy); if (s) return s;
-  }
-  return null;
-}
-function findBruteTarget(b) {
-  let best = null, score = Infinity;
-  for (const s of state.structures) {
-    const sx = s.gx * GRID, sy = s.gy * GRID;
-    const d = Math.hypot(sx - b.x, sy - b.y);
-    if (d > 540) continue;
-    const weak = s.hp / Math.max(1, s.maxHP);
-    const sc = d * .65 + weak * 180;
-    if (sc < score) { score = sc; best = s; }
-  }
-  return best;
-}
-
-function update(dt) {
-  let mx = 0, my = 0;
-  if (keys.arrowup || keys.w) my -= 1; if (keys.arrowdown || keys.s) my += 1;
-  if (keys.arrowleft || keys.a) mx -= 1; if (keys.arrowright || keys.d) mx += 1;
-  if (joy.active) { mx = joy.dx; my = joy.dy; }
-  const len = Math.hypot(mx, my);
-  if (len > 0) { mx /= len; my /= len; player.walkCycle += dt * 12; }
-  const isMoving = len > .08;
-  const move = statValue('moveSpeed') * 60 * dt;
-  const nx = player.x + mx * move, ny = player.y + my * move;
-  if (!structureAtWorld(nx, ny)) { player.x = nx; player.y = ny; }
-  else { if (!structureAtWorld(nx, player.y)) player.x = nx; if (!structureAtWorld(player.x, ny)) player.y = ny; }
-  if (len > 0) player.angle = Math.atan2(my, mx);
-
-  const maxHP = statValue('maxHP');
-  state.hp = Math.min(maxHP, state.hp + statValue('regen') * dt);
-  player.hitFlash = Math.max(0, player.hitFlash - dt);
-  player.axeAngle += dt * statValue('attackSpeed') * 5.5;
-
-  const enemyTooClose = beasts.some(b => Math.hypot(b.x - player.x, b.y - player.y) < ENEMY_CHOP_INTERRUPT_RADIUS);
-  player.chopping = null;
-  if (!isMoving && !enemyTooClose) {
-    let nearest = null, nearestD = PLAYER_CHOP_RADIUS;
-    for (const t of trees) {
-      if (!t.alive) continue;
-      const d = Math.hypot(t.x - player.x, t.y - player.y);
-      if (d < nearestD) { nearestD = d; nearest = t; }
-    }
-    if (nearest) {
-      player.chopping = nearest; nearest.hp -= PLAYER_CHOP_DPS * statValue('chopSpeed') * dt;
-      if (Math.random() < .35) { addParticle(nearest.x + (Math.random()-.5)*12, nearest.y, '#a05a2c', 'wood'); playSound('chop'); }
-      if (nearest.hp <= 0) {
-        nearest.alive = false; nearest.regrowTimer = TREE_REGROW_TIME; nearest.hp = 0;
-        state.wood += TREE_WOOD;
-        addText(nearest.x, nearest.y - 22, `+${TREE_WOOD}🪵`, '#d97706', -35, 1);
-        player.chopping = null; saveGame();
-      }
-    }
-  }
-  document.getElementById('chop-indicator').classList.toggle('show', !!player.chopping);
-  for (const t of trees) if (!t.alive) { t.regrowTimer -= dt; if (t.regrowTimer <= 0) { t.alive = true; t.hp = t.maxHP; } }
-  updateSurvivors(dt);
-
-  const range = statValue('range'); const damage = statValue('damage');
-  player.attackTimer -= dt;
-  if (player.attackTimer <= 0) {
-    let hitAny = false;
-    for (const b of beasts) {
-      if (Math.hypot(b.x - player.x, b.y - player.y) < range + b.size) {
-        b.hp -= damage; b.hitFlash = .15; hitAny = true;
-        for (let i=0; i<4; i++) addParticle(b.x, b.y - b.size*.3, '#f59e0b', 'spark');
-      }
-    }
-    if (hitAny) playSound('hit');
-    player.attackTimer = 1 / statValue('attackSpeed');
-  }
-
-  for (const s of state.structures) {
-    if (s.type !== 'tower' && s.type !== 'ice_tower') continue;
-    s.shootCD = Math.max(0, (s.shootCD || 0) - dt);
-    if (s.shootCD > 0 || beasts.length === 0) continue;
-    const tx = s.gx * GRID, ty = s.gy * GRID - 24;
-    let target = null, best = TOWER_RANGE;
-    for (const b of beasts) { const d = Math.hypot(b.x - tx, b.y - ty); if (d < best) { best = d; target = b; } }
-    if (target) {
-      const dmg = damage * (s.type === 'ice_tower' ? ICE_TOWER_DAMAGE_FACTOR : TOWER_DAMAGE_FACTOR);
-      projectiles.push({ x:tx, y:ty, target, speed:430, dmg, type:s.type, life:1.4 });
-      playSound('shoot');
-      s.shootCD = TOWER_BASE_COOLDOWN / Math.sqrt(statValue('attackSpeed'));
-    }
-  }
-
-  for (let i=projectiles.length-1; i>=0; i--) {
-    const p = projectiles[i]; p.life -= dt;
-    if (p.life <= 0 || !beasts.includes(p.target) || p.target.hp <= 0) { projectiles.splice(i, 1); continue; }
-    const tx = p.target.x, ty = p.target.y - p.target.size * .25;
-    const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy) || 1;
-    p.x += dx / d * p.speed * dt; p.y += dy / d * p.speed * dt;
-    if (d < p.target.size + 8) {
-      p.target.hp -= p.dmg; p.target.hitFlash = .15;
-      if (p.type === 'ice_tower') { p.target.slowTimer = 2.4; for (let k=0; k<5; k++) addParticle(p.x, p.y, '#67e8f9', 'spark'); }
-      else { for (let k=0; k<3; k++) addParticle(p.x, p.y, '#fbbf24', 'spark'); }
-      projectiles.splice(i, 1);
-    }
-  }
-
-  for (let i=beasts.length-1; i>=0; i--) {
-    const b = beasts[i];
-    if (b.slowTimer > 0) { b.slowTimer -= dt; b.speed = b.baseSpeed * .6; } else b.speed = b.baseSpeed;
-    const dx = player.x - b.x, dy = player.y - b.y, distToPlayer = Math.hypot(dx, dy) || 1;
-    b.legCycle += dt * b.speed * 15; b.hitFlash = Math.max(0, b.hitFlash - dt);
-    b.targetCD -= dt;
-    if (b.targetCD <= 0) {
-      b.target = b.kind === 'brute' ? (findBruteTarget(b) || findBlockingStructure(b, distToPlayer)) : findBlockingStructure(b, distToPlayer);
-      b.targetCD = .25;
-    }
-    if (b.target && b.target.hp > 0) {
-      const sx = b.target.gx * GRID, sy = b.target.gy * GRID;
-      const sdx = sx - b.x, sdy = sy - b.y, sd = Math.hypot(sdx, sdy) || 1;
-      if (sd > b.size + 11) { b.x += sdx / sd * b.speed * 60 * dt; b.y += sdy / sd * b.speed * 60 * dt; }
-      else {
-        b.attackCD -= dt;
-        if (b.attackCD <= 0) {
-          b.target.hp -= b.dmg * b.wallDmgMult; b.attackCD = b.kind === 'brute' ? 1.15 : 1;
-          for (let k=0; k<3; k++) addParticle(sx, sy, b.kind === 'brute' ? '#ef4444' : '#d97706', 'wood');
-          if (b.target.hp <= 0) {
-            const idx = state.structures.indexOf(b.target); if (idx >= 0) state.structures.splice(idx, 1);
-            addText(sx, sy, b.kind === 'brute' ? '💥 BRUTE BREACH!' : '💥 Breach!', '#ef4444', -22, .9);
-            b.target = null; saveGame();
-          }
-        }
-      }
-    } else {
-      b.x += dx / distToPlayer * b.speed * 60 * dt; b.y += dy / distToPlayer * b.speed * 60 * dt;
-      b.attackCD -= dt;
-      if (distToPlayer < b.size + 18 && b.attackCD <= 0) {
-        state.hp -= b.dmg; player.hitFlash = .25; b.attackCD = 1.2;
-        addText(player.x, player.y - 25, `-${Math.floor(b.dmg)} ❤️`, '#f87171', -30, .8);
-      }
-    }
-    if (b.hp <= 0) {
-      const z = ZONES[state.currentZone];
-      const bm = b.isBoss ? 1 : 1;
-      const moneyGain = Math.floor(z.moneyDrop * bm * b.moneyMult * statValue('moneyMult'));
-      const meatGain = Math.floor(z.meatDrop * bm * b.meatMult * statValue('meatValue'));
-      drops.push({ x:b.x, y:b.y, type:'money', value:moneyGain, life:0, vy:-3 });
-      drops.push({ x:b.x+14, y:b.y-10, type:'meat', value:meatGain, life:0, vy:-4 });
-      for (let j=0; j<(b.isBoss ? 24 : (b.kind === 'brute' ? 14 : 9)); j++) addParticle(b.x, b.y, b.kind === 'brute' ? '#7f1d1d' : '#b91c1c', 'blood');
-      beasts.splice(i, 1);
-    }
-  }
-
-  for (let i=drops.length-1; i>=0; i--) {
-    const d = drops[i]; d.life += dt;
-    const dx = player.x - d.x, dy = player.y - d.y, dist = Math.hypot(dx, dy) || 1;
-    if (dist < 180) { d.x += dx / dist * 340 * dt; d.y += dy / dist * 340 * dt; }
-    else { d.y += d.vy; d.vy += .25; }
-    if (dist < 25) {
-      if (d.type === 'money') { state.money += d.value; addText(d.x, d.y, `+$${d.value}`, '#4ade80', -35, .8); }
-      else { state.meat += d.value; addText(d.x, d.y, `+${d.value}🥩`, '#f87171', -35, .8); }
-      drops.splice(i, 1);
-    }
-  }
-  for (let i=particles.length-1; i>=0; i--) {
-    const p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt;
-    if (p.type === 'wood' || p.type === 'blood') p.vy += 220 * dt;
-    p.life -= dt; if (p.life <= 0) particles.splice(i, 1);
-  }
-  for (let i=floatingTexts.length-1; i>=0; i--) { const t = floatingTexts[i]; t.y += t.vy * dt; t.life -= dt; if (t.life <= 0) floatingTexts.splice(i, 1); }
-  if (state.hp <= 0 && !gameOver) triggerGameOver();
-  updateHUD();
-}
-
-function calculateRepairCost() { return state.structures.reduce((sum, s) => sum + (s.hp < s.maxHP ? 12 : 0), 0); }
-function updateHUD() {
-  const maxHP = statValue('maxHP');
-  document.getElementById('money').textContent = Math.floor(state.money);
-  document.getElementById('meat').textContent = Math.floor(state.meat);
-  document.getElementById('wood').textContent = Math.floor(state.wood);
-  document.getElementById('hp').textContent = `${Math.max(0, Math.floor(state.hp))}/${Math.floor(maxHP)}`;
-  document.getElementById('wave').textContent = state.wave + (state.wave % 5 === 0 ? ' 👑' : '');
-  document.getElementById('zone-name').textContent = ZONES[state.currentZone].name;
-  const status = document.getElementById('wave-status');
-  if (waveActive) status.textContent = waveBeastsRemaining > 0 ? `${waveBeastsRemaining} incoming` : `${beasts.length} remaining`;
-  else if (waveCleared || interWaveTimer > 0) status.textContent = `Prep ${Math.ceil(Math.max(0, interWaveTimer))}s`;
-  else status.textContent = 'Ready';
-  const canAfford = UPGRADES.some(u => canAffordUpgrade(u.key));
-  document.getElementById('upgrade-btn').classList.toggle('pulse', canAfford);
-  const rc = calculateRepairCost();
-  const rBtn = document.getElementById('repair-btn-action');
-  if (rBtn) { rBtn.textContent = `Repareer Alles ($${rc})`; rBtn.disabled = rc === 0 || state.money < rc; }
-}
-
-const snowflakes = [];
-for (let i=0; i<90; i++) snowflakes.push({ x:Math.random()*2000-1000, y:Math.random()*2000-1000, size:1.4+Math.random()*2.6, speed:35+Math.random()*45 });
-
-function drawGrid(cx, cy) {
-  ctx.strokeStyle = 'rgba(255,255,255,.045)'; ctx.lineWidth = 1;
-  const startX = Math.floor((player.x - W/2) / GRID) * GRID - GRID*2, endX = player.x + W/2 + GRID*2;
-  const startY = Math.floor((player.y - H/2) / GRID) * GRID - GRID*2, endY = player.y + H/2 + GRID*2;
-  for (let x=startX; x<endX; x+=GRID) { ctx.beginPath(); ctx.moveTo(x+cx, 0); ctx.lineTo(x+cx, H); ctx.stroke(); }
-  for (let y=startY; y<endY; y+=GRID) { ctx.beginPath(); ctx.moveTo(0, y+cy); ctx.lineTo(W, y+cy); ctx.stroke(); }
-}
-function drawBuildPreview(cx, cy) {
-  if (!buildMode || !buildPointer.active) return;
-  const gx = Math.round(buildPointer.x / GRID), gy = Math.round(buildPointer.y / GRID);
-  const valid = canPlaceAt(gx, gy);
-  const sx = gx * GRID + cx, sy = gy * GRID + cy;
-  ctx.save();
-  ctx.fillStyle = valid ? 'rgba(34,197,94,.22)' : 'rgba(239,68,68,.28)';
-  ctx.strokeStyle = valid ? 'rgba(34,197,94,.9)' : 'rgba(239,68,68,.95)';
-  ctx.lineWidth = 2;
-  ctx.fillRect(sx-GRID/2, sy-GRID/2, GRID, GRID);
-  ctx.strokeRect(sx-GRID/2, sy-GRID/2, GRID, GRID);
-  ctx.font = '900 20px system-ui'; ctx.textAlign = 'center'; ctx.fillStyle = valid ? '#22c55e' : '#ef4444';
-  ctx.fillText(buildType === 'wall' ? '🧱' : (buildType === 'ice_tower' ? '❄️' : '🏹'), sx, sy+7);
-  ctx.restore();
-}
-function drawTree(t, sx, sy) {
-  if (!t.alive) {
-    ctx.fillStyle = 'rgba(15,35,60,.15)'; ctx.beginPath(); ctx.ellipse(sx, sy+4, 12, 6, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#5c3317'; ctx.fillRect(sx-5, sy-8, 10, 12);
-    ctx.fillStyle = '#8b5a2b'; ctx.beginPath(); ctx.ellipse(sx, sy-8, 5, 2.5, 0, 0, Math.PI*2); ctx.fill(); return;
-  }
-  ctx.fillStyle = 'rgba(15,35,60,.2)'; ctx.beginPath(); ctx.ellipse(sx, sy + t.size*.42, t.size*1.2, t.size*.5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#4a2c11'; ctx.fillRect(sx - t.size*.15, sy - t.size*.2, t.size*.3, t.size*.6);
-  for (let i=0; i<3; i++) {
-    const pct = i / 3, w = t.size * (1.4 - pct*.6), h = t.size * .7, ly = sy - t.size*.3 - i * t.size*.4;
-    const g = ctx.createLinearGradient(sx-w, ly, sx+w, ly+h);
-    g.addColorStop(0, '#70a4b7'); g.addColorStop(.45, '#54879b'); g.addColorStop(1, '#335f71');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx, ly-h); ctx.lineTo(sx+w, ly+h); ctx.lineTo(sx-w, ly+h); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(sx, ly-h); ctx.lineTo(sx+w*.4, ly+h*.2); ctx.lineTo(sx-w*.4, ly+h*.2); ctx.closePath(); ctx.fill();
-  }
-  if (t.hp < t.maxHP) {
-    const bw = t.size * 1.65;
-    ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(sx-bw/2, sy-t.size*1.8, bw, 4);
-    ctx.fillStyle = '#d97706'; ctx.fillRect(sx-bw/2, sy-t.size*1.8, bw * (t.hp/t.maxHP), 4);
-  }
-}
-function drawStructure(s, sx, sy) {
-  if (s.type === 'wall') {
-    ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(sx-GRID/2+2, sy-GRID/2+6, GRID-2, GRID);
-    const g = ctx.createLinearGradient(sx-GRID/2, sy-GRID/2, sx+GRID/2, sy+GRID/2); g.addColorStop(0, '#8b5a2b'); g.addColorStop(1, '#5c3317');
-    ctx.fillStyle = g; ctx.fillRect(sx-GRID/2+3, sy-GRID/2-12, GRID-6, GRID+12);
-    ctx.strokeStyle = '#3e220f'; ctx.lineWidth = 1.5; ctx.strokeRect(sx-GRID/2+3, sy-GRID/2-12, GRID-6, GRID+12);
-    ctx.fillStyle = '#f8fafc'; ctx.fillRect(sx-GRID/2+3, sy-GRID/2-16, GRID-6, 5);
-  } else if (s.type === 'ice_tower') {
-    ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(sx, sy+12, 24, 10, 0, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sx-14, sy+12); ctx.lineTo(sx-7, sy-22); ctx.moveTo(sx+14, sy+12); ctx.lineTo(sx+7, sy-22); ctx.stroke();
-    ctx.fillStyle = '#0284c7'; ctx.fillRect(sx-18, sy-28, 36, 12);
-    ctx.fillStyle = '#e0f2fe'; ctx.beginPath(); ctx.arc(sx, sy-32, 7, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = 'rgba(103,232,249,.25)'; ctx.beginPath(); ctx.arc(sx, sy-32, 15 + Math.sin(performance.now()/180)*2, 0, Math.PI*2); ctx.fill();
-  } else {
-    ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(sx, sy+12, 24, 10, 0, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = '#3e220f'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(sx-14, sy+12); ctx.lineTo(sx-7, sy-22); ctx.moveTo(sx+14, sy+12); ctx.lineTo(sx+7, sy-22); ctx.stroke();
-    const g = ctx.createLinearGradient(sx-18, sy-28, sx+18, sy-16); g.addColorStop(0, '#b7791f'); g.addColorStop(1, '#78350f');
-    ctx.fillStyle = g; ctx.fillRect(sx-18, sy-28, 36, 12);
-    ctx.fillStyle = '#eff6ff'; ctx.beginPath(); ctx.moveTo(sx, sy-50); ctx.lineTo(sx+24, sy-34); ctx.lineTo(sx-24, sy-34); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#ef4444'; ctx.fillRect(sx+9, sy-50, 16, 9);
-  }
-  if (s.hp < s.maxHP) {
-    const bw = GRID - 6; ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(sx-bw/2, sy+16, bw, 4);
-    ctx.fillStyle = s.type.includes('tower') ? '#60a5fa' : '#22c55e'; ctx.fillRect(sx-bw/2, sy+16, bw * (s.hp/s.maxHP), 4);
-  }
-}
-function getCampDecorations(cx, cy) {
-  return [
-    { y:-26, draw:() => {
-      const wx = -86 + cx, wy = -26 + cy, woodRows = Math.min(5, Math.ceil(state.wood / 18));
-      ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(wx, wy+18, 48, 16, 0, 0, Math.PI*2); ctx.fill();
-      for (let r=0; r<woodRows; r++) {
-        const logs = Math.min(6, 2 + Math.floor(state.wood / 20));
-        for (let i=0; i<logs; i++) { const lx = wx - 28 + i*11 + (r%2)*4, ly = wy + 16 - r*8; ctx.fillStyle = '#8b5a2b'; ctx.fillRect(lx, ly, 24, 7); ctx.fillStyle = '#f1c27d'; ctx.beginPath(); ctx.arc(lx+24, ly+3.5, 3.6, 0, Math.PI*2); ctx.fill(); }
-      }
-      ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center'; ctx.fillText('WOOD', wx, wy+42);
-    }},
-    { y:-28, draw:() => {
-      const mx = 92 + cx, my = -28 + cy; ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(mx, my+22, 44, 14, 0, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#78350f'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(mx-34, my+22); ctx.lineTo(mx-30, my-16); ctx.moveTo(mx+34, my+22); ctx.lineTo(mx+30, my-16); ctx.stroke();
-      const meatCount = Math.min(12, Math.floor(state.meat / 4));
-      for (let i=0; i<meatCount; i++) { const px = mx - 26 + (i%6)*10, py = my - 8 + Math.floor(i/6)*12; ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.ellipse(px, py, 6, 8, .6, 0, Math.PI*2); ctx.fill(); }
-      ctx.fillStyle = '#cbd5e1'; ctx.font = '900 11px system-ui'; ctx.textAlign = 'center'; ctx.fillText('MEAT', mx, my+46);
-    }},
-    { y:0, draw:() => {
-      const fx = cx, fy = cy - 16;
-      ctx.fillStyle = 'rgba(15,35,60,.28)'; ctx.beginPath(); ctx.ellipse(cx, cy+10, 42, 16, 0, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#334155'; ctx.fillRect(cx-18, cy-34, 36, 38);
-      const glow = ctx.createRadialGradient(fx, fy, 2, fx, fy, 18 + Math.sin(performance.now()/100)*3);
-      glow.addColorStop(0, '#fff7ed'); glow.addColorStop(1, 'rgba(239,68,68,0)'); ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(fx, fy, 23, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(fx-14, fy+17); ctx.lineTo(fx, fy-9); ctx.lineTo(fx+14, fy+17); ctx.stroke();
-      ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(fx, fy+5, 7, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = 'rgba(226,232,240,.25)'; ctx.beginPath(); ctx.arc(fx+8, fy-24 - Math.sin(performance.now()/300)*3, 5, 0, Math.PI*2); ctx.fill();
-    }},
-    { y:58, draw:() => {
-      const gx = -76 + cx, gy = 58 + cy; if (state.money <= 0) return;
-      ctx.save(); ctx.translate(gx, gy); ctx.rotate(-.08); ctx.fillStyle = 'rgba(15,23,42,.82)'; ctx.fillRect(-28, -18, 56, 36);
-      const cash = Math.min(5, Math.floor(state.money / 80)); for (let i=0; i<cash; i++) { ctx.fillStyle = '#22c55e'; ctx.fillRect(-18 + i*7, -8 - i*2, 28, 12); }
-      ctx.restore();
-    }}
-  ];
-}
-function drawPlayer(sx, sy) {
-  const bob = Math.sin(player.walkCycle) * 3;
-  ctx.fillStyle = 'rgba(15,35,60,.25)'; ctx.beginPath(); ctx.ellipse(sx, sy+14, 16, 6, 0, 0, Math.PI*2); ctx.fill();
-  const range = statValue('range');
-  for (let i=0; i<5; i++) {
-    const a = player.axeAngle + (i/5)*Math.PI*2, ax = sx + Math.cos(a) * range * .72, ay = sy + Math.sin(a) * range * .72 + bob*.3;
-    ctx.save(); ctx.translate(ax, ay); ctx.rotate(a + Math.PI/2); ctx.fillStyle = '#78350f'; ctx.fillRect(-2, -14, 4, 26); ctx.fillStyle = '#64748b'; ctx.fillRect(-2, -14, 8, 8); ctx.restore();
-  }
-  ctx.strokeStyle = 'rgba(255,255,255,.1)'; ctx.lineWidth = 1.5; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.arc(sx, sy+6, range, 0, Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
-  ctx.save(); ctx.translate(sx, sy + bob);
-  ctx.fillStyle = player.hitFlash > 0 ? '#ef4444' : '#2563eb'; ctx.beginPath(); ctx.arc(0, 4, 13, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#f8fafc'; ctx.beginPath(); ctx.arc(0, -5, 10, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -4, 4.5, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-}
-function drawSurvivor(s, cx, cy) {
-  const sx = s.x + cx, sy = s.y + cy, bob = Math.sin(s.walkCycle) * 2.5;
-  ctx.fillStyle = 'rgba(15,35,60,.18)'; ctx.beginPath(); ctx.ellipse(sx, sy+10, 12, 4.5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.save(); ctx.translate(sx, sy + bob); ctx.fillStyle = '#d97706'; ctx.beginPath(); ctx.arc(0, 2, 9, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#fed7aa'; ctx.beginPath(); ctx.arc(0, -5, 7, 0, Math.PI*2); ctx.fill();
-  if (s.woodCarried > 0) { ctx.fillStyle = '#8b5a2b'; ctx.fillRect(-5, -15, 10, 12); ctx.fillStyle = '#f1c27d'; ctx.beginPath(); ctx.arc(0, -15, 4, 0, Math.PI*2); ctx.fill(); }
-  ctx.restore();
-}
-function drawBeast(b, sx, sy) {
-  const legBob = Math.sin(b.legCycle) * 3;
-  ctx.fillStyle = 'rgba(15,35,60,.22)'; ctx.beginPath(); ctx.ellipse(sx, sy + b.size*.4, b.size*1.1, b.size*.5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.save(); ctx.translate(sx, sy);
-  let body = '#e2e8f0';
-  if (b.kind === 'brute') body = '#9a3412';
-  if (b.isBoss) body = '#cbd5e1';
-  if (b.slowTimer > 0) body = '#a5f3fc';
-  if (b.hitFlash > 0) body = '#ef4444';
-  ctx.fillStyle = body;
-  ctx.fillRect(-b.size*.6, b.size*.2 + legBob, b.size*.25, b.size*.35); ctx.fillRect(b.size*.4, b.size*.2 - legBob, b.size*.25, b.size*.35);
-  ctx.beginPath(); ctx.ellipse(0, 0, b.size, b.size*.68, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = b.kind === 'brute' ? '#451a03' : '#1e293b';
-  ctx.beginPath(); ctx.arc(b.size*.35, -b.size*.16, b.kind === 'brute' ? 3 : 2, 0, Math.PI*2); ctx.fill();
-  ctx.restore();
-  const bw = b.size * 1.8; ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(sx-bw/2, sy-b.size-14, bw, 5);
-  ctx.fillStyle = b.kind === 'brute' ? '#ef4444' : '#22c55e'; ctx.fillRect(sx-bw/2, sy-b.size-14, bw * Math.max(0, b.hp/b.maxHP), 5);
-}
-function render() {
-  const z = ZONES[state.currentZone], bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, z.bg[0]); bg.addColorStop(1, z.bg[2]); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-  const cx = W/2 - player.x, cy = H/2 - player.y;
-  for (const s of snowflakes) {
-    const sx = ((s.x + cx*.4) % 2000 + 2000) % 2000 - 1000 + W/2;
-    const sy = ((s.y + cy*.4 + performance.now()*.001*s.speed) % 2000 + 2000) % 2000 - 1000 + H/2;
-    ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(sx, sy, s.size, 0, Math.PI*2); ctx.fill();
-  }
-  if (buildMode) drawGrid(cx, cy);
-  const renderables = [];
-  for (const d of getCampDecorations(cx, cy)) renderables.push(d);
-  for (const t of trees) if (inView(t.x, t.y)) renderables.push({ y:t.y, draw:() => drawTree(t, t.x+cx, t.y+cy) });
-  for (const s of state.structures) if (inView(s.gx*GRID, s.gy*GRID)) renderables.push({ y:s.gy*GRID, draw:() => drawStructure(s, s.gx*GRID+cx, s.gy*GRID+cy) });
-  for (const d of drops) if (inView(d.x, d.y)) renderables.push({ y:d.y, draw:() => { const sx = d.x + cx, sy = d.y + cy; ctx.fillStyle = d.type === 'money' ? '#22c55e' : '#ef4444'; ctx.beginPath(); ctx.arc(sx, sy, 6, 0, Math.PI*2); ctx.fill(); }});
-  for (const b of beasts) if (inView(b.x, b.y)) renderables.push({ y:b.y, draw:() => drawBeast(b, b.x+cx, b.y+cy) });
-  for (const s of survivors) renderables.push({ y:s.y, draw:() => drawSurvivor(s, cx, cy) });
-  renderables.push({ y:player.y, draw:() => drawPlayer(W/2, H/2) });
-  renderables.sort((a,b) => a.y - b.y); for (const r of renderables) r.draw();
-  drawBuildPreview(cx, cy);
-  for (const p of projectiles) { const sx = p.x + cx, sy = p.y + cy; ctx.fillStyle = p.type === 'ice_tower' ? '#38bdf8' : '#fbbf24'; ctx.beginPath(); ctx.arc(sx, sy, p.type === 'ice_tower' ? 5 : 4, 0, Math.PI*2); ctx.fill(); }
-  for (const p of particles) { ctx.globalAlpha = p.life / p.maxLife; ctx.fillStyle = p.color; ctx.fillRect(p.x+cx, p.y+cy, p.size, p.size); } ctx.globalAlpha = 1;
-  for (const t of floatingTexts) { ctx.fillStyle = t.color; ctx.font = '900 15px system-ui'; ctx.fillText(t.text, t.x+cx, t.y+cy); }
-  if (waveCleared) { ctx.fillStyle = 'rgba(11,22,44,.75)'; ctx.fillRect(0, H/2-40, W, 80); ctx.fillStyle = '#22c55e'; ctx.font = '900 24px system-ui'; ctx.textAlign = 'center'; ctx.fillText('✓ BLIZZARD OVERLEEFD', W/2, H/2+8); ctx.textAlign = 'left'; }
-}
-
-let gameOver = false;
-function triggerGameOver() { gameOver = true; playSound('gameover'); document.getElementById('game-over').classList.add('show'); }
-function respawn() {
-  state.hp = statValue('maxHP'); state.wave = Math.max(1, state.wave - 1);
-  beasts.length = 0; drops.length = 0; projectiles.length = 0; player.x = 0; player.y = 0;
-  waveActive = false; waveCleared = false; interWaveTimer = 4; gameOver = false;
-  document.getElementById('game-over').classList.remove('show'); syncSurvivors(true); saveGame(); updateHUD();
-}
-document.getElementById('respawn-btn').addEventListener('click', respawn);
-
-function renderUpgrades() {
-  const list = document.getElementById('upgrade-list-container'); list.innerHTML = '';
-  for (const u of UPGRADES) {
-    const lvl = state.upgrades[u.key] || 0, costs = upgradeCosts(u.key), maxed = isMaxed(u.key), afford = canAffordUpgrade(u.key), val = statValue(u.key);
-    const div = document.createElement('div'); div.className = 'upgrade' + (afford ? ' affordable' : '') + (maxed ? ' maxed' : '');
-    div.innerHTML = `<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${u.key === 'survivors' ? val.toFixed(0) : val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed ? 'MAX' : costLabel(costs)}</div>`;
-    if (afford) div.addEventListener('click', () => {
-      const pay = upgradeCosts(u.key); state.money -= pay.money; state.meat -= pay.meat; const oldVal = statValue(u.key); state.upgrades[u.key]++;
-      if (u.key === 'maxHP') state.hp += statValue('maxHP') - oldVal;
-      if (u.key === 'wallHP') {
-        for (const s of state.structures) { const mult = s.type === 'tower' ? 1.35 : (s.type === 'ice_tower' ? 1.2 : 1); s.maxHP = statValue('wallHP') * mult; s.hp = s.maxHP; }
-      }
-      if (u.key === 'survivors') syncSurvivors(true);
-      playSound('upgrade'); saveGame(); renderUpgrades(); updateHUD();
-    });
-    list.appendChild(div);
-  }
-}
-document.getElementById('repair-btn-action').addEventListener('click', () => {
-  const cost = calculateRepairCost();
-  if (state.money >= cost && cost > 0) {
-    state.money -= cost; for (const s of state.structures) s.hp = s.maxHP;
-    playSound('upgrade'); addText(player.x, player.y - 30, 'Kamp gerepareerd!', '#60a5fa', -25, 1); saveGame(); renderUpgrades(); updateHUD();
-  }
-});
-function renderZones() {
-  const section = document.getElementById('tab-zones'); section.innerHTML = '';
-  for (let i=0; i<ZONES.length; i++) {
-    const z = ZONES[i], unlocked = state.zonesUnlocked[i], isCurrent = state.currentZone === i;
-    const btn = document.createElement('button'); btn.className = 'zone-btn';
-    if (isCurrent) { btn.textContent = `📍 Kamp in ${z.name}`; btn.disabled = true; }
-    else if (unlocked) {
-      btn.textContent = `Reis naar ${z.name}`;
-      btn.addEventListener('click', () => { state.currentZone = i; beasts.length = 0; drops.length = 0; projectiles.length = 0; waveActive = false; waveCleared = false; interWaveTimer = 4; saveGame(); closePanel(); renderZones(); updateHUD(); });
-    } else {
-      btn.textContent = `🔒 Ontgrendel ${z.name} — $${z.cost}`; btn.disabled = state.money < z.cost;
-      if (state.money >= z.cost) btn.addEventListener('click', () => { state.money -= z.cost; state.zonesUnlocked[i] = true; playSound('upgrade'); saveGame(); renderUpgrades(); renderZones(); updateHUD(); });
-    }
-    section.appendChild(btn);
-  }
-}
-document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active');
-  const tab = t.dataset.tab;
-  document.getElementById('tab-upgrades').style.display = tab === 'upgrades' ? 'block' : 'none';
-  document.getElementById('tab-zones').style.display = tab === 'zones' ? 'block' : 'none';
-}));
-const panel = document.getElementById('panel');
-document.getElementById('upgrade-btn').addEventListener('click', () => { initAudio(); renderUpgrades(); renderZones(); panel.classList.add('open'); });
-document.getElementById('close-panel').addEventListener('click', closePanel);
-panel.addEventListener('click', e => { if (e.target === panel) closePanel(); });
-function closePanel() { panel.classList.remove('open'); }
-document.getElementById('reset-btn').addEventListener('click', () => {
-  if (confirm('Alle progressie resetten?')) { try { localStorage.removeItem(SAVE_KEY); for (const key of LEGACY_KEYS) localStorage.removeItem(key); } catch(e) {} location.reload(); }
-});
-
-let lastTime = performance.now();
-function loop(now) {
-  const dt = Math.min(.05, (now - lastTime) / 1000); lastTime = now;
-  if (!gameOver && !panel.classList.contains('open')) { updateWaves(dt); update(dt); }
-  else updateHUD();
-  render(); requestAnimationFrame(loop);
-}
-syncSurvivors(true); updateHUD(); requestAnimationFrame(loop);
+function structureAtGrid(gx,gy){ return state.structures.find(s=>s.gx===gx&&s.gy===gy); }
+function structureAtWorld(x,y){ return structureAtGrid(Math.round(x/GRID),Math.round(y/GRID)); }
+function addText(x,y,text,color='#fff',vy=-30,life=1){ floatingTexts.push({x,y,text,color,vy,life}); }
+function addParticle(x,y,color='#fff',type='dust'){ particles.push({x,y,vx:(Math.random()-.5)*90,vy:-25-Math.random()*65,life:.45,maxLife:.45,color,size:2+Math.random()*4,type}); }
+function inView(x,y,margin=CULL_MARGIN){ return x>player.x-W/2-margin && x<player.x+W/2+margin && y>player.y-H/2-margin && y<player.y+H/2+margin; }
+function drawSpriteFit(img,cx,baseY,maxW,maxH,anchor='bottom'){ if(!img||!img.loaded) return false; const ratio=(img.naturalWidth||img.width)/(img.naturalHeight||img.height||1); let w=maxW,h=maxH; if(w/h>ratio) w=h*ratio; else h=w/ratio; const x=cx-w/2, y=anchor==='center'?baseY-h/2:baseY-h; ctx.drawImage(img,x,y,w,h); return true; }
+function makeSurvivor(index){ const total=Math.max(1,statValue('survivors')), a=(index/total)*Math.PI*2; return {x:Math.cos(a)*34,y:28+Math.sin(a)*18,targetTree:null,mode:'searching',woodCarried:0,walkCycle:Math.random()*100,thinkTimer:0}; }
+function syncSurvivors(reset=false){ const wanted=statValue('survivors'); if(reset) survivors.length=0; while(survivors.length<wanted) survivors.push(makeSurvivor(survivors.length)); while(survivors.length>wanted) survivors.pop(); }
+function treeClaimedByAnother(tree,survivor){ return survivors.some(s=>s!==survivor&&s.targetTree===tree&&(s.mode==='walking'||s.mode==='chopping')); }
+function findSurvivorTree(s){ let best=null,score=Infinity; for(const t of trees){ if(!t.alive||treeClaimedByAnother(t,s)) continue; const d=Math.hypot(t.x-s.x,t.y-s.y); if(d<score){ score=d; best=t; }} return best; }
+function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
+function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=13*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
+let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5;
+function pickBeastKind(){ if(state.wave>=8 && Math.random()<Math.min(.18+state.wave*.006,.34)) return 'brute'; return 'bear'; }
+function spawnBeast(kind='bear'){ const z=ZONES[state.currentZone], waveMult=1+(state.wave-1)*.15; let hpMult=1,dmgMult=1,speedMult=1,size=24,wallDmgMult=1,moneyMult=1,meatMult=1; if(kind==='brute'){hpMult=2.55;dmgMult=1.35;speedMult=.62;size=35;wallDmgMult=2.5;moneyMult=1.7;meatMult=2.1;} if(kind==='boss'){hpMult=8;dmgMult=2;speedMult=.75;size=44;wallDmgMult=1.6;moneyMult=5;meatMult=5;} const a=Math.random()*Math.PI*2, dist=Math.max(W,H)*.72+80; beasts.push({kind,x:player.x+Math.cos(a)*dist,y:player.y+Math.sin(a)*dist,hp:z.beastHP*waveMult*hpMult,maxHP:z.beastHP*waveMult*hpMult,speed:z.beastSpeed*speedMult,baseSpeed:z.beastSpeed*speedMult,slowTimer:0,dmg:z.beastDmg*waveMult*dmgMult,wallDmgMult,size,moneyMult,meatMult,attackCD:0,isBoss:kind==='boss',hitFlash:0,target:null,targetCD:0,legCycle:0}); }
+function startWave(){ const boss=state.wave%5===0; waveBeastsRemaining=boss?1:(4+Math.floor(state.wave*.78)); waveSpawnTimer=0; waveActive=true; waveCleared=false; }
+function updateWaves(dt){ if(!waveActive&&!waveCleared){ interWaveTimer-=dt; if(interWaveTimer<=0) startWave(); } if(waveActive&&waveBeastsRemaining>0){ waveSpawnTimer-=dt; if(waveSpawnTimer<=0){ spawnBeast(state.wave%5===0?'boss':pickBeastKind()); waveBeastsRemaining--; waveSpawnTimer=Math.max(.42,1.32-state.wave*.03); }} if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){ waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame(); } if(waveCleared){ interWaveTimer-=dt; if(interWaveTimer<=0){waveCleared=false; interWaveTimer=0;} } }
+const keys={}; window.addEventListener('keydown',e=>{initAudio();keys[e.key.toLowerCase()]=true;}); window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+const joy={active:false,dx:0,dy:0,startX:0,startY:0}, joyEl=document.getElementById('joystick'), knobEl=document.getElementById('joystick-knob');
+function joyStart(e){ initAudio(); e.preventDefault(); joy.active=true; const r=joyEl.getBoundingClientRect(); joy.startX=r.left+r.width/2; joy.startY=r.top+r.height/2; joyMove(e); }
+function joyMove(e){ if(!joy.active) return; e.preventDefault(); const t=e.touches?e.touches[0]:e; let dx=t.clientX-joy.startX, dy=t.clientY-joy.startY; const len=Math.hypot(dx,dy), maxR=40; if(len>maxR){dx=dx/len*maxR;dy=dy/len*maxR;} joy.dx=dx/maxR; joy.dy=dy/maxR; knobEl.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`; }
+function joyEnd(){ joy.active=false; joy.dx=0; joy.dy=0; knobEl.style.transform='translate(-50%, -50%)'; }
+joyEl.addEventListener('touchstart',joyStart,{passive:false}); joyEl.addEventListener('touchmove',joyMove,{passive:false}); joyEl.addEventListener('touchend',joyEnd); joyEl.addEventListener('touchcancel',joyEnd); joyEl.addEventListener('mousedown',joyStart); window.addEventListener('mousemove',e=>{if(joy.active) joyMove(e);}); window.addEventListener('mouseup',joyEnd);
+let buildMode=false, buildType='wall', buildPointer={active:false,x:0,y:0};
+function setBuildType(type){ buildType=type; document.getElementById('build-wall-choice').classList.toggle('active',type==='wall'); document.getElementById('build-tower-choice').classList.toggle('active',type==='tower'); document.getElementById('build-ice-choice').classList.toggle('active',type==='ice_tower'); }
+function toggleBuildMode(){ initAudio(); buildMode=!buildMode; document.getElementById('build-btn').classList.toggle('active',buildMode); document.getElementById('build-hint').classList.toggle('show',buildMode); buildPointer.active=false; }
+document.getElementById('build-btn').addEventListener('click',toggleBuildMode);
+for(const [id,type] of [['build-wall-choice','wall'],['build-tower-choice','tower'],['build-ice-choice','ice_tower']]){ const el=document.getElementById(id); el.addEventListener('click',e=>{e.stopPropagation();setBuildType(type);}); el.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();setBuildType(type);},{passive:false}); }
+function canvasToWorld(clientX,clientY){ const r=canvas.getBoundingClientRect(); return {x:(clientX-r.left)-W/2+player.x,y:(clientY-r.top)-H/2+player.y}; }
+function updateBuildPointer(clientX,clientY){ const p=canvasToWorld(clientX,clientY); buildPointer={active:true,x:p.x,y:p.y}; }
+canvas.addEventListener('pointermove',e=>{if(buildMode) updateBuildPointer(e.clientX,e.clientY);}); canvas.addEventListener('pointerleave',()=>{buildPointer.active=false;});
+function buildCostAvailable(type){ if(type==='tower') return state.wood>=TOWER_WOOD_COST&&state.meat>=TOWER_MEAT_COST; if(type==='ice_tower') return state.wood>=ICE_TOWER_WOOD_COST&&state.meat>=ICE_TOWER_MEAT_COST; return state.wood>=WALL_COST; }
+function canPlaceAt(gx,gy){ if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return false; if(structureAtGrid(gx,gy)) return false; return buildCostAvailable(buildType); }
+function placeStructure(wx,wy){ const gx=Math.round(wx/GRID), gy=Math.round(wy/GRID); if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return; if(structureAtGrid(gx,gy)) return; if(buildType==='tower'){ if(state.wood<TOWER_WOOD_COST||state.meat<TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 30🪵 + 20🥩','#f87171',-25,1.2);return;} state.wood-=TOWER_WOOD_COST; state.meat-=TOWER_MEAT_COST; const hp=statValue('wallHP')*1.35; state.structures.push({type:'tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'🏹 Toren','#60a5fa',-15,.85); } else if(buildType==='ice_tower'){ if(state.wood<ICE_TOWER_WOOD_COST||state.meat<ICE_TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 40🪵 + 15🥩','#f87171',-25,1.2);return;} state.wood-=ICE_TOWER_WOOD_COST; state.meat-=ICE_TOWER_MEAT_COST; const hp=statValue('wallHP')*1.2; state.structures.push({type:'ice_tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'❄️ IJstoren','#38bdf8',-15,.85); } else { if(state.wood<WALL_COST){addText(player.x,player.y-30,'🪵 Te weinig hout!','#f87171',-25,1.2);return;} state.wood-=WALL_COST; const hp=statValue('wallHP'); state.structures.push({type:'wall',gx,gy,hp,maxHP:hp}); addText(gx*GRID,gy*GRID,'🧱 Muur','#fbbf24',-15,.85); } playSound('upgrade'); for(let i=0;i<8;i++) addParticle(gx*GRID+(Math.random()-.5)*24,gy*GRID+(Math.random()-.5)*24,'#fff','dust'); saveGame(); updateHUD(); }
+canvas.addEventListener('click',e=>{ if(!buildMode) return; const p=canvasToWorld(e.clientX,e.clientY); placeStructure(p.x,p.y); });
+canvas.addEventListener('touchend',e=>{ if(!buildMode||e.changedTouches.length===0) return; const t=e.changedTouches[0], target=document.elementFromPoint(t.clientX,t.clientY); if(target&&(target.tagName==='BUTTON'||target.closest('#build-hint'))) return; updateBuildPointer(t.clientX,t.clientY); const p=canvasToWorld(t.clientX,t.clientY); placeStructure(p.x,p.y); },{passive:false});
+function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) return null; const dx=player.x-b.x,dy=player.y-b.y,steps=Math.ceil(distToPlayer/GRID); for(let i=1;i<steps;i++){ const t=i/steps, gx=Math.round((b.x+dx*t)/GRID), gy=Math.round((b.y+dy*t)/GRID), s=structureAtGrid(gx,gy); if(s) return s; } return null; }
+function findBruteTarget(b){ let best=null,score=Infinity; for(const s of state.structures){ const sx=s.gx*GRID, sy=s.gy*GRID, d=Math.hypot(sx-b.x,sy-b.y); if(d>540) continue; const weak=s.hp/Math.max(1,s.maxHP), sc=d*.65+weak*180; if(sc<score){score=sc;best=s;} } return best; }
+function update(dt){ let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!structureAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!structureAtWorld(nx,player.y)) player.x=nx; if(!structureAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5;
+const enemyTooClose=beasts.some(b=>Math.hypot(b.x-player.x,b.y-player.y)<ENEMY_CHOP_INTERRUPT_RADIUS); player.chopping=null; if(!isMoving&&!enemyTooClose){ let nearest=null,nearestD=PLAYER_CHOP_RADIUS; for(const t of trees){ if(!t.alive) continue; const d=Math.hypot(t.x-player.x,t.y-player.y); if(d<nearestD){nearestD=d;nearest=t;} } if(nearest){ player.chopping=nearest; nearest.hp-=PLAYER_CHOP_DPS*statValue('chopSpeed')*dt; if(Math.random()<.35){addParticle(nearest.x+(Math.random()-.5)*12,nearest.y,'#a05a2c','wood');playSound('chop');} if(nearest.hp<=0){nearest.alive=false;nearest.regrowTimer=TREE_REGROW_TIME;nearest.hp=0;state.wood+=TREE_WOOD;addText(nearest.x,nearest.y-22,`+${TREE_WOOD}🪵`,'#d97706',-35,1);player.chopping=null;saveGame();}}}
+document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt);
+const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
+for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') continue; s.shootCD=Math.max(0,(s.shootCD||0)-dt); if(s.shootCD>0||beasts.length===0) continue; const tx=s.gx*GRID, ty=s.gy*GRID-24; let target=null,best=TOWER_RANGE; for(const b of beasts){ const d=Math.hypot(b.x-tx,b.y-ty); if(d<best){best=d;target=b;}} if(target){ const dmg=damage*(s.type==='ice_tower'?ICE_TOWER_DAMAGE_FACTOR:TOWER_DAMAGE_FACTOR); projectiles.push({x:tx,y:ty,target,speed:430,dmg,type:s.type,life:1.4}); playSound('shoot'); s.shootCD=TOWER_BASE_COOLDOWN/Math.sqrt(statValue('attackSpeed')); }}
+for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4; for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); projectiles.splice(i,1); }}
+for(let i=beasts.length-1;i>=0;i--){ const b=beasts[i]; if(b.slowTimer>0){b.slowTimer-=dt;b.speed=b.baseSpeed*.6;} else b.speed=b.baseSpeed; const dx=player.x-b.x,dy=player.y-b.y,distToPlayer=Math.hypot(dx,dy)||1; b.legCycle+=dt*b.speed*15; b.hitFlash=Math.max(0,b.hitFlash-dt); b.targetCD-=dt; if(b.targetCD<=0){ b.target=b.kind==='brute'?(findBruteTarget(b)||findBlockingStructure(b,distToPlayer)):findBlockingStructure(b,distToPlayer); b.targetCD=.25; } if(b.target&&b.target.hp>0){ const sx=b.target.gx*GRID, sy=b.target.gy*GRID, sdx=sx-b.x, sdy=sy-b.y, sd=Math.hypot(sdx,sdy)||1; if(sd>b.size+11){b.x+=sdx/sd*b.speed*60*dt; b.y+=sdy/sd*b.speed*60*dt;} else { b.attackCD-=dt; if(b.attackCD<=0){ b.target.hp-=b.dmg*b.wallDmgMult; b.attackCD=b.kind==='brute'?1.15:1; for(let k=0;k<3;k++) addParticle(sx,sy,b.kind==='brute'?'#ef4444':'#d97706','wood'); if(b.target.hp<=0){ const idx=state.structures.indexOf(b.target); if(idx>=0) state.structures.splice(idx,1); addText(sx,sy,b.kind==='brute'?'💥 BRUTE BREACH!':'💥 Breach!','#ef4444',-22,.9); b.target=null; saveGame(); } } } } else { b.x+=dx/distToPlayer*b.speed*60*dt; b.y+=dy/distToPlayer*b.speed*60*dt; b.attackCD-=dt; if(distToPlayer<b.size+18&&b.attackCD<=0){state.hp-=b.dmg; player.hitFlash=.25; b.attackCD=1.2; addText(player.x,player.y-25,`-${Math.floor(b.dmg)} ❤️`,'#f87171',-30,.8);} } if(b.hp<=0){ const z=ZONES[state.currentZone]; const moneyGain=Math.floor(z.moneyDrop*b.moneyMult*statValue('moneyMult')), meatGain=Math.floor(z.meatDrop*b.meatMult*statValue('meatValue')); drops.push({x:b.x,y:b.y,type:'money',value:moneyGain,life:0,vy:-3}); drops.push({x:b.x+14,y:b.y-10,type:'meat',value:meatGain,life:0,vy:-4}); for(let j=0;j<(b.isBoss?24:(b.kind==='brute'?14:9));j++) addParticle(b.x,b.y,b.kind==='brute'?'#7f1d1d':'#b91c1c','blood'); beasts.splice(i,1); }}
+for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.life+=dt; const dx=player.x-d.x,dy=player.y-d.y,dist=Math.hypot(dx,dy)||1; if(dist<180){d.x+=dx/dist*340*dt; d.y+=dy/dist*340*dt;} else {d.y+=d.vy; d.vy+=.25;} if(dist<25){ if(d.type==='money'){state.money+=d.value;addText(d.x,d.y,`+$${d.value}`,'#4ade80',-35,.8);} else {state.meat+=d.value;addText(d.x,d.y,`+${d.value}🥩`,'#f87171',-35,.8);} drops.splice(i,1); }}
+for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.type==='wood'||p.type==='blood') p.vy+=220*dt; p.life-=dt; if(p.life<=0) particles.splice(i,1); } for(let i=floatingTexts.length-1;i>=0;i--){ const t=floatingTexts[i]; t.y+=t.vy*dt; t.life-=dt; if(t.life<=0) floatingTexts.splice(i,1); } if(state.hp<=0&&!gameOver) triggerGameOver(); updateHUD(); }
+function calculateRepairCost(){ return state.structures.reduce((sum,s)=>sum+(s.hp<s.maxHP?12:0),0); }
+function updateHUD(){ const maxHP=statValue('maxHP'); document.getElementById('money').textContent=Math.floor(state.money); document.getElementById('meat').textContent=Math.floor(state.meat); document.getElementById('wood').textContent=Math.floor(state.wood); document.getElementById('hp').textContent=`${Math.max(0,Math.floor(state.hp))}/${Math.floor(maxHP)}`; document.getElementById('wave').textContent=state.wave+(state.wave%5===0?' 👑':''); document.getElementById('zone-name').textContent=ZONES[state.currentZone].name; const status=document.getElementById('wave-status'); if(waveActive) status.textContent=waveBeastsRemaining>0?`${waveBeastsRemaining} incoming`:`${beasts.length} remaining`; else if(waveCleared||interWaveTimer>0) status.textContent=`Prep ${Math.ceil(Math.max(0,interWaveTimer))}s`; else status.textContent='Ready'; document.getElementById('upgrade-btn').classList.toggle('pulse',UPGRADES.some(u=>canAffordUpgrade(u.key))); const rc=calculateRepairCost(), rBtn=document.getElementById('repair-btn-action'); if(rBtn){rBtn.textContent=`Repareer Alles ($${rc})`; rBtn.disabled=rc===0||state.money<rc;} }
+const snowflakes=[]; for(let i=0;i<90;i++) snowflakes.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,size:1.4+Math.random()*2.6,speed:35+Math.random()*45});
+function drawGrid(cx,cy){ ctx.strokeStyle='rgba(255,255,255,.045)'; ctx.lineWidth=1; const startX=Math.floor((player.x-W/2)/GRID)*GRID-GRID*2,endX=player.x+W/2+GRID*2,startY=Math.floor((player.y-H/2)/GRID)*GRID-GRID*2,endY=player.y+H/2+GRID*2; for(let x=startX;x<endX;x+=GRID){ctx.beginPath();ctx.moveTo(x+cx,0);ctx.lineTo(x+cx,H);ctx.stroke();} for(let y=startY;y<endY;y+=GRID){ctx.beginPath();ctx.moveTo(0,y+cy);ctx.lineTo(W,y+cy);ctx.stroke();} }
+function drawBuildPreview(cx,cy){ if(!buildMode||!buildPointer.active) return; const gx=Math.round(buildPointer.x/GRID),gy=Math.round(buildPointer.y/GRID),valid=canPlaceAt(gx,gy),sx=gx*GRID+cx,sy=gy*GRID+cy; ctx.save(); ctx.fillStyle=valid?'rgba(34,197,94,.22)':'rgba(239,68,68,.28)'; ctx.strokeStyle=valid?'rgba(34,197,94,.9)':'rgba(239,68,68,.95)'; ctx.lineWidth=2; ctx.fillRect(sx-GRID/2,sy-GRID/2,GRID,GRID); ctx.strokeRect(sx-GRID/2,sy-GRID/2,GRID,GRID); ctx.font='900 20px system-ui'; ctx.textAlign='center'; ctx.fillStyle=valid?'#22c55e':'#ef4444'; ctx.fillText(buildType==='wall'?'🧱':(buildType==='ice_tower'?'❄️':'🏹'),sx,sy+7); ctx.restore(); }
+function drawTree(t,sx,sy){ if(!t.alive){ ctx.fillStyle='rgba(15,35,60,.15)';ctx.beginPath();ctx.ellipse(sx,sy+4,12,6,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#5c3317';ctx.fillRect(sx-5,sy-8,10,12);ctx.fillStyle='#8b5a2b';ctx.beginPath();ctx.ellipse(sx,sy-8,5,2.5,0,0,Math.PI*2);ctx.fill();return;} if(!drawSpriteFit(images.tree,sx,sy+t.size*.8,t.size*2.3,t.size*3.3,'bottom')){ ctx.fillStyle='rgba(15,35,60,.2)';ctx.beginPath();ctx.ellipse(sx,sy+t.size*.42,t.size*1.2,t.size*.5,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4a2c11';ctx.fillRect(sx-t.size*.15,sy-t.size*.2,t.size*.3,t.size*.6); for(let i=0;i<3;i++){const pct=i/3,w=t.size*(1.4-pct*.6),h=t.size*.7,ly=sy-t.size*.3-i*t.size*.4,g=ctx.createLinearGradient(sx-w,ly,sx+w,ly+h);g.addColorStop(0,'#70a4b7');g.addColorStop(1,'#335f71');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(sx,ly-h);ctx.lineTo(sx+w,ly+h);ctx.lineTo(sx-w,ly+h);ctx.closePath();ctx.fill();}} if(t.hp<t.maxHP){ const bw=t.size*1.65; ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-bw/2,sy-t.size*1.8,bw,4);ctx.fillStyle='#d97706';ctx.fillRect(sx-bw/2,sy-t.size*1.8,bw*(t.hp/t.maxHP),4); } }
+function drawStructure(s,sx,sy){ const sprite=images[s.type]; if(sprite&&sprite.loaded&&s.type!=='wall'){ ctx.save(); drawSpriteFit(sprite,sx,sy+23,GRID*1.25,GRID*1.95,'bottom'); ctx.restore(); } else { if(s.type==='wall'){ ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(sx-GRID/2+2,sy-GRID/2+6,GRID-2,GRID); const g=ctx.createLinearGradient(sx-GRID/2,sy-GRID/2,sx+GRID/2,sy+GRID/2);g.addColorStop(0,'#8b5a2b');g.addColorStop(1,'#5c3317');ctx.fillStyle=g;ctx.fillRect(sx-GRID/2+3,sy-GRID/2-12,GRID-6,GRID+12);ctx.strokeStyle='#3e220f';ctx.lineWidth=1.5;ctx.strokeRect(sx-GRID/2+3,sy-GRID/2-12,GRID-6,GRID+12);ctx.fillStyle='#f8fafc';ctx.fillRect(sx-GRID/2+3,sy-GRID/2-16,GRID-6,5); } else if(s.type==='ice_tower'){ ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(sx,sy+12,24,10,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#0284c7';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(sx-14,sy+12);ctx.lineTo(sx-7,sy-22);ctx.moveTo(sx+14,sy+12);ctx.lineTo(sx+7,sy-22);ctx.stroke();ctx.fillStyle='#0284c7';ctx.fillRect(sx-18,sy-28,36,12);ctx.fillStyle='#e0f2fe';ctx.beginPath();ctx.arc(sx,sy-32,7,0,Math.PI*2);ctx.fill(); } else { ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(sx,sy+12,24,10,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#3e220f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(sx-14,sy+12);ctx.lineTo(sx-7,sy-22);ctx.moveTo(sx+14,sy+12);ctx.lineTo(sx+7,sy-22);ctx.stroke();const g=ctx.createLinearGradient(sx-18,sy-28,sx+18,sy-16);g.addColorStop(0,'#b7791f');g.addColorStop(1,'#78350f');ctx.fillStyle=g;ctx.fillRect(sx-18,sy-28,36,12);ctx.fillStyle='#eff6ff';ctx.beginPath();ctx.moveTo(sx,sy-50);ctx.lineTo(sx+24,sy-34);ctx.lineTo(sx-24,sy-34);ctx.closePath();ctx.fill(); }} if(s.hp<s.maxHP){ const bw=GRID-6; ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-bw/2,sy+16,bw,4);ctx.fillStyle=s.type.includes('tower')?'#60a5fa':'#22c55e';ctx.fillRect(sx-bw/2,sy+16,bw*(s.hp/s.maxHP),4); }}
+function getCampDecorations(cx,cy){ return [{y:-26,draw:()=>{ const wx=-86+cx,wy=-26+cy,woodRows=Math.min(5,Math.ceil(state.wood/18)); ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(wx,wy+18,48,16,0,0,Math.PI*2);ctx.fill(); for(let r=0;r<woodRows;r++){ const logs=Math.min(6,2+Math.floor(state.wood/20)); for(let i=0;i<logs;i++){const lx=wx-28+i*11+(r%2)*4,ly=wy+16-r*8;ctx.fillStyle='#8b5a2b';ctx.fillRect(lx,ly,24,7);}} ctx.fillStyle='#cbd5e1';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText('WOOD',wx,wy+42);}}, {y:-28,draw:()=>{ const mx=92+cx,my=-28+cy;ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(mx,my+22,44,14,0,0,Math.PI*2);ctx.fill(); const meatCount=Math.min(12,Math.floor(state.meat/4)); for(let i=0;i<meatCount;i++){const px=mx-26+(i%6)*10,py=my-8+Math.floor(i/6)*12;if(images.meat.loaded) drawSpriteFit(images.meat,px,py+8,14,14,'bottom'); else {ctx.fillStyle='#ef4444';ctx.beginPath();ctx.ellipse(px,py,6,8,.6,0,Math.PI*2);ctx.fill();}} ctx.fillStyle='#cbd5e1';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText('MEAT',mx,my+46);}}, {y:0,draw:()=>{ const fx=cx,fy=cy-16;ctx.fillStyle='rgba(15,35,60,.28)';ctx.beginPath();ctx.ellipse(cx,cy+10,42,16,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#334155';ctx.fillRect(cx-18,cy-34,36,38);const glow=ctx.createRadialGradient(fx,fy,2,fx,fy,18+Math.sin(performance.now()/100)*3);glow.addColorStop(0,'#fff7ed');glow.addColorStop(1,'rgba(239,68,68,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(fx,fy,23,0,Math.PI*2);ctx.fill();}}, {y:58,draw:()=>{ const gx=-76+cx,gy=58+cy; if(state.money<=0) return; ctx.save();ctx.translate(gx,gy);ctx.rotate(-.08);ctx.fillStyle='rgba(15,23,42,.82)';ctx.fillRect(-28,-18,56,36);const cash=Math.min(5,Math.floor(state.money/80)); for(let i=0;i<cash;i++){ctx.fillStyle='#22c55e';ctx.fillRect(-18+i*7,-8-i*2,28,12);} ctx.restore();}}]; }
+function drawPlayer(sx,sy){ const bob=Math.sin(player.walkCycle)*3; ctx.fillStyle='rgba(15,35,60,.25)';ctx.beginPath();ctx.ellipse(sx,sy+14,16,6,0,0,Math.PI*2);ctx.fill(); const range=statValue('range'); ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1.5;ctx.setLineDash([6,6]);ctx.beginPath();ctx.arc(sx,sy+6,range,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]); if(images.player.loaded){ctx.save(); if(player.hitFlash>0) ctx.filter='brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5)'; drawSpriteFit(images.player,sx,sy+23+bob,44,58,'bottom'); ctx.restore();} else {ctx.save();ctx.translate(sx,sy+bob);ctx.fillStyle=player.hitFlash>0?'#ef4444':'#2563eb';ctx.beginPath();ctx.arc(0,4,13,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fed7aa';ctx.beginPath();ctx.arc(0,-4,4.5,0,Math.PI*2);ctx.fill();ctx.restore();}}
+function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){drawSpriteFit(images.survivor,sx,sy+18+bob,34,46,'bottom'); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob);ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
+function drawBeast(b,sx,sy){ const legBob=Math.sin(b.legCycle)*3; ctx.fillStyle='rgba(15,35,60,.22)';ctx.beginPath();ctx.ellipse(sx,sy+b.size*.45,b.size*1.1,b.size*.5,0,0,Math.PI*2);ctx.fill(); const sprite=b.kind==='brute'?images.brute:images.bear; if(sprite&&sprite.loaded){ctx.save(); if(b.hitFlash>0) ctx.filter='brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5)'; else if(b.slowTimer>0) ctx.filter='hue-rotate(120deg) saturate(1.5) brightness(1.1)'; const faceLeft=player.x<b.x; if(faceLeft){ctx.translate(sx,0);ctx.scale(-1,1);drawSpriteFit(sprite,0,sy+b.size*.85+legBob*.3,b.size*2.35,b.size*2.05,'bottom');} else drawSpriteFit(sprite,sx,sy+b.size*.85+legBob*.3,b.size*2.35,b.size*2.05,'bottom'); ctx.restore();} else {ctx.save();ctx.translate(sx,sy); let body=b.kind==='brute'?'#9a3412':'#e2e8f0'; if(b.slowTimer>0) body='#a5f3fc'; if(b.hitFlash>0) body='#ef4444'; ctx.fillStyle=body;ctx.beginPath();ctx.ellipse(0,0,b.size,b.size*.68,0,0,Math.PI*2);ctx.fill();ctx.restore();} const bw=b.size*1.8; ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-bw/2,sy-b.size-14,bw,5);ctx.fillStyle=b.kind==='brute'?'#ef4444':'#22c55e';ctx.fillRect(sx-bw/2,sy-b.size-14,bw*Math.max(0,b.hp/b.maxHP),5); }
+function render(){ const z=ZONES[state.currentZone],bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,z.bg[0]);bg.addColorStop(1,z.bg[2]);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H); const cx=W/2-player.x,cy=H/2-player.y; for(const s of snowflakes){const sx=((s.x+cx*.4)%2000+2000)%2000-1000+W/2,sy=((s.y+cy*.4+performance.now()*.001*s.speed)%2000+2000)%2000-1000+H/2;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(sx,sy,s.size,0,Math.PI*2);ctx.fill();} if(buildMode) drawGrid(cx,cy); const renderables=[]; for(const d of getCampDecorations(cx,cy)) renderables.push(d); for(const t of trees) if(inView(t.x,t.y)) renderables.push({y:t.y,draw:()=>drawTree(t,t.x+cx,t.y+cy)}); for(const s of state.structures) if(inView(s.gx*GRID,s.gy*GRID)) renderables.push({y:s.gy*GRID,draw:()=>drawStructure(s,s.gx*GRID+cx,s.gy*GRID+cy)}); for(const d of drops) if(inView(d.x,d.y)) renderables.push({y:d.y,draw:()=>{const sx=d.x+cx,sy=d.y+cy;if(d.type==='meat'&&images.meat.loaded) drawSpriteFit(images.meat,sx,sy+8,16,16,'bottom'); else {ctx.fillStyle=d.type==='money'?'#22c55e':'#ef4444';ctx.beginPath();ctx.arc(sx,sy,6,0,Math.PI*2);ctx.fill();}}}); for(const b of beasts) if(inView(b.x,b.y)) renderables.push({y:b.y,draw:()=>drawBeast(b,b.x+cx,b.y+cy)}); for(const s of survivors) renderables.push({y:s.y,draw:()=>drawSurvivor(s,cx,cy)}); renderables.push({y:player.y,draw:()=>drawPlayer(W/2,H/2)}); renderables.sort((a,b)=>a.y-b.y); for(const r of renderables) r.draw(); drawBuildPreview(cx,cy); for(const p of projectiles){const sx=p.x+cx,sy=p.y+cy;ctx.fillStyle=p.type==='ice_tower'?'#38bdf8':'#fbbf24';ctx.beginPath();ctx.arc(sx,sy,p.type==='ice_tower'?5:4,0,Math.PI*2);ctx.fill();} for(const p of particles){ctx.globalAlpha=p.life/p.maxLife;ctx.fillStyle=p.color;ctx.fillRect(p.x+cx,p.y+cy,p.size,p.size);} ctx.globalAlpha=1; for(const t of floatingTexts){ctx.fillStyle=t.color;ctx.font='900 15px system-ui';ctx.fillText(t.text,t.x+cx,t.y+cy);} if(waveCleared){ctx.fillStyle='rgba(11,22,44,.75)';ctx.fillRect(0,H/2-40,W,80);ctx.fillStyle='#22c55e';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('✓ BLIZZARD OVERLEEFD',W/2,H/2+8);ctx.textAlign='left';}}
+let gameOver=false; function triggerGameOver(){gameOver=true;playSound('gameover');document.getElementById('game-over').classList.add('show');}
+function respawn(){state.hp=statValue('maxHP');state.wave=Math.max(1,state.wave-1);beasts.length=0;drops.length=0;projectiles.length=0;player.x=0;player.y=0;waveActive=false;waveCleared=false;interWaveTimer=4;gameOver=false;document.getElementById('game-over').classList.remove('show');syncSurvivors(true);saveGame();updateHUD();}
+document.getElementById('respawn-btn').addEventListener('click',respawn);
+function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${u.key==='survivors'?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1);s.maxHP=statValue('wallHP')*mult;s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
+document.getElementById('repair-btn-action').addEventListener('click',()=>{const cost=calculateRepairCost(); if(state.money>=cost&&cost>0){state.money-=cost;for(const s of state.structures) s.hp=s.maxHP;playSound('upgrade');addText(player.x,player.y-30,'Kamp gerepareerd!','#60a5fa',-25,1);saveGame();renderUpgrades();updateHUD();}});
+function renderZones(){ const section=document.getElementById('tab-zones'); section.innerHTML=''; for(let i=0;i<ZONES.length;i++){ const z=ZONES[i],unlocked=state.zonesUnlocked[i],isCurrent=state.currentZone===i,btn=document.createElement('button'); btn.className='zone-btn'; if(isCurrent){btn.textContent=`📍 Kamp in ${z.name}`;btn.disabled=true;} else if(unlocked){btn.textContent=`Reis naar ${z.name}`;btn.addEventListener('click',()=>{state.currentZone=i;beasts.length=0;drops.length=0;projectiles.length=0;waveActive=false;waveCleared=false;interWaveTimer=4;saveGame();closePanel();renderZones();updateHUD();});} else {btn.textContent=`🔒 Ontgrendel ${z.name} — $${z.cost}`;btn.disabled=state.money<z.cost; if(state.money>=z.cost) btn.addEventListener('click',()=>{state.money-=z.cost;state.zonesUnlocked[i]=true;playSound('upgrade');saveGame();renderUpgrades();renderZones();updateHUD();});} section.appendChild(btn);} }
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const tab=t.dataset.tab;document.getElementById('tab-upgrades').style.display=tab==='upgrades'?'block':'none';document.getElementById('tab-zones').style.display=tab==='zones'?'block':'none';}));
+const panel=document.getElementById('panel'); document.getElementById('upgrade-btn').addEventListener('click',()=>{initAudio();renderUpgrades();renderZones();panel.classList.add('open');}); document.getElementById('close-panel').addEventListener('click',closePanel); panel.addEventListener('click',e=>{if(e.target===panel) closePanel();}); function closePanel(){panel.classList.remove('open');}
+document.getElementById('reset-btn').addEventListener('click',()=>{if(confirm('Alle progressie resetten?')){try{localStorage.removeItem(SAVE_KEY);for(const key of LEGACY_KEYS) localStorage.removeItem(key);}catch(e){} location.reload();}});
+let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!panel.classList.contains('open')){updateWaves(dt);update(dt);} else updateHUD(); render(); requestAnimationFrame(loop);} syncSurvivors(true); updateHUD(); requestAnimationFrame(loop);
 </script>
 </body>
 </html>
