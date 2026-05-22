@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v7.0 - Bestiary</title>
+<title>Frostfall v7.1 - Rebalanced Bestiary</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -201,9 +201,9 @@ setTimeout(()=>{
   }
 },8000);
 const ZONES=[
-{id:0,name:'Siberian Camp',cost:0,beastHP:30,beastDmg:5,beastSpeed:.70,meatDrop:1,moneyDrop:8,bg:['#e4f0f6','#c4dee9','#a2cbdd']},
-{id:1,name:'Glacial Forest',cost:500,beastHP:85,beastDmg:12,beastSpeed:.90,meatDrop:2,moneyDrop:20,bg:['#cee2eb','#abc8d7','#83abc1']},
-{id:2,name:'Forgotten Ice Caves',cost:2500,beastHP:220,beastDmg:24,beastSpeed:1.10,meatDrop:4,moneyDrop:45,bg:['#a9c0cd','#81a1b4','#598099']}
+{id:0,name:'Siberian Camp',cost:0,beastHP:30,beastDmg:5,beastSpeed:.70,meatDrop:1,moneyDrop:9,bg:['#e4f0f6','#c4dee9','#a2cbdd']},
+{id:1,name:'Glacial Forest',cost:500,beastHP:60,beastDmg:8,beastSpeed:.84,meatDrop:2,moneyDrop:24,bg:['#cee2eb','#abc8d7','#83abc1']},
+{id:2,name:'Forgotten Ice Caves',cost:2500,beastHP:135,beastDmg:16,beastSpeed:.96,meatDrop:4,moneyDrop:58,bg:['#a9c0cd','#81a1b4','#598099']}
 ];
 const UPGRADES=[
 {key:'damage',icon:'⚔️',name:'Bijl Kracht',base:10,mult:1.50,costBase:25,costMult:1.60,unit:'dmg'},
@@ -219,8 +219,8 @@ const UPGRADES=[
 {key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4}
 ];
 const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
-const TOWER_RANGE=255, TOWER_BASE_COOLDOWN=1.18, TOWER_DAMAGE_FACTOR=.72, ICE_TOWER_DAMAGE_FACTOR=.44;
-const TREE_HP=100, TREE_WOOD=10, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=115, PLAYER_CHOP_DPS=34, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
+const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
+const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
 let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],_v64StartGrant:false};
 let audioCtx=null;
 function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
@@ -254,17 +254,17 @@ function syncSurvivors(reset=false){ const wanted=statValue('survivors'); if(res
 function treeClaimedByAnother(tree,survivor){ return survivors.some(s=>s!==survivor&&s.targetTree===tree&&(s.mode==='walking'||s.mode==='chopping')); }
 function findSurvivorTree(s){ let best=null,score=Infinity; for(const t of trees){ if(!t.alive||treeClaimedByAnother(t,s)) continue; const d=Math.hypot(t.x-s.x,t.y-s.y); if(d<score){ score=d; best=t; }} return best; }
 function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(Math.abs(dx)>.2) actor.face=dx<0?-1:1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
-function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=13*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
+function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=15*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
 let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5,waveIsYeti=false,waveYetiSpawned=false;
 function pickBeastKind(){
   // Build weighted spawn pool based on what's unlocked
   const pool=[];
-  // Bears: always available, weight scales DOWN as other enemies unlock
+  // Bears remain the baseline. New enemies are biome-gated so unlocking a zone does not suddenly spike old zones.
   let bearWeight=10;
-  // Brutes: unlock at wave 8 (existing behavior, kept)
-  if(state.wave>=8) pool.push({kind:'brute',weight:Math.min(3+state.wave*.08,7)});
-  // Wolves: unlock when Glacial Forest is purchased (zonesUnlocked[1])
-  if(state.zonesUnlocked[1]){ pool.push({kind:'wolf',weight:Math.min(4+state.wave*.10,9)}); bearWeight-=2; }
+  // Brutes unlock globally at wave 8, but with gentler frequency.
+  if(state.wave>=8) pool.push({kind:'brute',weight:Math.min(2+state.wave*.05,5)});
+  // Wolves appear in Glacial Forest and beyond.
+  if(state.currentZone>=1){ pool.push({kind:'wolf',weight:Math.min(3+state.wave*.06,6)}); bearWeight-=2; }
   // Bears with reduced weight as variety grows
   pool.push({kind:'bear',weight:Math.max(3,bearWeight)});
   // Roll weighted random
@@ -273,16 +273,16 @@ function pickBeastKind(){
   for(const p of pool){ roll-=p.weight; if(roll<=0) return p.kind; }
   return 'bear';
 }
-function isYetiWave(){ return state.zonesUnlocked[2] && state.wave>=10 && state.wave%10===0; }
-function spawnBeast(kind='bear'){ const z=ZONES[state.currentZone], waveMult=1+(state.wave-1)*.15;
+function isYetiWave(){ return state.currentZone>=2 && state.wave>=25 && state.wave%10===0; }
+function spawnBeast(kind='bear'){ const z=ZONES[state.currentZone], waveMult=1+(state.wave-1)*.10;
   // World-tier scaling: more zones unlocked = harder spawns even in base camp
   const unlockedCount=state.zonesUnlocked.filter(Boolean).length;
-  const tierMult=1+(unlockedCount-1)*.35;
-  let hpMult=1,dmgMult=1,speedMult=1,size=24,wallDmgMult=1,moneyMult=1,meatMult=1; if(kind==='brute'){hpMult=2.55;dmgMult=1.35;speedMult=.62;size=35;wallDmgMult=2.5;moneyMult=1.7;meatMult=2.1;} if(kind==='wolf'){hpMult=.65;dmgMult=.85;speedMult=1.35;size=20;wallDmgMult=.6;moneyMult=.9;meatMult=.7;} if(kind==='yeti'){hpMult=14;dmgMult=2.6;speedMult=.55;size=52;wallDmgMult=3.2;moneyMult=12;meatMult=10;} if(kind==='boss'){hpMult=8;dmgMult=2;speedMult=.75;size=44;wallDmgMult=1.6;moneyMult=5;meatMult=5;} const a=Math.random()*Math.PI*2, dist=Math.max(W,H)*.72+80; beasts.push({kind,x:player.x+Math.cos(a)*dist,y:player.y+Math.sin(a)*dist,hp:z.beastHP*waveMult*hpMult*tierMult,maxHP:z.beastHP*waveMult*hpMult*tierMult,speed:z.beastSpeed*speedMult,baseSpeed:z.beastSpeed*speedMult,slowTimer:0,dmg:z.beastDmg*waveMult*dmgMult*tierMult,wallDmgMult,size,moneyMult,meatMult,attackCD:0,isBoss:kind==='boss'||kind==='yeti',hitFlash:0,target:null,targetCD:0,legCycle:0,face:Math.cos(a)<0?1:-1}); }
-function spawnWolfPack(){ const count=2+Math.floor(Math.random()*2); for(let i=0;i<count;i++) spawnBeast('wolf'); }
-function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); if(yeti){ waveBeastsRemaining=4; addText(player.x,player.y-80,'❄️ YETI INCOMING ❄️','#67e8f9',-15,2.5); playSound('gameover'); } else { waveBeastsRemaining=boss?1:(4+Math.floor(state.wave*.78)); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
+  const tierMult=1;
+  let hpMult=1,dmgMult=1,speedMult=1,size=24,wallDmgMult=1,moneyMult=1,meatMult=1; if(kind==='brute'){hpMult=2.1;dmgMult=1.15;speedMult=.68;size=33;wallDmgMult=1.75;moneyMult=1.9;meatMult=2.2;} if(kind==='wolf'){hpMult=.45;dmgMult=.55;speedMult=1.25;size=19;wallDmgMult=.45;moneyMult=1.15;meatMult=.9;} if(kind==='yeti'){hpMult=9;dmgMult=1.7;speedMult=.50;size=50;wallDmgMult=2.1;moneyMult=14;meatMult=12;} if(kind==='boss'){hpMult=6;dmgMult=1.6;speedMult=.72;size=42;wallDmgMult=1.25;moneyMult=5;meatMult=5;} const a=Math.random()*Math.PI*2, dist=Math.max(W,H)*.72+80; beasts.push({kind,x:player.x+Math.cos(a)*dist,y:player.y+Math.sin(a)*dist,hp:z.beastHP*waveMult*hpMult*tierMult,maxHP:z.beastHP*waveMult*hpMult*tierMult,speed:z.beastSpeed*speedMult,baseSpeed:z.beastSpeed*speedMult,slowTimer:0,dmg:z.beastDmg*waveMult*dmgMult*tierMult,wallDmgMult,size,moneyMult,meatMult,attackCD:0,isBoss:kind==='boss'||kind==='yeti',hitFlash:0,target:null,targetCD:0,legCycle:0,face:Math.cos(a)<0?1:-1}); }
+function spawnWolfPack(){ const count=1+Math.floor(Math.random()*2); for(let i=0;i<count;i++) spawnBeast('wolf'); }
+function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); if(yeti){ waveBeastsRemaining=3; addText(player.x,player.y-80,'❄️ YETI INCOMING ❄️','#67e8f9',-15,2.5); playSound('gameover'); } else { waveBeastsRemaining=boss?1:(3+Math.floor(state.wave*.65)); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
 function updateWaves(dt){ if(waveCleared){ interWaveTimer-=dt; if(interWaveTimer<=0){waveCleared=false; interWaveTimer=0;} } else if(!waveActive){ interWaveTimer-=dt; if(interWaveTimer<=0) startWave(); } if(waveActive&&waveBeastsRemaining>0){ waveSpawnTimer-=dt; if(waveSpawnTimer<=0){ if(waveIsYeti){ if(!waveYetiSpawned){ spawnBeast('yeti'); waveYetiSpawned=true; waveBeastsRemaining--; } else { // Spawn 1-2 wolves or brutes als support, met variatie
-        const support=pickBeastKind(); if(support==='wolf') spawnWolfPack(); else spawnBeast(support); waveBeastsRemaining--; } } else { const kind=state.wave%5===0?'boss':pickBeastKind(); if(kind==='wolf'){ spawnWolfPack(); } else { spawnBeast(kind); } waveBeastsRemaining--; } waveSpawnTimer=Math.max(.42,1.32-state.wave*.03); }} if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){ waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame(); } }
+        const support=pickBeastKind(); if(support==='wolf') spawnWolfPack(); else spawnBeast(support); waveBeastsRemaining--; } } else { const kind=state.wave%5===0?'boss':pickBeastKind(); if(kind==='wolf'){ spawnWolfPack(); } else { spawnBeast(kind); } waveBeastsRemaining--; } waveSpawnTimer=Math.max(.55,1.45-state.wave*.02); }} if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){ waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame(); } }
 const keys={}; window.addEventListener('keydown',e=>{initAudio();keys[e.key.toLowerCase()]=true;}); window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
 const joy={active:false,dx:0,dy:0,startX:0,startY:0}, joyEl=document.getElementById('joystick'), knobEl=document.getElementById('joystick-knob');
 function joyStart(e){ initAudio(); e.preventDefault(); joy.active=true; const r=joyEl.getBoundingClientRect(); joy.startX=r.left+r.width/2; joy.startY=r.top+r.height/2; joyMove(e); }
@@ -314,7 +314,7 @@ for(let i=beasts.length-1;i>=0;i--){ const b=beasts[i]; if(b.slowTimer>0){b.slow
 for(let i=drops.length-1;i>=0;i--){ const d=drops[i]; d.life+=dt; const dx=player.x-d.x,dy=player.y-d.y,dist=Math.hypot(dx,dy)||1; if(dist<180){d.x+=dx/dist*340*dt; d.y+=dy/dist*340*dt;} else {d.y+=d.vy; d.vy+=.25;} if(dist<25){ if(d.type==='money'){state.money+=d.value;addText(d.x,d.y,`+$${d.value}`,'#4ade80',-35,.8);} else {state.meat+=d.value;addText(d.x,d.y,`+${d.value}🥩`,'#f87171',-35,.8);} drops.splice(i,1); }}
 for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; if(p.type==='wood'||p.type==='blood') p.vy+=220*dt; p.life-=dt; if(p.life<=0) particles.splice(i,1); } for(let i=floatingTexts.length-1;i>=0;i--){ const t=floatingTexts[i]; t.y+=t.vy*dt; t.life-=dt; if(t.life<=0) floatingTexts.splice(i,1); } if(state.hp<=0&&!gameOver) triggerGameOver(); updateHUD(); }
 function calculateRepairCost(){ return state.structures.reduce((sum,s)=>sum+(s.hp<s.maxHP?12:0),0); }
-function updateHUD(){ const maxHP=statValue('maxHP'); document.getElementById('money').textContent=Math.floor(state.money); document.getElementById('meat').textContent=Math.floor(state.meat); document.getElementById('wood').textContent=Math.floor(state.wood); document.getElementById('hp').textContent=`${Math.max(0,Math.floor(state.hp))}/${Math.floor(maxHP)}`; const yetiNext=state.zonesUnlocked[2]&&state.wave>=10&&state.wave%10===0; document.getElementById('wave').textContent=state.wave+(yetiNext?' ❄️':(state.wave%5===0?' 👑':'')); document.getElementById('zone-name').textContent=ZONES[state.currentZone].name; const status=document.getElementById('wave-status'); if(waveActive) status.textContent=waveIsYeti?(waveYetiSpawned?`Yeti + ${waveBeastsRemaining} support`:'YETI APPROACHING!'):(waveBeastsRemaining>0?`${waveBeastsRemaining} incoming`:`${beasts.length} remaining`); else if(waveCleared||interWaveTimer>0) status.textContent=`Prep ${Math.ceil(Math.max(0,interWaveTimer))}s`; else status.textContent='Ready'; document.getElementById('upgrade-btn').classList.toggle('pulse',UPGRADES.some(u=>canAffordUpgrade(u.key))); const rc=calculateRepairCost(), rBtn=document.getElementById('repair-btn-action'); if(rBtn){rBtn.textContent=`Repareer Alles ($${rc})`; rBtn.disabled=rc===0||state.money<rc;} }
+function updateHUD(){ const maxHP=statValue('maxHP'); document.getElementById('money').textContent=Math.floor(state.money); document.getElementById('meat').textContent=Math.floor(state.meat); document.getElementById('wood').textContent=Math.floor(state.wood); document.getElementById('hp').textContent=`${Math.max(0,Math.floor(state.hp))}/${Math.floor(maxHP)}`; const yetiNext=state.currentZone>=2&&state.wave>=25&&state.wave%10===0; document.getElementById('wave').textContent=state.wave+(yetiNext?' ❄️':(state.wave%5===0?' 👑':'')); document.getElementById('zone-name').textContent=ZONES[state.currentZone].name; const status=document.getElementById('wave-status'); if(waveActive) status.textContent=waveIsYeti?(waveYetiSpawned?`Yeti + ${waveBeastsRemaining} support`:'YETI APPROACHING!'):(waveBeastsRemaining>0?`${waveBeastsRemaining} incoming`:`${beasts.length} remaining`); else if(waveCleared||interWaveTimer>0) status.textContent=`Prep ${Math.ceil(Math.max(0,interWaveTimer))}s`; else status.textContent='Ready'; document.getElementById('upgrade-btn').classList.toggle('pulse',UPGRADES.some(u=>canAffordUpgrade(u.key))); const rc=calculateRepairCost(), rBtn=document.getElementById('repair-btn-action'); if(rBtn){rBtn.textContent=`Repareer Alles ($${rc})`; rBtn.disabled=rc===0||state.money<rc;} }
 const snowflakes=[]; for(let i=0;i<90;i++) snowflakes.push({x:Math.random()*2000-1000,y:Math.random()*2000-1000,size:1.4+Math.random()*2.6,speed:35+Math.random()*45});
 function drawGrid(cx,cy){ ctx.strokeStyle='rgba(255,255,255,.045)'; ctx.lineWidth=1; const startX=Math.floor((player.x-W/2)/GRID)*GRID-GRID*2,endX=player.x+W/2+GRID*2,startY=Math.floor((player.y-H/2)/GRID)*GRID-GRID*2,endY=player.y+H/2+GRID*2; for(let x=startX;x<endX;x+=GRID){ctx.beginPath();ctx.moveTo(x+cx,0);ctx.lineTo(x+cx,H);ctx.stroke();} for(let y=startY;y<endY;y+=GRID){ctx.beginPath();ctx.moveTo(0,y+cy);ctx.lineTo(W,y+cy);ctx.stroke();} }
 function drawBuildPreview(cx,cy){ if(!buildMode||!buildPointer.active) return; const gx=Math.round(buildPointer.x/GRID),gy=Math.round(buildPointer.y/GRID),valid=canPlaceAt(gx,gy),sx=gx*GRID+cx,sy=gy*GRID+cy; ctx.save(); ctx.fillStyle=valid?'rgba(34,197,94,.22)':'rgba(239,68,68,.28)'; ctx.strokeStyle=valid?'rgba(34,197,94,.9)':'rgba(239,68,68,.95)'; ctx.lineWidth=2; ctx.fillRect(sx-GRID/2,sy-GRID/2,GRID,GRID); ctx.strokeRect(sx-GRID/2,sy-GRID/2,GRID,GRID); ctx.font='900 20px system-ui'; ctx.textAlign='center'; ctx.fillStyle=valid?'#22c55e':'#ef4444'; ctx.fillText(buildType==='wall'?'🧱':(buildType==='ice_tower'?'❄️':'🏹'),sx,sy+7); ctx.restore(); }
