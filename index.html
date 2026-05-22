@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v7.8.1 - Zone Unlock Fix</title>
+<title>Frostfall v7.8.2 - Zone Unlock Hotfix</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -449,6 +449,8 @@ const FINALE_ANNOUNCE={alpha_wolf:'🐺 ALPHA WOLF NADERT',alpha_brute:'🐻 ALP
 
 function baseKindFor(kind){ return kind==='alpha_wolf'?'wolf':(kind==='alpha_brute'?'brute':(kind==='alpha_yeti'?'yeti':kind)); }
 function isAlphaKind(kind){ return typeof kind==='string' && kind.startsWith('alpha_'); }
+function getActiveZoneIndex(){ const arr=Array.isArray(state.zonesUnlocked)?state.zonesUnlocked:[true,false,false]; let hi=0; for(let i=0;i<arr.length && i<ZONES.length;i++) if(arr[i]) hi=i; return Math.max(0,Math.min(ZONES.length-1,Math.max(hi,Number(state.currentZone)||0))); }
+function getActiveZone(){ return ZONES[getActiveZoneIndex()]; }
 function isFinaleReady(){ return !state.victory && !state.finaleStarted && state.wave>=FINAL_WAVE && !!state.zonesUnlocked[2]; }
 function startFinale(){
   state.finaleStarted=true; state.finaleStage=0; state.finaleBossActive=false; state.currentZone=2;

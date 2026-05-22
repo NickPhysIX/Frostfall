@@ -1,0 +1,31 @@
+# Frostfall v7.8.2 — Zone Unlock Hotfix
+
+Fixes a critical regression in v7.8.1 that left the canvas blank and the game
+unplayable.
+
+## What broke in 7.8.1
+- 7.8.1 replaced ~9 uses of `state.currentZone` / `ZONES[state.currentZone]`
+  with calls to `getActiveZone()` and `getActiveZoneIndex()` to make zone
+  unlocks affect the active spawn pool, background, scaling and HUD.
+- The helper functions themselves were never declared.
+- Result: first call into `render()` threw `ReferenceError: getActiveZone is
+  not defined`, killing the frame loop. HUD and UI buttons rendered (HTML/CSS),
+  but canvas stayed empty and joystick input went nowhere.
+
+## Fix
+- Added the missing helpers just above `isFinaleReady()`:
+    function getActiveZoneIndex(){ ... }
+    function getActiveZone(){ return ZONES[getActiveZoneIndex()]; }
+- `getActiveZoneIndex()` returns the highest index in `state.zonesUnlocked`
+  that is truthy, with a fallback to `state.currentZone` for save
+  compatibility, clamped to the ZONES array length.
+- Service worker cache bumped to `frostfall-v7-8-2` so existing PWA installs
+  drop the broken 7.8.1 bundle on next load.
+- Page title bumped to v7.8.2.
+
+## Behaviour preserved from 7.8.1
+- Wolves still appear once Glacial Forest is unlocked.
+- Yeti waves still gate on `getActiveZoneIndex() >= 2`.
+- Background, base scaling and HUD zone title all follow the highest
+  unlocked zone.
+- Unlock buttons still set `state.currentZone` for save compatibility.
