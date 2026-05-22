@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v7.3 - Resource Sprite Update</title>
+<title>Frostfall v7.3.1 - Resource Sprite Hotfix</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -86,7 +86,7 @@
     <img src="icon-192.png" alt="Frostfall" style="width:100%;height:100%;display:block;image-rendering:pixelated;" onerror="this.style.display='none'" />
   </div>
   <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FROSTFALL</div>
-  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.3 · Resource sprite update</div>
+  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.3.1 · Resource sprite hotfix</div>
   <div style="width:220px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
     <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;transition:width .25s ease;"></div>
   </div>
@@ -412,6 +412,40 @@ function getCampDecorations(cx,cy){
       ctx.restore();
     }}
   ];
+}
+function drawOrbitingAxes(sx,sy,bob){
+  const range=statValue('range');
+  const orbit=Math.max(34,range*.72);
+  const axeSprite=images.axe;
+  for(let i=0;i<5;i++){
+    const a=player.axeAngle+(i/5)*Math.PI*2;
+    const ax=sx+Math.cos(a)*orbit;
+    const ay=sy+6+Math.sin(a)*orbit+bob*.25;
+    ctx.save();
+    ctx.translate(ax,ay);
+    ctx.rotate(player.axeSpin+i*(Math.PI*2/5));
+    if(axeSprite&&axeSprite.loaded){
+      drawSpriteFit(axeSprite,0,0,22,22,'center');
+    } else {
+      ctx.fillStyle='#78350f';
+      ctx.fillRect(-2,-15,4,28);
+      ctx.fillStyle='#94a3b8';
+      ctx.beginPath();
+      ctx.moveTo(-2,-15);
+      ctx.bezierCurveTo(9,-18,14,-9,7,-2);
+      ctx.lineTo(-2,-6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle='#e2e8f0';
+      ctx.beginPath();
+      ctx.moveTo(1,-15);
+      ctx.bezierCurveTo(8,-16,11,-9,6,-4);
+      ctx.lineTo(1,-7);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
 }
 function drawPlayer(sx,sy){
   const bob=Math.sin(player.walkCycle)*3;
