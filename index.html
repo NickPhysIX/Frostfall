@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v6.5 - Reset & Fixes</title>
+<title>Frostfall v6.7 - Sprite Axes</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body {
@@ -68,7 +68,7 @@
   #game-over h2 { font-size:36px; font-weight:900; color:#ef4444; text-shadow:0 0 20px rgba(239,68,68,.45); }
   #game-over p { opacity:.7; line-height:1.55; padding:0 20px; }
   #respawn-btn { border:0; color:white; padding:16px 40px; border-radius:14px; cursor:pointer; font-size:16px; font-weight:800; background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 10px 25px rgba(34,197,94,.32); }
-  #reset-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 54px); right:16px; z-index:18; border:1px solid rgba(239,68,68,.35); color:#fecaca; background:rgba(127,29,29,.35); padding:8px 12px; border-radius:12px; font-size:11px; font-weight:900; cursor:pointer; backdrop-filter:blur(6px); box-shadow:0 8px 22px rgba(0,0,0,.28); }
+  #reset-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 92px); left:50%; transform:translateX(-50%); z-index:18; width:auto; min-width:86px; padding:7px 12px; border-radius:999px; border:1px solid rgba(248,113,113,.45); color:rgba(255,255,255,.85); background:rgba(127,29,29,.55); box-shadow:0 8px 22px rgba(0,0,0,.28); backdrop-filter:blur(8px); font-size:10px; font-weight:900; letter-spacing:.8px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -99,7 +99,7 @@
   <span style="font-size:11px;opacity:.82;font-weight:normal">Groen = kan plaatsen. Rood = geblokkeerd/te weinig resources.</span>
 </div>
 <div id="joystick"><div id="joystick-knob"></div></div>
-<button id="reset-btn">RESET PROGRESS</button>
+<button id="reset-btn">RESET</button>
 <div id="reset-modal" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(5,10,20,.94);backdrop-filter:blur(12px);">
   <div style="max-width:380px;width:100%;padding:24px;border-radius:20px;background:linear-gradient(145deg,#132239,#0a111e);border:1px solid rgba(239,68,68,.3);box-shadow:0 20px 50px rgba(0,0,0,.62);color:white;text-align:center;">
     <div style="font-size:36px;margin-bottom:8px;">⚠️</div>
@@ -134,11 +134,11 @@
 </div>
 <script>
 'use strict';
-const SAVE_KEY='frostfall-save-v6-6-camp-decor';
-const LEGACY_KEYS=['frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v6-7-sprite-axes';
+const LEGACY_KEYS=['frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 function loadSprite(key,src){ const img=new Image(); img.loaded=false; img.onload=()=>{img.loaded=true;}; img.onerror=()=>{img.loaded=false;}; img.src=src; images[key]=img; }
-loadSprite('player','player.png'); loadSprite('survivor','survivor.png'); loadSprite('bear','bear.png'); loadSprite('brute','brute.png'); loadSprite('tree','tree.png'); loadSprite('tower','tower.png'); loadSprite('ice_tower','ice_tower.png'); loadSprite('meat','meat.png'); loadSprite('campfire','campfire.png'); loadSprite('mat_wood','mat_wood.png'); loadSprite('mat_meat','mat_meat.png'); loadSprite('mat_money','mat_money.png');
+loadSprite('player','player.png'); loadSprite('survivor','survivor.png'); loadSprite('bear','bear.png'); loadSprite('brute','brute.png'); loadSprite('tree','tree.png'); loadSprite('tower','tower.png'); loadSprite('ice_tower','ice_tower.png'); loadSprite('meat','meat.png'); loadSprite('campfire','campfire.png'); loadSprite('mat_wood','mat_wood.png'); loadSprite('mat_meat','mat_meat.png'); loadSprite('mat_money','mat_money.png'); loadSprite('axe','axe.png');
 const ZONES=[
 {id:0,name:'Siberian Camp',cost:0,beastHP:30,beastDmg:5,beastSpeed:.70,meatDrop:1,moneyDrop:8,bg:['#e4f0f6','#c4dee9','#a2cbdd']},
 {id:1,name:'Glacial Forest',cost:500,beastHP:85,beastDmg:12,beastSpeed:.90,meatDrop:2,moneyDrop:20,bg:['#cee2eb','#abc8d7','#83abc1']},
@@ -178,7 +178,7 @@ normalizeStructures(); if(!Number.isFinite(state.hp)||state.hp<=0) state.hp=stat
 const canvas=document.getElementById('game'), ctx=canvas.getContext('2d'); let W=0,H=0,DPR=1;
 function resize(){ DPR=Math.min(window.devicePixelRatio||1,2); W=window.innerWidth; H=window.innerHeight; canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR); canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); ctx.imageSmoothingEnabled=false; }
 window.addEventListener('resize',resize); resize();
-const player={x:0,y:0,angle:0,attackTimer:0,axeAngle:0,hitFlash:0,chopping:null,walkCycle:0,face:1};
+const player={x:0,y:0,angle:0,attackTimer:0,axeAngle:0,axeSpin:0,hitFlash:0,chopping:null,walkCycle:0,face:1};
 const beasts=[], drops=[], particles=[], floatingTexts=[], trees=[], projectiles=[], survivors=[];
 function generateTrees(){ trees.length=0; const starterAngles=[-.75,.55,2.35,3.7]; for(let i=0;i<starterAngles.length;i++){ const angle=starterAngles[i], dist=105+i*18; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:24+Math.random()*5,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } for(let i=4;i<28;i++){ const angle=Math.random()*Math.PI*2, dist=145+Math.random()*285; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:21+Math.random()*9,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } for(let i=28;i<68;i++){ const angle=Math.random()*Math.PI*2, dist=450+Math.random()*750; trees.push({id:i,x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,size:20+Math.random()*10,hp:TREE_HP,maxHP:TREE_HP,alive:true,regrowTimer:0,seed:Math.random()}); } }
 generateTrees();
@@ -220,7 +220,7 @@ canvas.addEventListener('click',e=>{ if(!buildMode) return; const p=canvasToWorl
 canvas.addEventListener('touchend',e=>{ if(!buildMode||e.changedTouches.length===0) return; const t=e.changedTouches[0], target=document.elementFromPoint(t.clientX,t.clientY); if(target&&(target.tagName==='BUTTON'||target.closest('#build-hint'))) return; updateBuildPointer(t.clientX,t.clientY); const p=canvasToWorld(t.clientX,t.clientY); placeStructure(p.x,p.y); },{passive:false});
 function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) return null; const dx=player.x-b.x,dy=player.y-b.y,steps=Math.ceil(distToPlayer/GRID); for(let i=1;i<steps;i++){ const t=i/steps, gx=Math.round((b.x+dx*t)/GRID), gy=Math.round((b.y+dy*t)/GRID), s=structureAtGrid(gx,gy); if(s) return s; } return null; }
 function findBruteTarget(b){ let best=null,score=Infinity; for(const s of state.structures){ const sx=s.gx*GRID, sy=s.gy*GRID, d=Math.hypot(sx-b.x,sy-b.y); if(d>540) continue; const weak=s.hp/Math.max(1,s.maxHP), sc=d*.65+weak*180; if(sc<score){score=sc;best=s;} } return best; }
-function update(dt){ let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!structureAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!structureAtWorld(nx,player.y)) player.x=nx; if(!structureAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5;
+function update(dt){ let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!structureAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!structureAtWorld(nx,player.y)) player.x=nx; if(!structureAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5; player.axeSpin+=dt*statValue('attackSpeed')*10;
 const enemyChopThreshSq=ENEMY_CHOP_INTERRUPT_RADIUS*ENEMY_CHOP_INTERRUPT_RADIUS; const enemyTooClose=beasts.some(b=>{const dx=b.x-player.x,dy=b.y-player.y;return dx*dx+dy*dy<enemyChopThreshSq;}); player.chopping=null; if(!isMoving&&!enemyTooClose){ let nearest=null,nearestD=PLAYER_CHOP_RADIUS; for(const t of trees){ if(!t.alive) continue; const d=Math.hypot(t.x-player.x,t.y-player.y); if(d<nearestD){nearestD=d;nearest=t;} } if(nearest){ player.chopping=nearest; nearest.hp-=PLAYER_CHOP_DPS*statValue('chopSpeed')*dt; if(Math.random()<.35){addParticle(nearest.x+(Math.random()-.5)*12,nearest.y,'#a05a2c','wood');playSound('chop');} if(nearest.hp<=0){nearest.alive=false;nearest.regrowTimer=TREE_REGROW_TIME;nearest.hp=0;state.wood+=TREE_WOOD;addText(nearest.x,nearest.y-22,`+${TREE_WOOD}🪵`,'#d97706',-35,1);player.chopping=null;saveGame();}}}
 document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt);
 const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
@@ -293,29 +293,40 @@ function getCampDecorations(cx,cy){
 function drawOrbitingAxes(sx,sy,bob){
   const range=statValue('range');
   const orbit=Math.max(34,range*.72);
+  const axeSprite=images.axe;
+
   for(let i=0;i<5;i++){
     const a=player.axeAngle+(i/5)*Math.PI*2;
     const ax=sx+Math.cos(a)*orbit;
     const ay=sy+6+Math.sin(a)*orbit+bob*.25;
+
     ctx.save();
     ctx.translate(ax,ay);
-    ctx.rotate(a+Math.PI/2);
-    ctx.fillStyle='#78350f';
-    ctx.fillRect(-2,-15,4,28);
-    ctx.fillStyle='#94a3b8';
-    ctx.beginPath();
-    ctx.moveTo(-2,-15);
-    ctx.bezierCurveTo(9,-18,14,-9,7,-2);
-    ctx.lineTo(-2,-6);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle='#e2e8f0';
-    ctx.beginPath();
-    ctx.moveTo(1,-15);
-    ctx.bezierCurveTo(8,-16,11,-9,6,-4);
-    ctx.lineTo(1,-7);
-    ctx.closePath();
-    ctx.fill();
+
+    if(axeSprite&&axeSprite.loaded){
+      ctx.imageSmoothingEnabled=false;
+      // Tangential orbit with a gentle self-spin: readable, but still alive.
+      ctx.rotate(a+Math.PI/2+player.axeSpin*.35);
+      drawSpriteFit(axeSprite,0,0,30,42,'center');
+    } else {
+      ctx.rotate(a+Math.PI/2);
+      ctx.fillStyle='#78350f';
+      ctx.fillRect(-2,-15,4,28);
+      ctx.fillStyle='#94a3b8';
+      ctx.beginPath();
+      ctx.moveTo(-2,-15);
+      ctx.bezierCurveTo(9,-18,14,-9,7,-2);
+      ctx.lineTo(-2,-6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle='#e2e8f0';
+      ctx.beginPath();
+      ctx.moveTo(1,-15);
+      ctx.bezierCurveTo(8,-16,11,-9,6,-4);
+      ctx.lineTo(1,-7);
+      ctx.closePath();
+      ctx.fill();
+    }
     ctx.restore();
   }
 }
