@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v6.7 - Sprite Axes</title>
+<title>Frostfall v6.8 - Survivor Facing + App Icon</title>
+<meta name="theme-color" content="#0b1f3a" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Frostfall" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body {
@@ -188,11 +197,11 @@ function addText(x,y,text,color='#fff',vy=-30,life=1){ floatingTexts.push({x,y,t
 function addParticle(x,y,color='#fff',type='dust'){ particles.push({x,y,vx:(Math.random()-.5)*90,vy:-25-Math.random()*65,life:.45,maxLife:.45,color,size:2+Math.random()*4,type}); }
 function inView(x,y,margin=CULL_MARGIN){ return x>player.x-W/2-margin && x<player.x+W/2+margin && y>player.y-H/2-margin && y<player.y+H/2+margin; }
 function drawSpriteFit(img,cx,baseY,maxW,maxH,anchor='bottom'){ if(!img||!img.loaded) return false; const ratio=(img.naturalWidth||img.width)/(img.naturalHeight||img.height||1); let w=maxW,h=maxH; if(w/h>ratio) w=h*ratio; else h=w/ratio; const x=cx-w/2, y=anchor==='center'?baseY-h/2:baseY-h; ctx.drawImage(img,x,y,w,h); return true; }
-function makeSurvivor(index){ const total=Math.max(1,statValue('survivors')), a=(index/total)*Math.PI*2; return {x:Math.cos(a)*34,y:28+Math.sin(a)*18,targetTree:null,mode:'searching',woodCarried:0,walkCycle:Math.random()*100,thinkTimer:0}; }
+function makeSurvivor(index){ const total=Math.max(1,statValue('survivors')), a=(index/total)*Math.PI*2; return {x:Math.cos(a)*34,y:28+Math.sin(a)*18,targetTree:null,mode:'searching',woodCarried:0,walkCycle:Math.random()*100,thinkTimer:0,face:1}; }
 function syncSurvivors(reset=false){ const wanted=statValue('survivors'); if(reset) survivors.length=0; while(survivors.length<wanted) survivors.push(makeSurvivor(survivors.length)); while(survivors.length>wanted) survivors.pop(); }
 function treeClaimedByAnother(tree,survivor){ return survivors.some(s=>s!==survivor&&s.targetTree===tree&&(s.mode==='walking'||s.mode==='chopping')); }
 function findSurvivorTree(s){ let best=null,score=Infinity; for(const t of trees){ if(!t.alive||treeClaimedByAnother(t,s)) continue; const d=Math.hypot(t.x-s.x,t.y-s.y); if(d<score){ score=d; best=t; }} return best; }
-function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
+function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(Math.abs(dx)>.2) actor.face=dx<0?-1:1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
 function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=13*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
 let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5;
 function pickBeastKind(){ if(state.wave>=8 && Math.random()<Math.min(.18+state.wave*.006,.34)) return 'brute'; return 'bear'; }
@@ -369,7 +378,7 @@ function drawPlayer(sx,sy){
     ctx.restore();
   }
 }
-function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){drawSpriteFit(images.survivor,sx,sy+18+bob,34,46,'bottom'); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob);ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
+function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){ ctx.save(); ctx.translate(sx,0); ctx.scale((s.face??1)<0?-1:1,1); drawSpriteFit(images.survivor,0,sy+18+bob,34,46,'bottom'); ctx.restore(); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob); ctx.scale((s.face??1)<0?-1:1,1); ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
 function drawBeast(b,sx,sy){
   const legBob=Math.sin(b.legCycle)*3;
   ctx.fillStyle='rgba(15,35,60,.22)';
