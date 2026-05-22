@@ -1,0 +1,9 @@
+Frostfall v8.1 — Sound Effects Update
+
+- Added sfx_chop.wav for wood chopping.
+- Added sfx_axe_hit.wav for axe/enemy hit sound.
+- playSound("chop") and playSound("hit") now prefer decoded Web Audio samples.
+- Kept Web Audio synth fallback if samples are not loaded yet.
+- Added per-SFX minimum gap and slight pitch jitter to reduce repeated-sound fatigue.
+- Bumped SAVE_KEY to frostfall-save-v8-1-sfx with v8.0 migration support.
+- Bumped service worker cache to frostfall-v8-1 and precached the new WAV assets.

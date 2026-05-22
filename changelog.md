@@ -1,12 +1,26 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.0**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.1**.
 
 Attributie-conventie:
 
 - Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
+
+
+## v8.1 — Sound Effects Update
+
+- Twee nieuwe sample-gebaseerde sound effects toegevoegd:
+  - `sfx_chop.wav` voor houthakken.
+  - `sfx_axe_hit.wav` voor bijl-aanvallen / enemy hits.
+- `playSound('chop')` en `playSound('hit')` gebruiken nu de nieuwe WAV-samples zodra deze zijn geladen.
+- Synthesizer-fallback behouden voor het geval de samples nog laden of ontbreken.
+- Kleine pitch-jitter en minimum-gap per SFX toegevoegd, zodat snelle attack-speed upgrades minder snel irritant of overlappend klinken.
+- Bestaande Web Audio API-geluiden voor upgrades, towers en game-over blijven behouden.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-1-sfx`; v8.0 saves blijven automatisch migreren via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-1`.
+- Nieuwe SFX-bestanden toegevoegd aan de service-worker pre-cache.
 
 ## v8.0 — Music Update
 

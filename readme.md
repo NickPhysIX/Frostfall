@@ -21,6 +21,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Pauzescherm met veilige reset-flow.
 - Achtergrondmuziek met aparte main, boss en victory tracks.
 - Muziekknop om muziek aan/uit te zetten, met opgeslagen voorkeur.
+- Sample-gebaseerde sound effects voor houthakken en bijl-aanvallen, met synth-fallback.
 
 - Endgame-finale vanaf wave 50: **Winter’s End**.
 - Sequentiële Alpha Boss Rush: Alpha Wolf, Alpha Brute Bear en Alpha Yeti.
@@ -211,6 +212,8 @@ Belangrijke bestanden in deze build:
 - `wood_pile_1.png` t/m `wood_pile_4.png` — houtopslag niveaus.
 - `money_pile_1.png` t/m `money_pile_4.png` — geldopslag niveaus.
 - `mat_meat.png`, `campfire.png` — kampdecoratie.
+- `main_loop.mp3`, `boss_loop.mp3`, `victory_cue.mp3` — achtergrondmuziek.
+- `sfx_chop.wav`, `sfx_axe_hit.wav` — sample-gebaseerde sound effects voor houthakken en bijl-aanvallen.
 - `changelog.md` — reconstructie van zichtbare wijzigingen.
 
 ## Ontwikkelnotitie
@@ -219,4 +222,4 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 
 ## Latest version
-Current packaged build: **v7.8.1 – Lifetime Stats Fix**.
+Current packaged build: **v8.1 – Sound Effects Update**.

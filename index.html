@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v8.0 - Music Update</title>
+<title>Frostfall v8.1 - SFX Update</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,8 +276,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v8-0-music';
-const LEGACY_KEYS=['frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v8-1-sfx';
+const LEGACY_KEYS=['frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','bear','brute','wolf','yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
@@ -354,8 +354,61 @@ function pickPileTier(amount,tiers){ return tiers.find(t=>amount>=t.min)||null; 
 function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
 let audioCtx=null;
-function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
-function playSound(type){ if(!audioCtx) return; try{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now=audioCtx.currentTime; if(type==='chop'){osc.type='triangle';osc.frequency.setValueAtTime(140,now);osc.frequency.exponentialRampToValueAtTime(45,now+.10);gain.gain.setValueAtTime(.22,now);gain.gain.exponentialRampToValueAtTime(.01,now+.10);osc.start(now);osc.stop(now+.10);} else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.16,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);} else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);} else if(type==='shoot'){osc.type='sine';osc.frequency.setValueAtTime(400,now);osc.frequency.exponentialRampToValueAtTime(150,now+.15);gain.gain.setValueAtTime(.08,now);gain.gain.exponentialRampToValueAtTime(.01,now+.15);osc.start(now);osc.stop(now+.15);} else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);} }catch(e){} }
+let sfxLoadingStarted=false;
+const SFX_SAMPLES={
+  chop:{src:'sfx_chop.wav',buffer:null,gain:.52,minGap:.11,last:-999,pitchJitter:.06},
+  hit:{src:'sfx_axe_hit.wav',buffer:null,gain:.42,minGap:.075,last:-999,pitchJitter:.045}
+};
+function initAudio(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  loadSfxBuffers();
+}
+function loadSfxBuffers(){
+  if(!audioCtx||sfxLoadingStarted) return;
+  sfxLoadingStarted=true;
+  for(const s of Object.values(SFX_SAMPLES)){
+    fetch(s.src)
+      .then(r=>r.ok?r.arrayBuffer():Promise.reject(new Error('SFX load failed')))
+      .then(buf=>audioCtx.decodeAudioData(buf))
+      .then(decoded=>{s.buffer=decoded;})
+      .catch(()=>{});
+  }
+}
+function playSampleSfx(type){
+  const s=SFX_SAMPLES[type];
+  if(!audioCtx||!s||!s.buffer) return false;
+  const now=audioCtx.currentTime;
+  if(now-s.last<s.minGap) return true;
+  s.last=now;
+  try{
+    const src=audioCtx.createBufferSource();
+    const gain=audioCtx.createGain();
+    src.buffer=s.buffer;
+    src.playbackRate.value=1+((Math.random()-.5)*2*(s.pitchJitter||0));
+    gain.gain.value=s.gain;
+    src.connect(gain); gain.connect(audioCtx.destination);
+    src.start(now);
+    return true;
+  }catch(e){return false;}
+}
+function playSynthSound(type){
+  if(!audioCtx) return;
+  try{
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    const now=audioCtx.currentTime;
+    if(type==='chop'){osc.type='triangle';osc.frequency.setValueAtTime(140,now);osc.frequency.exponentialRampToValueAtTime(45,now+.10);gain.gain.setValueAtTime(.20,now);gain.gain.exponentialRampToValueAtTime(.01,now+.10);osc.start(now);osc.stop(now+.10);}
+    else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.14,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);}
+    else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);}
+    else if(type==='shoot'){osc.type='sine';osc.frequency.setValueAtTime(400,now);osc.frequency.exponentialRampToValueAtTime(150,now+.15);gain.gain.setValueAtTime(.08,now);gain.gain.exponentialRampToValueAtTime(.01,now+.15);osc.start(now);osc.stop(now+.15);}
+    else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);}
+  }catch(e){}
+}
+function playSound(type){
+  if(!audioCtx) return;
+  if((type==='chop'||type==='hit')&&playSampleSfx(type)) return;
+  playSynthSound(type);
+}
 
 // --- BACKGROUND MUSIC (v8.0) ---
 const MUSIC_PREF_KEY='frostfall-music-muted-v8';
