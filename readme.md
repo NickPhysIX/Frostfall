@@ -187,7 +187,7 @@ Zone-unlocks voegen nieuwe vijandtypes toe zonder oude zones automatisch moeilij
 
 Frostfall slaat voortgang op in `localStorage`. Dat betekent dat je progressie in dezelfde browser bewaard blijft.
 
-Vanaf v7.8 houdt het spel lifetime run-statistieken bij voor het eindscherm: waves voltooid, vijanden verslagen, gebouwde structuren en totaal verzameld hout/vlees/goud. Bij oudere saves worden sommige historische waarden zo goed mogelijk geschat omdat eerdere versies die data nog niet exact opsloegen.
+Vanaf v7.8.1 houdt het spel lifetime run-statistieken bij voor het eindscherm: waves voltooid, vijanden verslagen, gebouwde structuren en totaal verzameld hout/vlees/goud. Bij oudere saves worden sommige historische waarden zo goed mogelijk geschat omdat eerdere versies die data nog niet exact opsloegen.
 
 De resetknop opent eerst een bevestigingsvenster. Pas na bevestiging worden save data en oudere legacy saves verwijderd.
 
@@ -215,4 +215,4 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 
 ## Latest version
-Current packaged build: **v7.8 – Lifetime Stats Fix**.
+Current packaged build: **v7.8.1 – Lifetime Stats Fix**.

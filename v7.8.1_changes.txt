@@ -1,0 +1,9 @@
+# Frostfall v7.8.1 — Zone Unlock Fix
+
+- Fixed a regression where unlocking Glacial Forest / Forgotten Ice Caves did not affect the active spawn pool.
+- Wolves now appear once Glacial Forest is unlocked.
+- Yeti waves now use the highest unlocked zone instead of the old `currentZone` field.
+- The top-right HUD zone title now reflects the highest unlocked zone.
+- Background and enemy base scaling now follow the active unlocked zone.
+- Unlock buttons now also update `state.currentZone` for save compatibility.
+- Service worker cache bumped to `frostfall-v7-8-1`.

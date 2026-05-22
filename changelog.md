@@ -1,5 +1,15 @@
 # Frostfall changelog
 
+## v7.8.1 — Zone Unlock Fix
+
+- Fixed a regression introduced by the cumulative bestiary/unlock system: enemy spawning and the HUD still looked at `state.currentZone`, while unlocking new zones only updated `state.zonesUnlocked`.
+- Added an active-zone helper based on the highest unlocked zone.
+- Wolves now enter the spawn pool after Glacial Forest is unlocked.
+- Yeti waves and Ice Caves scaling now activate after Forgotten Ice Caves is unlocked.
+- Top-right zone title and background now reflect the highest unlocked zone.
+- Unlock buttons also update `state.currentZone` for backwards compatibility.
+- Service-worker cache bumped to `frostfall-v7-8-1`.
+
 Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.8**.
 
 Attributie-conventie:
