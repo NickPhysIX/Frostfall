@@ -1,0 +1,189 @@
+# Frostfall
+
+**Frostfall** is een kleine browsergame / web-app waarin je een kamp in een ijzige wildernis verdedigt tegen steeds zwaardere waves van vijanden. Het spel combineert actie, idle-resource gathering en base defense: je loopt rond, hakt hout, verzamelt resources, bouwt muren en torens, koopt upgrades en probeert de volgende blizzard te overleven.
+
+De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canvas en PNG-sprites. Er is geen serverlogica nodig.
+
+## Wat zit erin?
+
+- Eén canvas-game in `index.html`.
+- Mobiele joystick en toetsenbordbesturing.
+- Resources: geld, vlees, hout en HP.
+- Upgradepaneel: **Tactical Forge**.
+- Build mode met muren, torens en ijstorens.
+- Survivors/dorpsbewoners die automatisch hout verzamelen.
+- Meerdere zones met eigen difficulty en vijand-unlocks.
+- Bestiary met vijandtypes.
+- Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
+- PWA/web-app support met manifest, app iconen en service worker.
+- LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.
+
+## Starten
+
+### Via GitHub Pages
+
+Plaats de inhoud van deze map in je GitHub Pages repository. Open daarna de GitHub Pages URL in Safari, Chrome of een andere browser.
+
+### Lokaal testen
+
+Omdat service workers en sommige browserfeatures beter werken via HTTP dan via `file://`, kun je lokaal een kleine statische server starten:
+
+```bash
+python3 -m http.server 8000
+```
+
+Open daarna:
+
+```text
+http://localhost:8000
+```
+
+## Installeren als web-app op iPhone/iPad
+
+Op iOS/iPadOS:
+
+1. Open de GitHub Pages URL in Safari.
+2. Tik op de deelknop.
+3. Kies **Zet op beginscherm**.
+4. Bevestig de naam **Frostfall**.
+
+De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
+
+## Besturing
+
+### Mobiel / touchscreen
+
+- Gebruik de joystick rechtsonder om te bewegen.
+- Tik op de groene upgradeknop linksonder om de Tactical Forge te openen.
+- Tik op de oranje buildknop om build mode aan of uit te zetten.
+- Kies in build mode wat je wilt plaatsen: muur, toren of ijstoren.
+- Tik op de kaart om te bouwen.
+- Groen bouwvak = plaatsing kan.
+- Rood bouwvak = geblokkeerd of te weinig resources.
+
+### Desktop
+
+- Bewegen met WASD of pijltjestoetsen.
+- Klik op de upgradeknop voor upgrades.
+- Klik op de buildknop om build mode te gebruiken.
+
+## Resources
+
+### Geld
+
+Geld wordt vooral gebruikt voor upgrades, repairs en zone-unlocks. Vijanden droppen geld wanneer ze verslagen worden.
+
+### Vlees
+
+Vlees komt van vijanden en wordt gebruikt voor bepaalde upgrades en torens. Vlees heeft ook een eigen visuele opslag in het kamp.
+
+### Hout
+
+Hout komt van bomen. Je gebruikt hout voor muren en torens. Hout wordt verzameld door:
+
+- zelf stil te staan bij een boom, zolang er geen vijand te dichtbij is;
+- survivors, zodra je die upgrade hebt gekocht.
+
+De houtopslag groeit visueel mee via vier sprite-niveaus.
+
+### HP
+
+Als vijanden de speler bereiken, verlies je HP. Regen upgrades herstellen langzaam HP. Bij 0 HP krijg je Frostbite en kun je respawnen.
+
+## Combat
+
+De speler heeft ronddraaiende bijlen. Vijanden binnen bereik krijgen automatisch schade op basis van je damage, attack speed en range upgrades.
+
+Torens vallen automatisch vijanden binnen bereik aan. IJstorens doen minder damage dan gewone torens, maar vertragen vijanden tijdelijk.
+
+## Bouwen
+
+### Muur
+
+Goedkoopste verdediging. Muren blokkeren vijanden en kopen tijd.
+
+### Toren
+
+Schiet automatisch op vijanden binnen bereik. Kost hout en vlees.
+
+### IJstoren
+
+Schiet ijsprojectielen. Doet minder schade, maar geeft slow. Handig om groepen of grote vijanden te vertragen.
+
+## Upgrades
+
+In de Tactical Forge kun je onder andere verbeteren:
+
+- Bijl Kracht — meer damage.
+- Gooi Snelheid — sneller aanvallen.
+- Bijl Bereik — groter bereik.
+- Snelheid — sneller bewegen.
+- Gezondheid — meer maximale HP.
+- HP Herstel — regeneratie.
+- Hout Hakken — sneller hout verzamelen.
+- Muur/Toren HP — sterkere constructies.
+- Vlees Opbrengst — meer vlees uit drops.
+- Goud Koers — meer geld uit drops.
+- Dorpsbewoners — survivors die automatisch hout verzamelen.
+
+## Vijanden
+
+### Polar Bear
+
+De standaardvijand. Komt vanaf het begin voor.
+
+### Brute Bear
+
+Verschijnt later in de run. Traag en taai, met extra muurschade. Richt zich sterker op zwakke verdediging.
+
+### Frost Wolf
+
+Wordt ontgrendeld via Glacial Forest. Snel, lichter, minder muurschade, maar gevaarlijk als hij doorbreekt.
+
+### Yeti
+
+Wordt ontgrendeld via Forgotten Ice Caves. Verschijnt vanaf latere waves als groot event/boss-moment. Veel HP, flinke beloning, maar bedoeld als zware test van je kamp.
+
+## Zones
+
+### Siberian Camp
+
+Startzone. Basisvijanden en relatief veilige progression.
+
+### Glacial Forest
+
+Ontgrendelt wolven en maakt de vijandpool dynamischer.
+
+### Forgotten Ice Caves
+
+Ontgrendelt yeti-events en zwaardere late-game druk.
+
+Zone-unlocks voegen nieuwe vijandtypes toe zonder oude zones automatisch moeilijker te maken.
+
+## Opslaan en resetten
+
+Frostfall slaat voortgang op in `localStorage`. Dat betekent dat je progressie in dezelfde browser bewaard blijft.
+
+De resetknop opent eerst een bevestigingsvenster. Pas na bevestiging worden save data en oudere legacy saves verwijderd.
+
+## Bestanden
+
+Belangrijke bestanden in deze build:
+
+- `index.html` — hoofdgame.
+- `sw.js` — service worker / cache.
+- `manifest.webmanifest` — PWA metadata.
+- `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-1024.png` — app iconen.
+- `player.png`, `survivor.png`, `bear.png`, `brute.png`, `wolf.png`, `yeti.png` — character/enemy sprites.
+- `tree.png`, `stump_1.png`, `stump_2.png`, `stump_3.png` — boom- en stump-sprites.
+- `tower.png`, `ice_tower.png` — structure sprites.
+- `axe.png` — ronddraaiende bijlsprite.
+- `meat.png` — vlees-drop sprite.
+- `wood_pile_1.png` t/m `wood_pile_4.png` — houtopslag niveaus.
+- `money_pile_1.png` t/m `money_pile_4.png` — geldopslag niveaus.
+- `mat_meat.png`, `campfire.png` — kampdecoratie.
+- `changelog.md` — reconstructie van zichtbare wijzigingen.
+
+## Ontwikkelnotitie
+
+De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk te uploaden naar GitHub Pages en makkelijk te tweaken. Bij verdere groei kan het nuttig worden om de code op te splitsen in modules, bijvoorbeeld `entities.js`, `rendering.js`, `balance.js`, `input.js` en `assets.js`.

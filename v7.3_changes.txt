@@ -1,0 +1,25 @@
+Frostfall v7.3 - Resource Sprite Update
+
+Included changes:
+- Added 4 wood pile sprite levels:
+  - wood_pile_1.png
+  - wood_pile_2.png
+  - wood_pile_3.png
+  - wood_pile_4.png
+- Added 4 money pile sprite levels:
+  - money_pile_1.png
+  - money_pile_2.png
+  - money_pile_3.png
+  - money_pile_4.png
+- Added 3 tree stump sprites:
+  - stump_1.png
+  - stump_2.png
+  - stump_3.png
+- Updated index.html to preload and use the new sprites.
+- Wood pile display tiers:
+  1-24, 25-74, 75-149, 150+
+- Money pile display tiers:
+  1-49, 50-149, 150-349, 350+
+- Chopped trees now use a random stump sprite.
+- Save key updated to v7.3 with backward compatibility for the previous v7.2 save key.
+- Service worker cache version updated to v7.3 and new assets added to pre-cache.
