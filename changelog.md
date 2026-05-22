@@ -1,6 +1,6 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.1**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.2**.
 
 Attributie-conventie:
 
@@ -8,6 +8,21 @@ Attributie-conventie:
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
+
+
+## v8.2 — Audio Polish
+
+- Door Niels aangeleverde MP3-sound effects verwerkt en game-ready gemaakt:
+  - `sfx_chop.mp3` voor bijl-op-hout / houthakken.
+  - `sfx_axe_hit.mp3` voor bijl-op-weefsel / enemy hits.
+- De aangeleverde MP3's zijn ingekort, licht gefadet en in mono/128 kbps game-assets omgezet zodat ze minder zwaar en minder storend zijn bij herhaald afspelen.
+- SFX-loader omgezet van WAV naar MP3-bestanden.
+- Volumebalans, pitch-jitter en minimum-gap opnieuw afgestemd op de nieuwe samples.
+- De bestaande geluidsknop is omgezet naar een **master mute**: **🔊 GELUID / 🔇 GELUID** schakelt nu zowel achtergrondmuziek als sound effects uit of aan.
+- De master mute-voorkeur wordt opgeslagen in `localStorage` onder `frostfall-audio-muted-v8-2`; de oude muziek-mute key blijft als legacy/fallback behouden.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-2-audio-polish`; v8.1 saves migreren automatisch via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-2`.
+- Nieuwe MP3-SFX-bestanden toegevoegd aan de service-worker pre-cache.
 
 ## v8.1 — Sound Effects Update
 

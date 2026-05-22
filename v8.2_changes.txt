@@ -1,0 +1,15 @@
+Frostfall v8.2 — Audio Polish
+
+- Replaced generated WAV SFX with Niels-provided MP3 axe samples.
+- Added game-ready MP3 assets:
+  - sfx_chop.mp3
+  - sfx_axe_hit.mp3
+- Trimmed/faded/optimized the uploaded sounds for repeated in-game use.
+- Updated Web Audio SFX loader to fetch MP3 samples.
+- Retuned SFX gain, rate limiting, and pitch jitter.
+- Changed the top audio button from music-only mute to master audio mute: 🔊 GELUID / 🔇 GELUID.
+- Master mute now silences both background music and SFX.
+- Added new audio mute preference key: frostfall-audio-muted-v8-2.
+- Kept the old frostfall-music-muted-v8 key as legacy fallback.
+- Bumped SAVE_KEY to frostfall-save-v8-2-audio-polish.
+- Bumped service-worker cache to frostfall-v8-2.

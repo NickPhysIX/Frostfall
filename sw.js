@@ -1,6 +1,6 @@
 // Frostfall service worker
 // Cache version - bump this when assets change to force refresh
-const CACHE_VERSION = 'frostfall-v8-1';
+const CACHE_VERSION = 'frostfall-v8-2';
 
 // Assets to pre-cache on install
 const ASSETS = [
@@ -39,8 +39,8 @@ const ASSETS = [
   './main_loop.mp3',
   './boss_loop.mp3',
   './victory_cue.mp3',
-  './sfx_chop.wav',
-  './sfx_axe_hit.wav'
+  './sfx_chop.mp3',
+  './sfx_axe_hit.mp3'
 ];
 
 // Install: pre-cache all assets

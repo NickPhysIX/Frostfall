@@ -20,7 +20,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.
 - Pauzescherm met veilige reset-flow.
 - Achtergrondmuziek met aparte main, boss en victory tracks.
-- Muziekknop om muziek aan/uit te zetten, met opgeslagen voorkeur.
+- Geluidsknop om muziek én sound effects aan/uit te zetten, met opgeslagen voorkeur.
 - Sample-gebaseerde sound effects voor houthakken en bijl-aanvallen, met synth-fallback.
 
 - Endgame-finale vanaf wave 50: **Winter’s End**.
@@ -64,7 +64,7 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 
 - Gebruik de joystick rechtsonder om te bewegen.
 - Tik op **⏸ PAUZE** bovenin om het spel tijdelijk stil te zetten of veilig opnieuw te starten.
-- Tik op **🔊 MUZIEK** / **🔇 MUZIEK** om de achtergrondmuziek aan of uit te zetten.
+- Tik op **🔊 GELUID** / **🔇 GELUID** om zowel achtergrondmuziek als sound effects aan of uit te zetten.
 - Tik op de groene upgradeknop linksonder om de Tactical Forge te openen.
 - Tik op de oranje buildknop om build mode aan of uit te zetten.
 - Kies in build mode wat je wilt plaatsen: muur, toren of ijstoren.
@@ -78,7 +78,7 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 - Klik op de upgradeknop voor upgrades.
 - Klik op de buildknop om build mode te gebruiken.
 - Pauzeren met de **⏸ PAUZE** knop, **P** of **Escape**.
-- Muziek aan/uit met de **🔊 MUZIEK** knop.
+- Geluid aan/uit met de **🔊 GELUID** knop.
 
 
 ## Endgame: Winter’s End
@@ -213,7 +213,7 @@ Belangrijke bestanden in deze build:
 - `money_pile_1.png` t/m `money_pile_4.png` — geldopslag niveaus.
 - `mat_meat.png`, `campfire.png` — kampdecoratie.
 - `main_loop.mp3`, `boss_loop.mp3`, `victory_cue.mp3` — achtergrondmuziek.
-- `sfx_chop.wav`, `sfx_axe_hit.wav` — sample-gebaseerde sound effects voor houthakken en bijl-aanvallen.
+- `sfx_chop.mp3`, `sfx_axe_hit.mp3` — sample-gebaseerde sound effects voor houthakken en bijl-aanvallen.
 - `changelog.md` — reconstructie van zichtbare wijzigingen.
 
 ## Ontwikkelnotitie
@@ -222,4 +222,4 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 
 ## Latest version
-Current packaged build: **v8.1 – Sound Effects Update**.
+Current packaged build: **v8.2 – Audio Polish**.
