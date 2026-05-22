@@ -1,6 +1,6 @@
 // Frostfall service worker
 // Cache version - bump this when assets change to force refresh
-const CACHE_VERSION = 'frostfall-v7-8-2';
+const CACHE_VERSION = 'frostfall-v8-0';
 
 // Assets to pre-cache on install
 const ASSETS = [
@@ -35,7 +35,10 @@ const ASSETS = [
   './icon-512.png',
   './apple-touch-icon.png',
   './favicon-32.png',
-  './victory-screen.png'
+  './victory-screen.png',
+  './main_loop.mp3',
+  './boss_loop.mp3',
+  './victory_cue.mp3'
 ];
 
 // Install: pre-cache all assets

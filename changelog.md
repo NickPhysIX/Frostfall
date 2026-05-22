@@ -1,5 +1,28 @@
 # Frostfall changelog
 
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.0**.
+
+Attributie-conventie:
+
+- Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
+- Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
+- Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
+
+## v8.0 — Music Update
+
+- Achtergrondmuziek toegevoegd als echte gamefeature:
+  - `main_loop.mp3` voor normale gameplay.
+  - `boss_loop.mp3` voor boss waves, Yeti-waves en de Winter's End finale.
+  - `victory_cue.mp3` voor het victory/eindscherm.
+- Nieuwe **🔊 MUZIEK** / **🔇 MUZIEK** knop toegevoegd bovenin het scherm, naast de pauzeknop.
+- Muziek start pas na de eerste gebruikersactie, zodat iOS/iPadOS/Safari autoplay-regels netjes worden gevolgd.
+- Muziekvoorkeur wordt opgeslagen in `localStorage` onder `frostfall-music-muted-v8`.
+- Muziek wordt zacht gefadet tussen main, boss en victory tracks.
+- Game-over pauzeert de achtergrondmuziek zodat de bestaande game-over soundcue duidelijk blijft.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-0-music`; v7.8 lifetime-stat saves blijven automatisch migreren.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-0`.
+- Nieuwe MP3-bestanden toegevoegd aan de service-worker pre-cache voor PWA/offline gebruik.
+
 ## v7.8.1 — Zone Unlock Fix
 
 - Fixed a regression introduced by the cumulative bestiary/unlock system: enemy spawning and the HUD still looked at `state.currentZone`, while unlocking new zones only updated `state.zonesUnlocked`.
@@ -9,14 +32,6 @@
 - Top-right zone title and background now reflect the highest unlocked zone.
 - Unlock buttons also update `state.currentZone` for backwards compatibility.
 - Service-worker cache bumped to `frostfall-v7-8-1`.
-
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.8**.
-
-Attributie-conventie:
-
-- Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
-- Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
-- Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
 ## v7.8 — Lifetime Stats Fix
 
