@@ -1,0 +1,9 @@
+Frostfall v7.8 - Lifetime Stats Fix
+
+- Victory screen gebruikt nu lifetime run-statistieken in plaats van huidige resourcevoorraad.
+- `state.stats` uitgebreid met `wavesCompleted` en v7.8 migration marker.
+- Wood/meat/money collected worden bijgehouden bij collection/pickup, ook als resources later worden uitgegeven.
+- Kill count, structures built en waves completed worden expliciet bijgehouden.
+- Legacy save migratie vult ontbrekende oude stats aan met huidige voorraad, bestaande structuren, wave-progressie en conservatieve kill-inschatting.
+- Save key: frostfall-save-v7-8-lifetime-stats.
+- Service-worker cache bump: frostfall-v7-8.

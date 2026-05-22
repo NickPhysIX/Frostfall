@@ -1,12 +1,25 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.7**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v7.8**.
 
 Attributie-conventie:
 
 - Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
+
+## v7.8 — Lifetime Stats Fix
+
+- Victory-screen statistieken omgebouwd naar echte **lifetime run stats** in plaats van momentopnames van de huidige voorraad.
+- `state.stats` uitgebreid met `wavesCompleted` en een v7.8 lifetime-stats marker.
+- Hout, vlees en goud tellen nu door op het moment van verzamelen, ook als ze later worden uitgegeven aan towers, upgrades of repairs.
+- Vijanden verslaan, structuren bouwen en waves voltooien worden expliciet bijgehouden voor het eindscherm.
+- Victory modal gebruikt nu `state.stats.*Collected`, `state.stats.kills`, `state.stats.structuresBuilt` en `state.stats.wavesCompleted`.
+- Migratie toegevoegd voor oudere saves uit v1.0–v7.7: bestaande stats blijven behouden, maar worden minimaal aangevuld met huidige voorraad, bestaande structuren, wave-progressie en een conservatieve kill-inschatting op basis van reeds voltooide waves.
+- Nieuwe saves vanaf v7.8 houden lifetime stats exact bij vanaf het begin van de run.
+- Save key bijgewerkt naar `frostfall-save-v7-8-lifetime-stats`.
+- v7.7-save key toegevoegd aan `LEGACY_KEYS`, zodat de bestaande v7.7-save automatisch wordt opgepakt.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v7-8`.
 
 ## v7.7 — Victory Screen Update
 

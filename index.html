@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v7.7 - Winter's End</title>
+<title>Frostfall v7.8 - Lifetime Stats</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -165,7 +165,7 @@
     <img src="icon-192.png" alt="Frostfall" style="width:100%;height:100%;display:block;image-rendering:pixelated;" onerror="this.style.display='none'" />
   </div>
   <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FROSTFALL</div>
-  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.7 · Winter's End</div>
+  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v7.8 · Lifetime Stats</div>
   <div style="width:220px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
     <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;transition:width .25s ease;"></div>
   </div>
@@ -272,8 +272,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v7-7-victory-screen';
-const LEGACY_KEYS=['frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v7-8-lifetime-stats';
+const LEGACY_KEYS=['frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','bear','brute','wolf','yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
@@ -348,20 +348,50 @@ const MONEY_PILE_TIERS=[
 ];
 function pickPileTier(amount,tiers){ return tiers.find(t=>amount>=t.min)||null; }
 function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0},_v64StartGrant:false};
+let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
 let audioCtx=null;
 function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
 function playSound(type){ if(!audioCtx) return; try{ const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); const now=audioCtx.currentTime; if(type==='chop'){osc.type='triangle';osc.frequency.setValueAtTime(140,now);osc.frequency.exponentialRampToValueAtTime(45,now+.10);gain.gain.setValueAtTime(.22,now);gain.gain.exponentialRampToValueAtTime(.01,now+.10);osc.start(now);osc.stop(now+.10);} else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.16,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);} else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);} else if(type==='shoot'){osc.type='sine';osc.frequency.setValueAtTime(400,now);osc.frequency.exponentialRampToValueAtTime(150,now+.15);gain.gain.setValueAtTime(.08,now);gain.gain.exponentialRampToValueAtTime(.01,now+.15);osc.start(now);osc.stop(now+.15);} else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);} }catch(e){} }
 function loadGame(){ let saved=null; try{saved=localStorage.getItem(SAVE_KEY);}catch(e){} if(!saved){ for(const key of LEGACY_KEYS){ try{saved=localStorage.getItem(key);}catch(e){} if(saved) break; }} if(!saved) return; try{ const parsed=JSON.parse(saved); if(Array.isArray(parsed.walls)||Array.isArray(parsed.towers)){ parsed.structures=[...(parsed.walls||[]).map(w=>({...w,type:'wall'})),...(parsed.towers||[]).map(t=>({...t,type:'tower',shootCD:t.shootCD||0}))]; delete parsed.walls; delete parsed.towers; } state={...state,...parsed}; state.upgrades={...state.upgrades,...(parsed.upgrades||{})}; if(state.upgrades.survis!==undefined && !state.upgrades.survivors) state.upgrades.survivors=state.upgrades.survis; for(const u of UPGRADES) if(state.upgrades[u.key]===undefined) state.upgrades[u.key]=0; if(!Array.isArray(state.structures)) state.structures=[]; if(!Array.isArray(state.zonesUnlocked)) state.zonesUnlocked=[true,false,false]; }catch(e){ console.warn('Save load failed:',e); } }
 function saveGame(){ try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){} }
 loadGame();
+function estimateLegacyKills(completedWaves){
+  // Best-effort migration only: older saves did not track kills.
+  // This estimates roughly how many enemies must have been cleared to reach the saved wave.
+  let total=0;
+  for(let w=1; w<=completedWaves; w++){
+    if(w>=25 && w%10===0) total+=3; // yeti event + support, conservative because packs vary
+    else if(w%5===0) total+=1;
+    else total+=3+Math.floor(w*.60);
+  }
+  return total;
+}
 function ensureStateDefaults(){
   if(!state.stats) state.stats={};
+  const completedWaves=Math.max(0,(Number(state.wave)||1)-1);
+  const structuresNow=Array.isArray(state.structures)?state.structures.length:0;
+  const legacyMigration=state.stats._v78Lifetime!==true;
+
   state.stats.kills=Number(state.stats.kills)||0;
   state.stats.woodCollected=Number(state.stats.woodCollected)||0;
   state.stats.meatCollected=Number(state.stats.meatCollected)||0;
   state.stats.moneyCollected=Number(state.stats.moneyCollected)||0;
   state.stats.structuresBuilt=Number(state.stats.structuresBuilt)||0;
+  state.stats.wavesCompleted=Number(state.stats.wavesCompleted)||0;
+
+  if(legacyMigration){
+    // Old v1-v7.7 saves can only be reconstructed approximately.
+    // Preserve any already tracked stats, but make the victory screen less misleading.
+    state.stats.kills=Math.max(state.stats.kills,estimateLegacyKills(completedWaves));
+    state.stats.woodCollected=Math.max(state.stats.woodCollected,Math.floor(Number(state.wood)||0));
+    state.stats.meatCollected=Math.max(state.stats.meatCollected,Math.floor(Number(state.meat)||0));
+    state.stats.moneyCollected=Math.max(state.stats.moneyCollected,Math.floor(Number(state.money)||0));
+    state.stats.structuresBuilt=Math.max(state.stats.structuresBuilt,structuresNow);
+    state.stats.wavesCompleted=Math.max(state.stats.wavesCompleted,completedWaves);
+    state.stats._legacyStatsEstimated=true;
+    state.stats._v78Lifetime=true;
+  }
+
   state.finaleStarted=!!state.finaleStarted;
   state.finaleStage=Number(state.finaleStage)||0;
   state.finaleBossActive=!!state.finaleBossActive;
@@ -440,7 +470,7 @@ function advanceFinale(killedKind){
   state.finaleBossActive=false;
   state.finaleStage++;
   if(killedKind==='alpha_yeti' || state.finaleStage>=FINALE_BOSSES.length){
-    state.victory=true; state.finaleStarted=false; saveGame(); triggerVictory(); return;
+    state.stats.wavesCompleted=Math.max(state.stats.wavesCompleted||0,state.wave); state.victory=true; state.finaleStarted=false; saveGame(); triggerVictory(); return;
   }
   interWaveTimer=2.4;
   addText(player.x,player.y-70,'✓ '+(FINALE_NAMES[killedKind]||'Alpha')+' verslagen','#4ade80',-15,1.8);
@@ -556,7 +586,7 @@ function updateWaves(dt){
     }
   }
   if(waveActive&&waveBeastsRemaining<=0&&beasts.length===0){
-    waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame();
+    state.stats.wavesCompleted=Math.max(state.stats.wavesCompleted||0,state.wave); waveActive=false; waveCleared=true; interWaveTimer=5.0; state.wave++; saveGame();
   }
 }
 const keys={}; window.addEventListener('keydown',e=>{initAudio();keys[e.key.toLowerCase()]=true;}); window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
@@ -904,7 +934,7 @@ function triggerGameOver(){gameOver=true;playSound('gameover');document.getEleme
 function triggerVictory(){
   state.victory=true; paused=true; joyEnd(); beasts.length=0; projectiles.length=0; drops.length=0; saveGame();
   const stats=state.stats||{};
-  document.getElementById('vic-stat-wave').textContent=Math.max(0,state.wave-1);
+  document.getElementById('vic-stat-wave').textContent=Math.max(Number(stats.wavesCompleted)||0,Math.max(0,state.wave-1));
   document.getElementById('vic-stat-kills').textContent=Math.floor(stats.kills||0);
   document.getElementById('vic-stat-structures').textContent=Math.floor(stats.structuresBuilt||0);
   document.getElementById('vic-stat-wood').textContent=Math.floor(stats.woodCollected||0);
