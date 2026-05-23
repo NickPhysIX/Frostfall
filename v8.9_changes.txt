@@ -1,0 +1,17 @@
+# Frostfall v8.9 — Hunter Combat Polish
+
+## Nieuw
+- Hunters hebben nu een zichtbare melee-aanval met 4 ronddraaiende axe-sprites.
+- De melee-spin verschijnt kort wanneer een hunter een vijand binnen melee range raakt.
+- Hunter-ranged attacks gebruiken nu duidelijkere pijl/speer-projectiles in plaats van kleine dots.
+- Hunter-projectiles bewaren hun vliegrichting en worden als rotated arrow/spear getekend.
+- Hunter combat feedback kreeg een kleine ranged flash bij afvuren.
+
+## Technisch
+- SAVE_KEY bijgewerkt naar `frostfall-save-v8-9-hunter-combat-polish`.
+- v8.8 palisade-save toegevoegd aan `LEGACY_KEYS`.
+- Service-worker cache bijgewerkt naar `frostfall-v8-9`.
+
+## Notitie
+- De v8.8 neighbor-aware palisade blijft behouden.
+- Walls blijven friendlies doorlaten maar blokkeren/beïnvloeden vijanden als verdedigingsobject.

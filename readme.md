@@ -10,7 +10,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Mobiele joystick en toetsenbordbesturing.
 - Resources: geld, vlees, hout en HP.
 - Upgradepaneel: **Tactical Forge**.
-- Build mode met muren, torens en ijstorens.
+- Build mode met muren, torens en ijstorens. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap) en zijn doorloopbaar voor speler, survivors en jagers, maar blokkeren vijanden.
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes, inclusief Brute Frost Wolf en Brute Yeti.
@@ -226,7 +226,7 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 
 ## Latest version
-Current packaged build: **v8.2 – Audio Polish**.
+Current packaged build: **v9 — Meat Stockpiles**.
 
 ## v8.7 — Hunters & Compass
 
@@ -238,3 +238,17 @@ Current packaged build: **v8.2 – Audio Polish**.
 - Hunter damage scales from axe power only, without a separate upgrade tree.
 - Updated save/cache versioning for v8.7.
 
+
+
+## v9 Meat Stockpiles
+
+- Vleesopslag in het kamp gebruikt nu vier visuele niveaus, passend bij de bestaande hout- en goudstapels.
+- De voorraad groeit van één stuk vlees naar kleine stapel, volle kist en grote voorraad.
+- Nieuwe assets: `meat_pile_1.png` t/m `meat_pile_4.png`.
+
+## v8.9 Hunter Combat Polish
+
+- Hunters ondersteunen het kamp nu visueel duidelijker met twee aanvalsstijlen:
+  - ranged arrow/spear projectiles;
+  - korte spinning-axe melee animatie met vier bijlen.
+- De v8.8 palisade walls blijven de standaard wall-rendering.

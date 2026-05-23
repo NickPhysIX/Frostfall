@@ -1,0 +1,12 @@
+Frostfall v8.8 — Palisade
+
+- Walls now render as a connected palisade structure with neighbor-aware drawing.
+- Single walls show a pointed wooden post with a snow cap.
+- Adjacent walls (E/W) share a horizontal cross-beam and a continuous snow ridge.
+- Adjacent walls (N/S) share a vertical connection beam so vertical runs read as one structure.
+- Corners and T-junctions automatically combine horizontal and vertical connections.
+- No new sprite assets — palisade is procedurally drawn on canvas.
+- Friendlies (player, survivors, hunters) now walk through walls. Towers and ice towers still block.
+- Enemies still respect walls and attack them as before.
+- SAVE_KEY bumped to frostfall-save-v8-8-palisade with v8.7 added to legacy migration list.
+- Service-worker cache bumped to frostfall-v8-8.

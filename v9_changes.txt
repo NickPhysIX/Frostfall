@@ -1,0 +1,12 @@
+# Frostfall v9 — Meat Stockpiles
+
+- Vleesopslag gebruikt nu vier visuele voorraadniveaus, net als hout en geld.
+- Nieuwe sprites toegevoegd:
+  - `meat_pile_1.png` — één stuk vlees
+  - `meat_pile_2.png` — kleine stapel vlees
+  - `meat_pile_3.png` — houten kist vol vlees
+  - `meat_pile_4.png` — grote voorraad met meerdere kisten en stapels vlees
+- `MEAT_PILE_TIERS` toegevoegd aan de camp-decor rendering.
+- De oude `mat_meat.png`-weergave is vervangen door tiered meat-pile sprites.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v9-meat-stockpiles`; v8.9 blijft als legacy save-key aanwezig voor migratie.
+- Service-worker cache bijgewerkt naar `frostfall-v9` en de nieuwe meat sprites toegevoegd aan de pre-cache.

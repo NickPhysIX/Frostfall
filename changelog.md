@@ -1,5 +1,37 @@
 # Frostfall changelog
 
+## v9 — Meat Stockpiles
+
+- Vleesopslag vervangen door vier schaalbare sprite-niveaus:
+  - `meat_pile_1.png` — één stuk vlees.
+  - `meat_pile_2.png` — kleine stapel vlees.
+  - `meat_pile_3.png` — houten kist vol vlees.
+  - `meat_pile_4.png` — grote voorraad met meerdere kisten en stapels vlees.
+- `MEAT_PILE_TIERS` toegevoegd, analoog aan de bestaande hout- en geldstapels.
+- Kampdecoratie toont nu automatisch het juiste vleesniveau op basis van `state.meat`.
+- Oude `mat_meat.png`-opslagweergave vervangen door tiered meat-pile sprites.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v9-meat-stockpiles`; v8.9 blijft als legacy key aanwezig.
+- Service-worker cache bijgewerkt naar `frostfall-v9` en nieuwe sprites toegevoegd.
+
+## v8.9 — Hunter Combat Polish
+
+- Hunters hebben nu een zichtbare melee-spin met vier axe-sprites wanneer ze vijanden van dichtbij raken.
+- Hunter-ranged attacks zijn visueel verbeterd: projectiles worden nu als kleine pijlen/speren getekend in plaats van als eenvoudige dots.
+- Hunter-projectiles krijgen een vliegrichting (`angle`) zodat ze visueel naar hun doel wijzen.
+- Kleine ranged flash toegevoegd bij hunter-shots voor betere combat feedback.
+- v8.8 neighbor-aware palisade wall implementation behouden.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-9-hunter-combat-polish`.
+- Service-worker cache bijgewerkt naar `frostfall-v8-9`.
+
+
+## v8.8 — Palisade
+
+- Walls now render as a connected palisade with pointed posts, horizontal and vertical cross-beams, and continuous snow caps.
+- Neighbor-aware rendering: solo walls, rows, L-corners, T-junctions and full forts all draw correctly without sprite tiles.
+- Friendlies (player, survivors, hunters) walk through walls; enemies still respect them.
+- Towers and ice towers still block all movement.
+- Updated save/cache versioning for v8.8.
+
 ## v8.7 — Hunters & Compass
 
 - Added subtle edge-of-screen compass arrows: white points back to camp, red points to off-screen enemies.
@@ -11,7 +43,7 @@
 - Updated save/cache versioning for v8.7.
 
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.6**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v9**.
 
 Attributie-conventie:
 
