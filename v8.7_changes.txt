@@ -1,0 +1,29 @@
+# Frostfall v8.7 — Hunters & Compass
+
+## New: Direction indicators
+
+- Added subtle edge-of-screen directional arrows.
+- White arrow points back toward camp/home when the camp is off-screen.
+- Red arrows point toward off-screen enemies.
+- Boss/alpha enemies get slightly stronger red/pink arrows and a small dot marker.
+- Enemy arrows are capped at three at a time to avoid clutter.
+
+## New: Hunters
+
+- Added `hunter.png` as a new helper/NPC sprite.
+- Added a new **Jagers** upgrade in Tactical Forge.
+- Hunters share the same max cap as survivors: max 4.
+- Hunters are permanent helpers and do not die.
+- Hunters patrol near the camp when idle.
+- Hunters automatically target enemies within a guard radius.
+- At range, hunters fire a weak projectile attack.
+- At close distance, hunters use a stronger melee/spinning-axe style attack.
+- Hunter damage scales only from the player’s axe damage/attack power, not from a separate upgrade tree.
+
+## Versioning
+
+- Updated title to `Frostfall v8.7 - Hunters & Compass`.
+- Updated save key to `frostfall-save-v8-7-hunters-compass`.
+- Added v8.6 save key to legacy migration list.
+- Updated service-worker cache to `frostfall-v8-7`.
+- Added `hunter.png` to the service-worker pre-cache.

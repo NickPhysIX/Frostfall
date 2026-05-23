@@ -14,7 +14,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes, inclusief Brute Frost Wolf en Brute Yeti.
-- Exchange-tab in de Tactical Forge voor resource-omzetting met verlies.
+- Exchange-tab in de Tactical Forge voor resource-omzetting met verlies, inclusief **Ruil 1×** en **Ruil alles**.
 - Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
 - Yeti-waves met één grote Yeti plus snelle Brute Yeti-support enemies.
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
@@ -69,7 +69,7 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 - Tik op **⏸ PAUZE** bovenin om het spel tijdelijk stil te zetten of veilig opnieuw te starten.
 - Tik op **🔊 GELUID** / **🔇 GELUID** om zowel achtergrondmuziek als sound effects aan of uit te zetten.
 - Tik op de groene upgradeknop linksonder om de Tactical Forge te openen.
-- Gebruik de **Exchange**-tab om hout/vlees/geld met verlies om te zetten wanneer één resource de bottleneck wordt.
+- Gebruik de **Exchange**-tab om hout/vlees/geld met verlies om te zetten wanneer één resource de bottleneck wordt. Kies **Ruil 1×** voor een kleine omzetting of **Ruil alles** voor de maximaal mogelijke volledige batch.
 - Tik op de oranje buildknop om build mode aan of uit te zetten.
 - Kies in build mode wat je wilt plaatsen: muur, toren of ijstoren.
 - Tik op de kaart om te bouwen.
@@ -227,3 +227,14 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 ## Latest version
 Current packaged build: **v8.2 – Audio Polish**.
+
+## v8.7 — Hunters & Compass
+
+- Added subtle edge-of-screen compass arrows: white points back to camp, red points to off-screen enemies.
+- Enemy direction arrows are capped to three to avoid clutter; boss/alpha enemies get stronger indicators.
+- Added `hunter.png` and a new **Jagers** upgrade.
+- Hunters are permanent camp defenders, capped at 4 like survivors.
+- Hunters patrol near camp, fire weak ranged projectiles, and use a stronger close-range melee/spinning-axe attack.
+- Hunter damage scales from axe power only, without a separate upgrade tree.
+- Updated save/cache versioning for v8.7.
+

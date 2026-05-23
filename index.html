@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v8.5 - Exchange & Mobile QoL</title>
+<title>Frostfall v8.7 - Hunters & Compass</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -78,7 +78,9 @@
   .exchange-info { flex:1; }
   .exchange-name { font-weight:900; font-size:14px; margin-bottom:3px; }
   .exchange-rate { font-size:12px; opacity:.68; font-variant-numeric:tabular-nums; }
+  .exchange-actions { display:flex; flex-direction:column; gap:6px; align-items:stretch; }
   .exchange-action { border:0; border-radius:10px; padding:8px 11px; background:#fbbf24; color:#1f1300; font-weight:900; font-size:12px; cursor:pointer; white-space:nowrap; }
+  .exchange-action.all { background:#f97316; color:#fff7ed; }
   .exchange-action:disabled { background:rgba(255,255,255,.09); color:rgba(255,255,255,.42); cursor:not-allowed; }
   #game-over { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center; flex-direction:column; gap:20px; color:white; text-align:center; background:rgba(6,11,22,.96); backdrop-filter:blur(10px); }
   #game-over.show { display:flex; }
@@ -286,10 +288,10 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v8-5-exchange-qol';
-const LEGACY_KEYS=['frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v8-7-hunters-compass';
+const LEGACY_KEYS=['frostfall-save-v8-6-exchange-all','frostfall-save-v8-5-exchange-qol','frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
-const SPRITE_LIST=['player','survivor','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
+const SPRITE_LIST=['player','survivor','hunter','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
 const spritesTotal=SPRITE_LIST.length;
 function updateLoadingProgress(){
@@ -342,11 +344,14 @@ const UPGRADES=[
 {key:'wallHP',icon:'🧱',name:'Muur/Toren HP',base:120,mult:1.40,costBase:60,costMult:1.70,unit:'hp',max:10},
 {key:'meatValue',icon:'🥩',name:'Vlees Opbrengst',base:1.0,mult:1.40,costBase:55,costMult:1.75,unit:'x',max:8},
 {key:'moneyMult',icon:'💰',name:'Goud Koers',base:1.0,mult:1.40,costBase:70,costMult:1.75,unit:'x',max:10},
-{key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4}
+{key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4},
+{key:'hunters',icon:'🏹',name:'Jagers',base:0,mult:1.0,costBase:220,costMult:2.35,meatCostBase:15,meatCostAdd:18,unit:'jager',max:4}
 ];
 const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
 const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
 const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
+const HUNTER_DETECT_RANGE=440, HUNTER_RANGED_RANGE=380, HUNTER_MELEE_RANGE=58, HUNTER_PROJECTILE_SPEED=520, HUNTER_HOME_RADIUS=86;
+const COMPASS_EDGE_INSET=38, COMPASS_MAX_ENEMY_ARROWS=3;
 const STUMP_KEYS=['stump_1','stump_2','stump_3'];
 const WOOD_PILE_TIERS=[
   {min:150,key:'wood_pile_4',maxW:112,maxH:76,label:'WOOD'},
@@ -362,7 +367,7 @@ const MONEY_PILE_TIERS=[
 ];
 function pickPileTier(amount,tiers){ return tiers.find(t=>amount>=t.min)||null; }
 function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
+let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0,hunters:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
 let audioCtx=null;
 let sfxLoadingStarted=false;
 const activeAudioNodes=new Set();
@@ -614,7 +619,7 @@ function ensureStateDefaults(){
 }
 ensureStateDefaults();
 if(!state._v64StartGrant){ state.wood=Math.max(Number(state.wood)||0,20); state.meat=Math.max(Number(state.meat)||0,5); state._v64StartGrant=true; saveGame(); }
-function statValue(key){ const u=UPGRADES.find(x=>x.key===key); if(!u) return 0; if(key==='survivors') return Math.floor(state.upgrades.survivors||0); return u.base*Math.pow(u.mult,state.upgrades[key]||0); }
+function statValue(key){ const u=UPGRADES.find(x=>x.key===key); if(!u) return 0; if(key==='survivors') return Math.floor(state.upgrades.survivors||0); if(key==='hunters') return Math.floor(state.upgrades.hunters||0); return u.base*Math.pow(u.mult,state.upgrades[key]||0); }
 function upgradeCosts(key){ const u=UPGRADES.find(x=>x.key===key), lvl=state.upgrades[key]||0; return {money:Math.floor(u.costBase*Math.pow(u.costMult,lvl)), meat:u.meatCostBase!==undefined?Math.floor(u.meatCostBase+(u.meatCostAdd||0)*lvl):0}; }
 function costLabel(c){ return c.meat>0?`$${c.money} + ${c.meat}🥩`:`$${c.money}`; }
 function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key); return !!(u.max && (state.upgrades[key]||0)>=u.max); }
@@ -625,7 +630,7 @@ const canvas=document.getElementById('game'), ctx=canvas.getContext('2d'); let W
 function resize(){ DPR=Math.min(window.devicePixelRatio||1,2); W=window.innerWidth; H=window.innerHeight; canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR); canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); ctx.imageSmoothingEnabled=false; }
 window.addEventListener('resize',resize); resize();
 const player={x:0,y:0,angle:0,attackTimer:0,axeAngle:0,axeSpin:0,hitFlash:0,chopping:null,walkCycle:0,face:1};
-const beasts=[], drops=[], particles=[], floatingTexts=[], trees=[], projectiles=[], survivors=[];
+const beasts=[], drops=[], particles=[], floatingTexts=[], trees=[], projectiles=[], survivors=[], hunters=[];
 function generateTrees(){
   trees.length=0;
   const starterAngles=[-.75,.55,2.35,3.7];
@@ -656,6 +661,70 @@ function treeClaimedByAnother(tree,survivor){ return survivors.some(s=>s!==survi
 function findSurvivorTree(s){ let best=null,score=Infinity; for(const t of trees){ if(!t.alive||treeClaimedByAnother(t,s)) continue; const d=Math.hypot(t.x-s.x,t.y-s.y); if(d<score){ score=d; best=t; }} return best; }
 function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(Math.abs(dx)>.2) actor.face=dx<0?-1:1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
 function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=15*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; state.stats.woodCollected+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
+function makeHunter(index){
+  const total=Math.max(1,statValue('hunters'));
+  const a=(index/total)*Math.PI*2 + Math.PI*.35;
+  return {x:Math.cos(a)*HUNTER_HOME_RADIUS,y:Math.sin(a)*HUNTER_HOME_RADIUS,target:null,mode:'guard',attackCD:Math.random()*.4,meleeCD:0,walkCycle:Math.random()*100,face:1,patrolAngle:a};
+}
+function syncHunters(reset=false){
+  const wanted=statValue('hunters');
+  if(reset) hunters.length=0;
+  while(hunters.length<wanted) hunters.push(makeHunter(hunters.length));
+  while(hunters.length>wanted) hunters.pop();
+}
+function findHunterTarget(h){
+  let best=null,score=Infinity;
+  for(const b of beasts){
+    if(!b||b.hp<=0) continue;
+    const d=Math.hypot(b.x-h.x,b.y-h.y);
+    if(d>HUNTER_DETECT_RANGE) continue;
+    const priority=(b.isBoss||b.alpha?0.65:1) * (b.baseKind==='wolf'?0.85:1);
+    const sc=d*priority;
+    if(sc<score){score=sc;best=b;}
+  }
+  return best;
+}
+function updateHunters(dt){
+  syncHunters();
+  const axePower=statValue('damage');
+  const atkSpeed=Math.sqrt(statValue('attackSpeed'));
+  for(let i=0;i<hunters.length;i++){
+    const h=hunters[i];
+    h.walkCycle+=dt*9;
+    h.attackCD=Math.max(0,(h.attackCD||0)-dt);
+    h.meleeCD=Math.max(0,(h.meleeCD||0)-dt);
+    if(!h.target || !beasts.includes(h.target) || h.target.hp<=0 || Math.hypot(h.target.x-h.x,h.target.y-h.y)>HUNTER_DETECT_RANGE*1.25){
+      h.target=findHunterTarget(h);
+    }
+    if(h.target){
+      const dx=h.target.x-h.x, dy=h.target.y-h.y, d=Math.hypot(dx,dy)||1;
+      if(Math.abs(dx)>.2) h.face=dx<0?-1:1;
+      if(d>HUNTER_RANGED_RANGE*.78){
+        h.x+=dx/d*82*dt; h.y+=dy/d*82*dt;
+      } else if(d<HUNTER_MELEE_RANGE*.72){
+        h.x-=dx/d*40*dt; h.y-=dy/d*40*dt;
+      }
+      if(d<=HUNTER_MELEE_RANGE && h.meleeCD<=0){
+        const dmg=axePower*.58;
+        h.target.hp-=dmg; h.target.hitFlash=.15;
+        h.meleeCD=Math.max(.38,.88/atkSpeed);
+        h.attackCD=Math.max(h.attackCD,.18);
+        for(let k=0;k<4;k++) addParticle(h.target.x,h.target.y-h.target.size*.25,'#fbbf24','spark');
+        playSound('hit');
+      } else if(d<=HUNTER_RANGED_RANGE && h.attackCD<=0){
+        projectiles.push({x:h.x,y:h.y-18,target:h.target,speed:HUNTER_PROJECTILE_SPEED,dmg:axePower*.34,type:'hunter',life:1.6});
+        h.attackCD=Math.max(.52,1.45/atkSpeed);
+        playSound('shoot');
+      }
+    } else {
+      h.patrolAngle+=(.15+i*.015)*dt;
+      const tx=Math.cos(h.patrolAngle)*HUNTER_HOME_RADIUS;
+      const ty=Math.sin(h.patrolAngle)*HUNTER_HOME_RADIUS;
+      moveToward(h,tx,ty,48,dt);
+    }
+  }
+}
+
 let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5,waveIsYeti=false,waveYetiSpawned=false,waveBruteYetiRemaining=0;
 const FINAL_WAVE=50;
 const FINALE_BOSSES=['alpha_wolf','alpha_brute','alpha_yeti'];
@@ -836,7 +905,7 @@ function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) 
 function findBruteTarget(b){ let best=null,score=Infinity; for(const s of state.structures){ const sx=s.gx*GRID, sy=s.gy*GRID, d=Math.hypot(sx-b.x,sy-b.y); if(d>540) continue; const weak=s.hp/Math.max(1,s.maxHP), sc=d*.65+weak*180; if(sc<score){score=sc;best=s;} } return best; }
 function update(dt){ let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!structureAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!structureAtWorld(nx,player.y)) player.x=nx; if(!structureAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5; player.axeSpin+=dt*statValue('attackSpeed')*10;
 const enemyChopThreshSq=ENEMY_CHOP_INTERRUPT_RADIUS*ENEMY_CHOP_INTERRUPT_RADIUS; const enemyTooClose=beasts.some(b=>{const dx=b.x-player.x,dy=b.y-player.y;return dx*dx+dy*dy<enemyChopThreshSq;}); player.chopping=null; if(!isMoving&&!enemyTooClose){ let nearest=null,nearestD=PLAYER_CHOP_RADIUS; for(const t of trees){ if(!t.alive) continue; const d=Math.hypot(t.x-player.x,t.y-player.y); if(d<nearestD){nearestD=d;nearest=t;} } if(nearest){ player.chopping=nearest; nearest.hp-=PLAYER_CHOP_DPS*statValue('chopSpeed')*dt; if(Math.random()<.35){addParticle(nearest.x+(Math.random()-.5)*12,nearest.y,'#a05a2c','wood');playSound('chop');} if(nearest.hp<=0){nearest.alive=false;nearest.regrowTimer=TREE_REGROW_TIME;nearest.hp=0;state.wood+=TREE_WOOD;state.stats.woodCollected+=TREE_WOOD;addText(nearest.x,nearest.y-22,`+${TREE_WOOD}🪵`,'#d97706',-35,1);player.chopping=null;saveGame();}}}
-document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt);
+document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt); updateHunters(dt);
 const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
 for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') continue; s.shootCD=Math.max(0,(s.shootCD||0)-dt); if(s.shootCD>0||beasts.length===0) continue; const tx=s.gx*GRID, ty=s.gy*GRID-24; let target=null,best=TOWER_RANGE; for(const b of beasts){ const d=Math.hypot(b.x-tx,b.y-ty); if(d<best){best=d;target=b;}} if(target){ const dmg=damage*(s.type==='ice_tower'?ICE_TOWER_DAMAGE_FACTOR:TOWER_DAMAGE_FACTOR); projectiles.push({x:tx,y:ty,target,speed:430,dmg,type:s.type,life:1.4}); playSound('shoot'); s.shootCD=TOWER_BASE_COOLDOWN/Math.sqrt(statValue('attackSpeed')); }}
 for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4*(1-(p.target.slowResist||0)); for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); projectiles.splice(i,1); }}
@@ -1005,6 +1074,24 @@ function drawPlayer(sx,sy){
   }
 }
 function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){ ctx.save(); ctx.translate(sx,0); ctx.scale((s.face??1)<0?-1:1,1); drawSpriteFit(images.survivor,0,sy+18+bob,34,46,'bottom'); ctx.restore(); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob); ctx.scale((s.face??1)<0?-1:1,1); ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
+function drawHunter(h,cx,cy){
+  const sx=h.x+cx,sy=h.y+cy,bob=Math.sin(h.walkCycle)*2.2;
+  ctx.fillStyle='rgba(15,35,60,.20)'; ctx.beginPath(); ctx.ellipse(sx,sy+11,13,5,0,0,Math.PI*2); ctx.fill();
+  if(images.hunter && images.hunter.loaded){
+    ctx.save(); ctx.translate(sx,0); ctx.scale((h.face??1)<0?-1:1,1); drawSpriteFit(images.hunter,0,sy+24+bob,38,58,'bottom'); ctx.restore();
+  } else {
+    ctx.save(); ctx.translate(sx,sy+bob); ctx.scale((h.face??1)<0?-1:1,1);
+    ctx.fillStyle='#64748b'; ctx.beginPath(); ctx.arc(0,2,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#cbd5e1'; ctx.fillRect(7,-8,3,22);
+    ctx.strokeStyle='#8b5a2b'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(-3,-2,12,-1.2,1.2); ctx.stroke();
+    ctx.restore();
+  }
+  if(h.target){
+    ctx.save(); ctx.globalAlpha=.35; ctx.strokeStyle='#fbbf24'; ctx.lineWidth=1; ctx.setLineDash([3,5]);
+    ctx.beginPath(); ctx.arc(sx,sy,HUNTER_MELEE_RANGE,0,Math.PI*2); ctx.stroke(); ctx.restore();
+  }
+}
+
 function drawBeast(b,sx,sy){
   const legBob=Math.sin(b.legCycle)*3;
   ctx.fillStyle='rgba(15,35,60,.22)';
@@ -1153,7 +1240,48 @@ function drawBeast(b,sx,sy){
     ctx.textAlign='left';
   }
 }
-function render(){ const z=getActiveZone(),bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,z.bg[0]);bg.addColorStop(1,z.bg[2]);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H); const cx=W/2-player.x,cy=H/2-player.y; for(const s of snowflakes){const sx=((s.x+cx*.4)%2000+2000)%2000-1000+W/2,sy=((s.y+cy*.4+performance.now()*.001*s.speed)%2000+2000)%2000-1000+H/2;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(sx,sy,s.size,0,Math.PI*2);ctx.fill();} if(buildMode) drawGrid(cx,cy); const renderables=[]; for(const d of getCampDecorations(cx,cy)) renderables.push(d); for(const t of trees) if(inView(t.x,t.y)) renderables.push({y:t.y,draw:()=>drawTree(t,t.x+cx,t.y+cy)}); for(const s of state.structures) if(inView(s.gx*GRID,s.gy*GRID)) renderables.push({y:s.gy*GRID,draw:()=>drawStructure(s,s.gx*GRID+cx,s.gy*GRID+cy)}); for(const d of drops) if(inView(d.x,d.y)) renderables.push({y:d.y,draw:()=>{const sx=d.x+cx,sy=d.y+cy;if(d.type==='meat'&&images.meat.loaded) drawSpriteFit(images.meat,sx,sy+8,16,16,'bottom'); else {ctx.fillStyle=d.type==='money'?'#22c55e':'#ef4444';ctx.beginPath();ctx.arc(sx,sy,6,0,Math.PI*2);ctx.fill();}}}); for(const b of beasts) if(inView(b.x,b.y)) renderables.push({y:b.y,draw:()=>drawBeast(b,b.x+cx,b.y+cy)}); for(const s of survivors) renderables.push({y:s.y,draw:()=>drawSurvivor(s,cx,cy)}); renderables.push({y:player.y,draw:()=>drawPlayer(W/2,H/2)}); renderables.sort((a,b)=>a.y-b.y); for(const r of renderables) r.draw(); drawBuildPreview(cx,cy); for(const p of projectiles){const sx=p.x+cx,sy=p.y+cy;ctx.fillStyle=p.type==='ice_tower'?'#38bdf8':'#fbbf24';ctx.beginPath();ctx.arc(sx,sy,p.type==='ice_tower'?5:4,0,Math.PI*2);ctx.fill();} for(const p of particles){ctx.globalAlpha=p.life/p.maxLife;ctx.fillStyle=p.color;ctx.fillRect(p.x+cx,p.y+cy,p.size,p.size);} ctx.globalAlpha=1; for(const t of floatingTexts){ctx.fillStyle=t.color;ctx.font='900 15px system-ui';ctx.fillText(t.text,t.x+cx,t.y+cy);} if(waveCleared){ctx.fillStyle='rgba(11,22,44,.75)';ctx.fillRect(0,H/2-40,W,80);ctx.fillStyle='#22c55e';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('✓ BLIZZARD OVERLEEFD',W/2,H/2+8);ctx.textAlign='left';}}
+
+function isOnScreen(sx,sy,margin=26){ return sx>=margin && sx<=W-margin && sy>=margin && sy<=H-margin; }
+function drawEdgeArrowToWorld(cx,cy,wx,wy,opts={}){
+  const sx=wx+cx, sy=wy+cy;
+  if(isOnScreen(sx,sy,opts.margin||34)) return false;
+  const dx=sx-W/2, dy=sy-H/2;
+  const len=Math.hypot(dx,dy)||1;
+  const nx=dx/len, ny=dy/len;
+  const inset=opts.inset||COMPASS_EDGE_INSET;
+  const tx=nx===0?Infinity:(W/2-inset)/Math.abs(nx);
+  const ty=ny===0?Infinity:(H/2-inset)/Math.abs(ny);
+  const t=Math.min(tx,ty);
+  const x=W/2+nx*t, y=H/2+ny*t;
+  const angle=Math.atan2(ny,nx);
+  ctx.save();
+  ctx.translate(x,y); ctx.rotate(angle);
+  ctx.globalAlpha=opts.alpha||.72;
+  ctx.fillStyle=opts.color||'#ef4444';
+  ctx.strokeStyle='rgba(15,23,42,.55)';
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(12,0); ctx.lineTo(-7,-7); ctx.lineTo(-4,0); ctx.lineTo(-7,7); ctx.closePath(); ctx.fill(); ctx.stroke();
+  if(opts.dot){ ctx.beginPath(); ctx.arc(-12,0,3,0,Math.PI*2); ctx.fill(); }
+  ctx.restore(); ctx.globalAlpha=1;
+  return true;
+}
+function drawDirectionalIndicators(cx,cy){
+  // Subtle home indicator: points back to the camp/fire at world origin if it is off-screen.
+  drawEdgeArrowToWorld(cx,cy,0,0,{color:'#f8fafc',alpha:.62,dot:true,inset:COMPASS_EDGE_INSET+8});
+  const offscreen=beasts
+    .filter(b=>!isOnScreen(b.x+cx,b.y+cy,44))
+    .sort((a,b)=>{
+      const ap=(a.isBoss||a.alpha?0:160), bp=(b.isBoss||b.alpha?0:160);
+      return (Math.hypot(a.x-player.x,a.y-player.y)+ap)-(Math.hypot(b.x-player.x,b.y-player.y)+bp);
+    })
+    .slice(0,COMPASS_MAX_ENEMY_ARROWS);
+  for(const b of offscreen){
+    const col=(b.isBoss||b.alpha)?'#fb7185':'#ef4444';
+    drawEdgeArrowToWorld(cx,cy,b.x,b.y,{color:col,alpha:(b.isBoss||b.alpha)?.86:.68,dot:b.isBoss||b.alpha});
+  }
+}
+
+function render(){ const z=getActiveZone(),bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,z.bg[0]);bg.addColorStop(1,z.bg[2]);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H); const cx=W/2-player.x,cy=H/2-player.y; for(const s of snowflakes){const sx=((s.x+cx*.4)%2000+2000)%2000-1000+W/2,sy=((s.y+cy*.4+performance.now()*.001*s.speed)%2000+2000)%2000-1000+H/2;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(sx,sy,s.size,0,Math.PI*2);ctx.fill();} if(buildMode) drawGrid(cx,cy); const renderables=[]; for(const d of getCampDecorations(cx,cy)) renderables.push(d); for(const t of trees) if(inView(t.x,t.y)) renderables.push({y:t.y,draw:()=>drawTree(t,t.x+cx,t.y+cy)}); for(const s of state.structures) if(inView(s.gx*GRID,s.gy*GRID)) renderables.push({y:s.gy*GRID,draw:()=>drawStructure(s,s.gx*GRID+cx,s.gy*GRID+cy)}); for(const d of drops) if(inView(d.x,d.y)) renderables.push({y:d.y,draw:()=>{const sx=d.x+cx,sy=d.y+cy;if(d.type==='meat'&&images.meat.loaded) drawSpriteFit(images.meat,sx,sy+8,16,16,'bottom'); else {ctx.fillStyle=d.type==='money'?'#22c55e':'#ef4444';ctx.beginPath();ctx.arc(sx,sy,6,0,Math.PI*2);ctx.fill();}}}); for(const b of beasts) if(inView(b.x,b.y)) renderables.push({y:b.y,draw:()=>drawBeast(b,b.x+cx,b.y+cy)}); for(const s of survivors) renderables.push({y:s.y,draw:()=>drawSurvivor(s,cx,cy)}); for(const h of hunters) renderables.push({y:h.y,draw:()=>drawHunter(h,cx,cy)}); renderables.push({y:player.y,draw:()=>drawPlayer(W/2,H/2)}); renderables.sort((a,b)=>a.y-b.y); for(const r of renderables) r.draw(); drawBuildPreview(cx,cy); for(const p of projectiles){const sx=p.x+cx,sy=p.y+cy;ctx.fillStyle=p.type==='ice_tower'?'#38bdf8':(p.type==='hunter'?'#cbd5e1':'#fbbf24');ctx.beginPath();ctx.arc(sx,sy,p.type==='ice_tower'?5:(p.type==='hunter'?3:4),0,Math.PI*2);ctx.fill();} for(const p of particles){ctx.globalAlpha=p.life/p.maxLife;ctx.fillStyle=p.color;ctx.fillRect(p.x+cx,p.y+cy,p.size,p.size);} ctx.globalAlpha=1; for(const t of floatingTexts){ctx.fillStyle=t.color;ctx.font='900 15px system-ui';ctx.fillText(t.text,t.x+cx,t.y+cy);} drawDirectionalIndicators(cx,cy); if(waveCleared){ctx.fillStyle='rgba(11,22,44,.75)';ctx.fillRect(0,H/2-40,W,80);ctx.fillStyle='#22c55e';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('✓ BLIZZARD OVERLEEFD',W/2,H/2+8);ctx.textAlign='left';}}
 let gameOver=false;
 function resetAllProgress(){ try{localStorage.removeItem(SAVE_KEY);for(const key of LEGACY_KEYS) localStorage.removeItem(key);}catch(e){} location.reload(); }
 function triggerGameOver(){gameOver=true;pauseAllMusic(false);playSound('gameover');document.getElementById('game-over').classList.add('show');}
@@ -1173,7 +1301,7 @@ function triggerVictory(){
 }
 function respawn(){state.hp=statValue('maxHP');state.wave=Math.max(1,state.wave-1);beasts.length=0;drops.length=0;projectiles.length=0;player.x=0;player.y=0;waveActive=false;waveCleared=false;interWaveTimer=4;gameOver=false;document.getElementById('game-over').classList.remove('show');syncSurvivors(true);saveGame();updateHUD();}
 document.getElementById('respawn-btn').addEventListener('click',respawn);
-function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${u.key==='survivors'?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1);s.maxHP=statValue('wallHP')*mult;s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
+function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${(u.key==='survivors'||u.key==='hunters')?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1);s.maxHP=statValue('wallHP')*mult;s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); if(u.key==='hunters') syncHunters(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
 document.getElementById('repair-btn-action').addEventListener('click',()=>{const cost=calculateRepairCost(); if(state.money>=cost&&cost>0){state.money-=cost;for(const s of state.structures) s.hp=s.maxHP;playSound('upgrade');addText(player.x,player.y-30,'Kamp gerepareerd!','#60a5fa',-25,1);saveGame();renderUpgrades();updateHUD();}});
 const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },
@@ -1263,16 +1391,39 @@ function resourceLabel(obj){
 function canAffordCost(cost){
   return (state.money >= (cost.money||0)) && (state.meat >= (cost.meat||0)) && (state.wood >= (cost.wood||0));
 }
-function applyExchange(recipe){
-  if(!canAffordCost(recipe.cost)) return;
-  state.money -= recipe.cost.money || 0;
-  state.meat -= recipe.cost.meat || 0;
-  state.wood -= recipe.cost.wood || 0;
-  state.money += recipe.gain.money || 0;
-  state.meat += recipe.gain.meat || 0;
-  state.wood += recipe.gain.wood || 0;
+function maxExchangeBatches(recipe){
+  let max=Infinity;
+  for(const key of ['money','meat','wood']){
+    const needed=recipe.cost[key]||0;
+    if(needed>0){
+      max=Math.min(max, Math.floor((state[key]||0)/needed));
+    }
+  }
+  return Number.isFinite(max) ? Math.max(0,max) : 0;
+}
+function multiplyResources(obj,batches){
+  const out={};
+  for(const key of ['money','meat','wood']){
+    if(obj[key]) out[key]=obj[key]*batches;
+  }
+  return out;
+}
+function applyExchange(recipe,batches=1){
+  batches=Math.max(1,Math.floor(batches));
+  const maxBatches=maxExchangeBatches(recipe);
+  if(maxBatches<=0) return;
+  batches=Math.min(batches,maxBatches);
+  const totalCost=multiplyResources(recipe.cost,batches);
+  const totalGain=multiplyResources(recipe.gain,batches);
+  state.money -= totalCost.money || 0;
+  state.meat -= totalCost.meat || 0;
+  state.wood -= totalCost.wood || 0;
+  state.money += totalGain.money || 0;
+  state.meat += totalGain.meat || 0;
+  state.wood += totalGain.wood || 0;
   playSound('upgrade');
-  addText(player.x, player.y - 36, `${resourceLabel(recipe.cost)} → ${resourceLabel(recipe.gain)}`, '#fbbf24', -24, 1.2);
+  const prefix=batches>1?`${batches}× `:'';
+  addText(player.x, player.y - 36, `${prefix}${resourceLabel(totalCost)} → ${resourceLabel(totalGain)}`, '#fbbf24', -24, 1.2);
   saveGame(); updateHUD(); renderExchange(); renderUpgrades(); renderZones();
 }
 function renderExchange(){
@@ -1288,11 +1439,13 @@ function renderExchange(){
   summary.textContent=`Beschikbaar: $${Math.floor(state.money)} · ${Math.floor(state.meat)}🥩 · ${Math.floor(state.wood)}🪵`;
   section.appendChild(summary);
   for(const r of EXCHANGE_RECIPES){
-    const affordable=canAffordCost(r.cost);
+    const maxBatches=maxExchangeBatches(r);
+    const affordable=maxBatches>0;
     const row=document.createElement('div');
     row.className='exchange-row'+(affordable?' affordable':'');
-    row.innerHTML=`<div style="font-size:25px;width:44px;text-align:center">${r.icon}</div><div class="exchange-info"><div class="exchange-name">${r.name}</div><div class="exchange-rate">${r.rate}</div></div><button class="exchange-action" ${affordable?'':'disabled'}>Ruil</button>`;
-    row.querySelector('button').addEventListener('click',()=>applyExchange(r));
+    row.innerHTML=`<div style="font-size:25px;width:44px;text-align:center">${r.icon}</div><div class="exchange-info"><div class="exchange-name">${r.name}</div><div class="exchange-rate">${r.rate}${affordable?` · max ${maxBatches}×`:''}</div></div><div class="exchange-actions"><button class="exchange-action one" ${affordable?'':'disabled'}>Ruil 1×</button><button class="exchange-action all" ${affordable?'':'disabled'}>Ruil alles</button></div>`;
+    row.querySelector('.exchange-action.one').addEventListener('click',()=>applyExchange(r,1));
+    row.querySelector('.exchange-action.all').addEventListener('click',()=>applyExchange(r,maxExchangeBatches(r)));
     section.appendChild(row);
   }
 }
@@ -1331,7 +1484,7 @@ window.addEventListener('keydown',e=>{
 });
 document.getElementById('reset-confirm').addEventListener('click',resetAllProgress);
 document.getElementById('victory-reset-btn').addEventListener('click',resetAllProgress);
-let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!state.victory&&!paused&&!panel.classList.contains('open')&&resetModal.style.display!=='flex'){updateWaves(dt);update(dt);} else updateHUD(); updateMusicForState(); render(); requestAnimationFrame(loop);} syncSurvivors(true); updateHUD(); if(state.victory) setTimeout(triggerVictory,250); requestAnimationFrame(loop);
+let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!state.victory&&!paused&&!panel.classList.contains('open')&&resetModal.style.display!=='flex'){updateWaves(dt);update(dt);} else updateHUD(); updateMusicForState(); render(); requestAnimationFrame(loop);} syncSurvivors(true); syncHunters(true); updateHUD(); if(state.victory) setTimeout(triggerVictory,250); requestAnimationFrame(loop);
 </script>
 </body>
 </html>

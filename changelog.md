@@ -1,6 +1,17 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.5**.
+## v8.7 — Hunters & Compass
+
+- Added subtle edge-of-screen compass arrows: white points back to camp, red points to off-screen enemies.
+- Enemy direction arrows are capped to three to avoid clutter; boss/alpha enemies get stronger indicators.
+- Added `hunter.png` and a new **Jagers** upgrade.
+- Hunters are permanent camp defenders, capped at 4 like survivors.
+- Hunters patrol near camp, fire weak ranged projectiles, and use a stronger close-range melee/spinning-axe attack.
+- Hunter damage scales from axe power only, without a separate upgrade tree.
+- Updated save/cache versioning for v8.7.
+
+
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.6**.
 
 Attributie-conventie:
 
@@ -8,6 +19,20 @@ Attributie-conventie:
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
+
+
+## v8.6 — Exchange All
+
+- Exchange-tab uitgebreid met een tweede actieknop per ruilregel: **Ruil alles**.
+- Naast **Ruil 1×** kan de speler nu automatisch alle mogelijke volledige batches van een resource-omzetting uitvoeren.
+- Exchange-regels tonen nu een `max X×` indicatie wanneer een ruil mogelijk is.
+- Nieuwe helperlogica toegevoegd:
+  - `maxExchangeBatches(recipe)` berekent hoeveel volledige batches de huidige voorraad toestaat.
+  - `multiplyResources(obj, batches)` berekent totale kosten/opbrengst voor bulkruil.
+- Bulk-exchange beïnvloedt lifetime collection stats niet; het blijft omzetting van bestaande voorraad.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-6-exchange-all`; v8.5 saves migreren automatisch via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-6`.
+- `v8.6_changes.txt` en `release_notes_v8.6.md` toegevoegd.
 
 
 ## v8.5 — Exchange & Mobile QoL

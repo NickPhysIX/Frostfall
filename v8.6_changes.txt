@@ -1,0 +1,9 @@
+Frostfall v8.6 — Exchange All
+
+- Exchange-tab uitgebreid met een tweede knop per ruilregel: “Ruil alles”.
+- De game berekent automatisch hoeveel volledige batches mogelijk zijn op basis van je huidige voorraad.
+- “Ruil 1×” blijft beschikbaar voor gecontroleerde kleine omzettingen.
+- Exchange-regels tonen nu ook “max X×” wanneer een ruil mogelijk is.
+- Lifetime collection stats blijven onaangetast: ruilen/verkoop telt niet als nieuw verzamelde resource.
+- SAVE_KEY bijgewerkt naar frostfall-save-v8-6-exchange-all met automatische migratie vanaf v8.5.
+- Service-worker cache-versie bijgewerkt naar frostfall-v8-6.
