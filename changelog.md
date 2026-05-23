@@ -1,6 +1,6 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.3**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.4**.
 
 Attributie-conventie:
 
@@ -9,6 +9,23 @@ Attributie-conventie:
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
 
+
+## v8.4 — Brute Beasts
+
+- Nieuwe enemy-sprites toegevoegd:
+  - `brute_wolf.png`
+  - `brute_yeti.png`
+- Brute Frost Wolf toegevoegd aan de spawn pool nadat Glacial Forest is ontgrendeld en de run ongeveer wave 14 bereikt.
+- Brute Frost Wolf is sterker en taaier dan een gewone Frost Wolf, maar duidelijk langzamer.
+- Brute Yeti toegevoegd als Yeti-wave support enemy.
+- Brute Yeti is veel kleiner en minder sterk dan de grote Yeti, maar een stuk sneller.
+- Yeti-waves spawnen nu één grote Yeti plus 4–5 Brute Yetis, zodat de wave tactischer wordt zonder dat er onbeperkt veel tegelijk verschijnen.
+- Bestiary uitgebreid met Brute Frost Wolf en Brute Yeti.
+- Rendering, HP-bar kleuren, vector-fallbacks en sprite selection uitgebreid voor de nieuwe enemy kinds.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-4-brute-beasts`; v8.3 saves migreren automatisch via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-4`.
+- Nieuwe sprites toegevoegd aan de service-worker pre-cache.
+- `v8.4_changes.txt` en `release_notes_v8.4.md` toegevoegd.
 
 ## v8.3 — Audio Lifecycle Fix
 

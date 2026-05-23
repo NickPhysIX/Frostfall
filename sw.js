@@ -1,6 +1,6 @@
 // Frostfall service worker
 // Cache version - bump this when assets change to force refresh
-const CACHE_VERSION = 'frostfall-v8-3';
+const CACHE_VERSION = 'frostfall-v8-4';
 
 // Assets to pre-cache on install
 const ASSETS = [
@@ -12,7 +12,9 @@ const ASSETS = [
   './bear.png',
   './brute.png',
   './wolf.png',
+  './brute_wolf.png',
   './yeti.png',
+  './brute_yeti.png',
   './tree.png',
   './tower.png',
   './ice_tower.png',

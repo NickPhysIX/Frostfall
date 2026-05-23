@@ -13,8 +13,9 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Build mode met muren, torens en ijstorens.
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
-- Bestiary met vijandtypes.
+- Bestiary met vijandtypes, inclusief Brute Frost Wolf en Brute Yeti.
 - Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
+- Yeti-waves met één grote Yeti plus snelle Brute Yeti-support enemies.
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
 - PWA/web-app support met manifest, app iconen en service worker.
 - LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.

@@ -1,0 +1,9 @@
+Frostfall v8.4 — Brute Beasts
+
+- Added brute_wolf.png and brute_yeti.png.
+- Added Brute Frost Wolf: slower than a normal wolf, but tougher and stronger.
+- Added Brute Yeti: smaller and weaker than the full Yeti, but much faster.
+- Yeti-waves now spawn one full Yeti plus 4–5 Brute Yetis as support.
+- Brute Frost Wolf enters the Glacial Forest+ spawn pool from roughly wave 14.
+- Bestiary updated with the new enemy types.
+- Sprite loader, renderer, HP bar colors, service-worker cache, SAVE_KEY and docs updated.
