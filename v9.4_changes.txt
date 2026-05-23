@@ -1,0 +1,9 @@
+Frostfall v9.4 — Balanced Villager Repairs
+
+- Limited automatic villager repairs to preserve resource gathering.
+- Emergency repairs: structures <25% HP, max 2 villagers globally.
+- Maintenance repairs: structures 25–50% HP, max 1 villager globally.
+- Villagers protect a 25 wood reserve.
+- Villagers repair in bursts: 4 ticks, 18 HP each, 1 wood per tick.
+- Auto-repair stops around 70% HP; full repair remains player-controlled and costs money.
+- SAVE_KEY and service worker cache bumped to v9.4.

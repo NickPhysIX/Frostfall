@@ -1,0 +1,10 @@
+# Frostfall v9.2 — Quiet Row Caps
+
+- Per-post snow caps worden niet meer getekend op middencellen van horizontale muurrijen (cellen met zowel een E- als W-buur).
+- De doorlopende sneeuwstrook op de horizontale rail is daar al de dominante visuele laag; losse caps erbovenop zorgden voor een drukke "dubbele sneeuw"-uitstraling.
+- Uiteinden van een rij, hoeken, T-stuk-koppen en alle verticale/solo paaltjes blijven hun eigen cap behouden.
+- Geen gameplay- of asset-wijzigingen — pure render-tweak op `drawWallPalisade`.
+
+## Technisch
+- SAVE_KEY ongewijzigd (`frostfall-save-v9-meat-stockpiles`) — save-data blijft geldig.
+- Service-worker cache bijgewerkt naar `frostfall-v9-2`.

@@ -8,3 +8,8 @@ Deze release rondt de resource-visuals af: vlees heeft nu, net als hout en goud,
 - Nieuwe meat stockpile sprites.
 - Updated PWA cache.
 - Save migration vanaf v8.9.
+
+
+## v9.1 hotfix
+- Wall snow caps now generate in a way that better matches vertical palisade posts.
+- Horizontal wall runs still keep the continuous top snow band.

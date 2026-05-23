@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9 - Meat Stockpiles</title>
+<title>Frostfall v9.4 - Balanced Repairs</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -178,7 +178,7 @@
     <img src="icon-192.png" alt="Frostfall" style="width:100%;height:100%;display:block;image-rendering:pixelated;" onerror="this.style.display='none'" />
   </div>
   <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FROSTFALL</div>
-  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v9 · Meat Stockpiles</div>
+  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v9.3 · Reinforced Repairs</div>
   <div style="width:220px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
     <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;transition:width .25s ease;"></div>
   </div>
@@ -288,8 +288,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v9-meat-stockpiles';
-const LEGACY_KEYS=['frostfall-save-v8-9-hunter-combat-polish','frostfall-save-v8-8-palisade','frostfall-save-v8-7-hunters-compass','frostfall-save-v8-6-exchange-all','frostfall-save-v8-5-exchange-qol','frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v9-4-balanced-repairs';
+const LEGACY_KEYS=['frostfall-save-v9-3-reinforced-repairs','frostfall-save-v9-meat-stockpiles','frostfall-save-v8-9-hunter-combat-polish','frostfall-save-v8-8-palisade','frostfall-save-v8-7-hunters-compass','frostfall-save-v8-6-exchange-all','frostfall-save-v8-5-exchange-qol','frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','hunter','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','meat_pile_1','meat_pile_2','meat_pile_3','meat_pile_4','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
@@ -341,7 +341,7 @@ const UPGRADES=[
 {key:'maxHP',icon:'❤️',name:'Gezondheid',base:100,mult:1.30,costBase:30,costMult:1.55,unit:'hp'},
 {key:'regen',icon:'✨',name:'HP Herstel',base:.50,mult:1.40,costBase:50,costMult:1.80,unit:'/s',max:12},
 {key:'chopSpeed',icon:'🪓',name:'Hout Hakken',base:1.0,mult:1.30,costBase:40,costMult:1.60,unit:'x',max:10},
-{key:'wallHP',icon:'🧱',name:'Muur/Toren HP',base:120,mult:1.40,costBase:60,costMult:1.70,unit:'hp',max:10},
+{key:'wallHP',icon:'🧱',name:'Muur/Toren HP',base:160,mult:1.40,costBase:60,costMult:1.70,unit:'hp',max:10},
 {key:'meatValue',icon:'🥩',name:'Vlees Opbrengst',base:1.0,mult:1.40,costBase:55,costMult:1.75,unit:'x',max:8},
 {key:'moneyMult',icon:'💰',name:'Goud Koers',base:1.0,mult:1.40,costBase:70,costMult:1.75,unit:'x',max:10},
 {key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4},
@@ -351,6 +351,10 @@ const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_W
 const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
 const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
 const HUNTER_DETECT_RANGE=440, HUNTER_RANGED_RANGE=380, HUNTER_MELEE_RANGE=58, HUNTER_PROJECTILE_SPEED=520, HUNTER_HOME_RADIUS=86;
+const VILLAGER_REPAIR_THRESHOLD=.50, VILLAGER_EMERGENCY_REPAIR_THRESHOLD=.25, VILLAGER_REPAIR_STOP_AT=.70;
+const VILLAGER_MIN_WOOD_FOR_AUTO_REPAIR=25, VILLAGER_NORMAL_REPAIRER_CAP=1, VILLAGER_EMERGENCY_REPAIRER_CAP=2;
+const VILLAGER_REPAIR_PACKET_HP=18, VILLAGER_REPAIR_WOOD_COST=1, VILLAGER_REPAIR_INTERVAL=.45, VILLAGER_REPAIR_TICKS_PER_BURST=4;
+const STRUCTURE_HP_MULT={wall:1,tower:1.45,ice_tower:1.30};
 const COMPASS_EDGE_INSET=38, COMPASS_MAX_ENEMY_ARROWS=3;
 const STUMP_KEYS=['stump_1','stump_2','stump_3'];
 const WOOD_PILE_TIERS=[
@@ -626,12 +630,28 @@ function ensureStateDefaults(){
 ensureStateDefaults();
 if(!state._v64StartGrant){ state.wood=Math.max(Number(state.wood)||0,20); state.meat=Math.max(Number(state.meat)||0,5); state._v64StartGrant=true; saveGame(); }
 function statValue(key){ const u=UPGRADES.find(x=>x.key===key); if(!u) return 0; if(key==='survivors') return Math.floor(state.upgrades.survivors||0); if(key==='hunters') return Math.floor(state.upgrades.hunters||0); return u.base*Math.pow(u.mult,state.upgrades[key]||0); }
+function structureHPMultiplier(type){ return STRUCTURE_HP_MULT[type]||1; }
+function desiredStructureMaxHP(type){ return statValue('wallHP')*structureHPMultiplier(type); }
 function upgradeCosts(key){ const u=UPGRADES.find(x=>x.key===key), lvl=state.upgrades[key]||0; return {money:Math.floor(u.costBase*Math.pow(u.costMult,lvl)), meat:u.meatCostBase!==undefined?Math.floor(u.meatCostBase+(u.meatCostAdd||0)*lvl):0}; }
 function costLabel(c){ return c.meat>0?`$${c.money} + ${c.meat}🥩`:`$${c.money}`; }
 function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key); return !!(u.max && (state.upgrades[key]||0)>=u.max); }
 function canAffordUpgrade(key){ const c=upgradeCosts(key); return state.money>=c.money && state.meat>=c.meat && !isMaxed(key); }
-function normalizeStructures(){ const wallHP=statValue('wallHP'); for(const s of state.structures){ if(!s.type) s.type='wall'; if(!Number.isFinite(s.shootCD)) s.shootCD=0; if(!Number.isFinite(s.maxHP)||!Number.isFinite(s.hp)){ const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1); s.maxHP=wallHP*mult; s.hp=s.maxHP; } } }
-normalizeStructures(); if(!Number.isFinite(state.hp)||state.hp<=0) state.hp=statValue('maxHP');
+function normalizeStructures(){ for(const s of state.structures){ if(!s.type) s.type='wall'; if(!Number.isFinite(s.shootCD)) s.shootCD=0; if(!Number.isFinite(s.maxHP)||!Number.isFinite(s.hp)){ s.maxHP=desiredStructureMaxHP(s.type); s.hp=s.maxHP; } } }
+function applyStructureBalanceV93(){
+  if(state._v93ReinforcedStructures) return;
+  for(const s of state.structures){
+    if(!s.type) s.type='wall';
+    const oldMax=Number.isFinite(s.maxHP)&&s.maxHP>0?s.maxHP:desiredStructureMaxHP(s.type);
+    const ratio=Number.isFinite(s.hp)&&oldMax>0?Math.max(0,Math.min(1,s.hp/oldMax)):1;
+    const newMax=desiredStructureMaxHP(s.type);
+    if(!Number.isFinite(s.maxHP)||newMax>s.maxHP){
+      s.maxHP=newMax;
+      s.hp=Math.min(s.maxHP,Math.max(Number(s.hp)||0,ratio*newMax));
+    }
+  }
+  state._v93ReinforcedStructures=true;
+}
+normalizeStructures(); applyStructureBalanceV93(); if(!Number.isFinite(state.hp)||state.hp<=0) state.hp=statValue('maxHP');
 const canvas=document.getElementById('game'), ctx=canvas.getContext('2d'); let W=0,H=0,DPR=1;
 function resize(){ DPR=Math.min(window.devicePixelRatio||1,2); W=window.innerWidth; H=window.innerHeight; canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR); canvas.style.width=W+'px'; canvas.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); ctx.imageSmoothingEnabled=false; }
 window.addEventListener('resize',resize); resize();
@@ -663,12 +683,123 @@ function addText(x,y,text,color='#fff',vy=-30,life=1){ floatingTexts.push({x,y,t
 function addParticle(x,y,color='#fff',type='dust'){ particles.push({x,y,vx:(Math.random()-.5)*90,vy:-25-Math.random()*65,life:.45,maxLife:.45,color,size:2+Math.random()*4,type}); }
 function inView(x,y,margin=CULL_MARGIN){ return x>player.x-W/2-margin && x<player.x+W/2+margin && y>player.y-H/2-margin && y<player.y+H/2+margin; }
 function drawSpriteFit(img,cx,baseY,maxW,maxH,anchor='bottom'){ if(!img||!img.loaded) return false; const ratio=(img.naturalWidth||img.width)/(img.naturalHeight||img.height||1); let w=maxW,h=maxH; if(w/h>ratio) w=h*ratio; else h=w/ratio; const x=cx-w/2, y=anchor==='center'?baseY-h/2:baseY-h; ctx.drawImage(img,x,y,w,h); return true; }
-function makeSurvivor(index){ const total=Math.max(1,statValue('survivors')), a=(index/total)*Math.PI*2; return {x:Math.cos(a)*34,y:28+Math.sin(a)*18,targetTree:null,mode:'searching',woodCarried:0,walkCycle:Math.random()*100,thinkTimer:0,face:1}; }
+function makeSurvivor(index){ const total=Math.max(1,statValue('survivors')), a=(index/total)*Math.PI*2; return {x:Math.cos(a)*34,y:28+Math.sin(a)*18,targetTree:null,targetStructure:null,mode:'searching',woodCarried:0,walkCycle:Math.random()*100,thinkTimer:0,repairTimer:0,face:1}; }
 function syncSurvivors(reset=false){ const wanted=statValue('survivors'); if(reset) survivors.length=0; while(survivors.length<wanted) survivors.push(makeSurvivor(survivors.length)); while(survivors.length>wanted) survivors.pop(); }
+function repairModeActive(s){ return s.mode==='repair_walk'||s.mode==='repairing'; }
+function structureHealthRatio(st){ return st&&Number.isFinite(st.hp)&&Number.isFinite(st.maxHP)?st.hp/Math.max(1,st.maxHP):1; }
+function repairPriorityFor(st){
+  const health=structureHealthRatio(st);
+  if(health<VILLAGER_EMERGENCY_REPAIR_THRESHOLD) return 'emergency';
+  if(health<VILLAGER_REPAIR_THRESHOLD) return 'maintenance';
+  return null;
+}
+function repairerCountFor(structure=null){
+  return survivors.reduce((sum,s)=>sum+(repairModeActive(s)&&(!structure||s.targetStructure===structure)?1:0),0);
+}
+function currentAutoRepairCap(){
+  const hasEmergency=state.structures.some(st=>repairPriorityFor(st)==='emergency');
+  return hasEmergency?VILLAGER_EMERGENCY_REPAIRER_CAP:VILLAGER_NORMAL_REPAIRER_CAP;
+}
+function repairClaimedTooMuch(structure){
+  const priority=repairPriorityFor(structure);
+  if(!priority) return true;
+  const perStructureCap=priority==='emergency'?VILLAGER_EMERGENCY_REPAIRER_CAP:1;
+  return repairerCountFor(structure)>=perStructureCap;
+}
+function findRepairTarget(s){
+  let best=null,score=Infinity;
+  const globalCap=currentAutoRepairCap();
+  if(repairerCountFor()>=globalCap) return null;
+  for(const st of state.structures){
+    if(!st||!Number.isFinite(st.hp)||!Number.isFinite(st.maxHP)||st.hp>=st.maxHP-1) continue;
+    const priority=repairPriorityFor(st);
+    if(!priority) continue;
+    if(repairClaimedTooMuch(st)) continue;
+    const sx=st.gx*GRID,sy=st.gy*GRID,d=Math.hypot(sx-s.x,sy-s.y);
+    const health=structureHealthRatio(st);
+    const priorityBonus=priority==='emergency'?-220:0;
+    const sc=d+health*280+priorityBonus;
+    if(sc<score){score=sc;best=st;}
+  }
+  return best;
+}
+function assignRepairIfNeeded(s){
+  if(state.wood<=VILLAGER_MIN_WOOD_FOR_AUTO_REPAIR) return false;
+  const target=findRepairTarget(s);
+  if(!target) return false;
+  s.targetTree=null;
+  s.targetStructure=target;
+  s.mode='repair_walk';
+  s.repairTimer=0;
+  s.repairTicks=0;
+  return true;
+}
+function clearRepairTarget(s){ s.targetStructure=null; s.repairTimer=0; s.repairTicks=0; }
 function treeClaimedByAnother(tree,survivor){ return survivors.some(s=>s!==survivor&&s.targetTree===tree&&(s.mode==='walking'||s.mode==='chopping')); }
 function findSurvivorTree(s){ let best=null,score=Infinity; for(const t of trees){ if(!t.alive||treeClaimedByAnother(t,s)) continue; const d=Math.hypot(t.x-s.x,t.y-s.y); if(d<score){ score=d; best=t; }} return best; }
 function moveToward(actor,tx,ty,speed,dt){ const dx=tx-actor.x,dy=ty-actor.y,d=Math.hypot(dx,dy)||1; if(Math.abs(dx)>.2) actor.face=dx<0?-1:1; if(d<=speed*dt){actor.x=tx;actor.y=ty;return true;} actor.x+=dx/d*speed*dt; actor.y+=dy/d*speed*dt; return false; }
-function updateSurvivors(dt){ syncSurvivors(); for(const s of survivors){ s.walkCycle+=dt*10; s.thinkTimer-=dt; if(s.mode==='searching'&&s.thinkTimer<=0){ const tree=findSurvivorTree(s); if(tree){s.targetTree=tree;s.mode='walking';} else s.mode='idle'; s.thinkTimer=.35+Math.random()*.35; } else if(s.mode==='idle'){ if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching'; } else if(s.mode==='walking'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping'; } else if(s.mode==='chopping'){ if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;} s.targetTree.hp-=15*dt; if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); } if(s.targetTree.hp<=0){ s.targetTree.alive=false; s.targetTree.regrowTimer=TREE_REGROW_TIME; s.targetTree.hp=0; s.woodCarried=TREE_WOOD; s.targetTree=null; s.mode='returning'; } } else if(s.mode==='returning'){ if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; state.stats.woodCollected+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); } } } }
+function updateSurvivors(dt){
+  syncSurvivors();
+  for(const s of survivors){
+    s.walkCycle+=dt*10;
+    s.thinkTimer-=dt;
+
+    // Balanced repair rule: villagers remain wood-gatherers first.
+    // They only divert to limited burst repairs when structures are badly damaged,
+    // never while carrying wood home, and never below the protected wood reserve.
+    const canDivertToRepair=s.mode!=='returning'&&s.mode!=='repair_walk'&&s.mode!=='repairing'&&(s.woodCarried||0)<=0;
+    if(canDivertToRepair&&assignRepairIfNeeded(s)) continue;
+
+    if(s.mode==='searching'&&s.thinkTimer<=0){
+      if(assignRepairIfNeeded(s)){
+        s.thinkTimer=.25;
+      } else {
+        const tree=findSurvivorTree(s);
+        if(tree){s.targetTree=tree;s.mode='walking';}
+        else s.mode='idle';
+        s.thinkTimer=.35+Math.random()*.35;
+      }
+    } else if(s.mode==='idle'){
+      if(assignRepairIfNeeded(s)) continue;
+      if(moveToward(s,0,34,55,dt)||Math.random()<.01) s.mode='searching';
+    } else if(s.mode==='walking'){
+      if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;}
+      if(moveToward(s,s.targetTree.x,s.targetTree.y,78,dt)) s.mode='chopping';
+    } else if(s.mode==='chopping'){
+      if(!s.targetTree||!s.targetTree.alive){s.targetTree=null;s.mode='searching';continue;}
+      s.targetTree.hp-=15*dt;
+      if(Math.random()<.16){ addParticle(s.targetTree.x+(Math.random()-.5)*12,s.targetTree.y,'#a05a2c','wood'); if(Math.random()<.045) playSound('chop'); }
+      if(s.targetTree.hp<=0){ s.targetTree.alive=false;s.targetTree.regrowTimer=TREE_REGROW_TIME;s.targetTree.hp=0;s.woodCarried=TREE_WOOD;s.targetTree=null;s.mode='returning'; }
+    } else if(s.mode==='repair_walk'){
+      const st=s.targetStructure;
+      if(!st||!state.structures.includes(st)||structureHealthRatio(st)>=VILLAGER_REPAIR_STOP_AT||state.wood<=VILLAGER_MIN_WOOD_FOR_AUTO_REPAIR){ clearRepairTarget(s); s.mode='searching'; continue; }
+      const sx=st.gx*GRID, sy=st.gy*GRID;
+      if(moveToward(s,sx,sy,82,dt)) s.mode='repairing';
+    } else if(s.mode==='repairing'){
+      const st=s.targetStructure;
+      if(!st||!state.structures.includes(st)||structureHealthRatio(st)>=VILLAGER_REPAIR_STOP_AT){ clearRepairTarget(s); s.mode='searching'; continue; }
+      if(state.wood<=VILLAGER_MIN_WOOD_FOR_AUTO_REPAIR){ clearRepairTarget(s); s.mode='searching'; continue; }
+      if((s.repairTicks||0)>=VILLAGER_REPAIR_TICKS_PER_BURST){ clearRepairTarget(s); s.mode='searching'; continue; }
+      const sx=st.gx*GRID, sy=st.gy*GRID;
+      if(Math.hypot(sx-s.x,sy-s.y)>GRID*.9){ s.mode='repair_walk'; continue; }
+      s.repairTimer-=dt;
+      if(Math.random()<.20) addParticle(sx+(Math.random()-.5)*20,sy-12+(Math.random()-.5)*10,'#93c5fd','spark');
+      if(s.repairTimer<=0){
+        state.wood-=VILLAGER_REPAIR_WOOD_COST;
+        const targetHp=Math.min(st.maxHP,VILLAGER_REPAIR_STOP_AT*st.maxHP);
+        const repaired=Math.min(VILLAGER_REPAIR_PACKET_HP,targetHp-st.hp);
+        if(repaired>0) st.hp=Math.min(targetHp,st.hp+repaired);
+        s.repairTicks=(s.repairTicks||0)+1;
+        if(Math.random()<.45&&repaired>0) addText(sx,sy-28,`+${Math.floor(repaired)} 🛠️`,'#93c5fd',-18,.55);
+        s.repairTimer=VILLAGER_REPAIR_INTERVAL;
+        if(st.hp>=targetHp-1||(s.repairTicks||0)>=VILLAGER_REPAIR_TICKS_PER_BURST||state.wood<=VILLAGER_MIN_WOOD_FOR_AUTO_REPAIR){ clearRepairTarget(s); s.mode='searching'; }
+        saveGame();
+      }
+    } else if(s.mode==='returning'){
+      if(moveToward(s,-86,-26,72,dt)){ state.wood+=s.woodCarried; state.stats.woodCollected+=s.woodCarried; addText(s.x,s.y-18,`+${s.woodCarried}🪵`,'#d97706',-28,.9); s.woodCarried=0; s.mode='searching'; saveGame(); }
+    }
+  }
+}
 function makeHunter(index){
   const total=Math.max(1,statValue('hunters'));
   const a=(index/total)*Math.PI*2 + Math.PI*.35;
@@ -917,7 +1048,7 @@ function updateBuildPointer(clientX,clientY){ const p=canvasToWorld(clientX,clie
 canvas.addEventListener('pointermove',e=>{if(buildMode) updateBuildPointer(e.clientX,e.clientY);}); canvas.addEventListener('pointerleave',()=>{buildPointer.active=false;});
 function buildCostAvailable(type){ if(type==='tower') return state.wood>=TOWER_WOOD_COST&&state.meat>=TOWER_MEAT_COST; if(type==='ice_tower') return state.wood>=ICE_TOWER_WOOD_COST&&state.meat>=ICE_TOWER_MEAT_COST; return state.wood>=WALL_COST; }
 function canPlaceAt(gx,gy){ if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return false; if(structureAtGrid(gx,gy)) return false; return buildCostAvailable(buildType); }
-function placeStructure(wx,wy){ const gx=Math.round(wx/GRID), gy=Math.round(wy/GRID); if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return; if(structureAtGrid(gx,gy)) return; if(buildType==='tower'){ if(state.wood<TOWER_WOOD_COST||state.meat<TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 30🪵 + 20🥩','#f87171',-25,1.2);return;} state.wood-=TOWER_WOOD_COST; state.meat-=TOWER_MEAT_COST; const hp=statValue('wallHP')*1.35; state.structures.push({type:'tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'🏹 Toren','#60a5fa',-15,.85); } else if(buildType==='ice_tower'){ if(state.wood<ICE_TOWER_WOOD_COST||state.meat<ICE_TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 40🪵 + 15🥩','#f87171',-25,1.2);return;} state.wood-=ICE_TOWER_WOOD_COST; state.meat-=ICE_TOWER_MEAT_COST; const hp=statValue('wallHP')*1.2; state.structures.push({type:'ice_tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'❄️ IJstoren','#38bdf8',-15,.85); } else { if(state.wood<WALL_COST){addText(player.x,player.y-30,'🪵 Te weinig hout!','#f87171',-25,1.2);return;} state.wood-=WALL_COST; const hp=statValue('wallHP'); state.structures.push({type:'wall',gx,gy,hp,maxHP:hp}); addText(gx*GRID,gy*GRID,'🧱 Muur','#fbbf24',-15,.85); } state.stats.structuresBuilt++; playSound('upgrade'); for(let i=0;i<8;i++) addParticle(gx*GRID+(Math.random()-.5)*24,gy*GRID+(Math.random()-.5)*24,'#fff','dust'); saveGame(); updateHUD(); }
+function placeStructure(wx,wy){ const gx=Math.round(wx/GRID), gy=Math.round(wy/GRID); if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return; if(structureAtGrid(gx,gy)) return; if(buildType==='tower'){ if(state.wood<TOWER_WOOD_COST||state.meat<TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 30🪵 + 20🥩','#f87171',-25,1.2);return;} state.wood-=TOWER_WOOD_COST; state.meat-=TOWER_MEAT_COST; const hp=desiredStructureMaxHP('tower'); state.structures.push({type:'tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'🏹 Toren','#60a5fa',-15,.85); } else if(buildType==='ice_tower'){ if(state.wood<ICE_TOWER_WOOD_COST||state.meat<ICE_TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 40🪵 + 15🥩','#f87171',-25,1.2);return;} state.wood-=ICE_TOWER_WOOD_COST; state.meat-=ICE_TOWER_MEAT_COST; const hp=desiredStructureMaxHP('ice_tower'); state.structures.push({type:'ice_tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'❄️ IJstoren','#38bdf8',-15,.85); } else { if(state.wood<WALL_COST){addText(player.x,player.y-30,'🪵 Te weinig hout!','#f87171',-25,1.2);return;} state.wood-=WALL_COST; const hp=desiredStructureMaxHP('wall'); state.structures.push({type:'wall',gx,gy,hp,maxHP:hp}); addText(gx*GRID,gy*GRID,'🧱 Muur','#fbbf24',-15,.85); } state.stats.structuresBuilt++; playSound('upgrade'); for(let i=0;i<8;i++) addParticle(gx*GRID+(Math.random()-.5)*24,gy*GRID+(Math.random()-.5)*24,'#fff','dust'); saveGame(); updateHUD(); }
 canvas.addEventListener('click',e=>{ if(!buildMode) return; const p=canvasToWorld(e.clientX,e.clientY); placeStructure(p.x,p.y); });
 canvas.addEventListener('touchend',e=>{ if(!buildMode||e.changedTouches.length===0) return; const t=e.changedTouches[0], target=document.elementFromPoint(t.clientX,t.clientY); if(target&&(target.tagName==='BUTTON'||target.closest('#build-hint'))) return; updateBuildPointer(t.clientX,t.clientY); const p=canvasToWorld(t.clientX,t.clientY); placeStructure(p.x,p.y); },{passive:false});
 function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) return null; const dx=player.x-b.x,dy=player.y-b.y,steps=Math.ceil(distToPlayer/GRID); for(let i=1;i<steps;i++){ const t=i/steps, gx=Math.round((b.x+dx*t)/GRID), gy=Math.round((b.y+dy*t)/GRID), s=structureAtGrid(gx,gy); if(s) return s; } return null; }
@@ -1066,31 +1197,50 @@ function drawWallPalisade(s,sx,sy){
     ctx.stroke();
   }
 
-  // Snow cap: drawn as a continuous strip just below the post tips.
-  // Extends into horizontal neighbors so a row of walls gets one unbroken snow line.
-  const snowY=postTopY+1, snowH=4;
-  const snowL=nW?sx-half-1:sx-half+2, snowR=nE?sx+half+1:sx+half-2;
-  ctx.fillStyle='#f8fafc';
-  ctx.fillRect(snowL,snowY,snowR-snowL,snowH);
-  // Soft top edge (irregular, but procedurally seeded by gx/gy so it's stable per cell).
+  // Snow cap generation: horizontal runs keep a light snow strip on the rail,
+  // while vertical/solo posts get their own aligned cap so the snow follows the palisade shape.
   const seed=((s.gx*73856093)^(s.gy*19349663))>>>0;
   const bump=((seed%5)-2)*.6;
-  ctx.fillStyle='rgba(255,255,255,.9)';
-  ctx.beginPath();
-  ctx.moveTo(snowL,snowY+1);
-  ctx.quadraticCurveTo((snowL+snowR)/2,snowY-1.5+bump,snowR,snowY+1);
-  ctx.lineTo(snowR,snowY+snowH);
-  ctx.lineTo(snowL,snowY+snowH);
-  ctx.closePath();
-  ctx.fill();
-  // Snow caps on individual post tips for solo/end posts.
-  if(!nE||!nW){
-    for(const px of posts){
-      ctx.fillStyle='#ffffff';
-      ctx.beginPath();
-      ctx.arc(px,postTopY+1,postW/2+1,Math.PI,Math.PI*2);
-      ctx.fill();
-    }
+
+  // Continuous snow strip only for horizontal joins.
+  if(nE||nW){
+    const snowY=postTopY+1, snowH=4;
+    const snowL=nW?sx-half-1:sx-half+2, snowR=nE?sx+half+1:sx+half-2;
+    ctx.fillStyle='#f8fafc';
+    ctx.fillRect(snowL,snowY,snowR-snowL,snowH);
+    ctx.fillStyle='rgba(255,255,255,.92)';
+    ctx.beginPath();
+    ctx.moveTo(snowL,snowY+1);
+    ctx.quadraticCurveTo((snowL+snowR)/2,snowY-1.5+bump,snowR,snowY+1);
+    ctx.lineTo(snowR,snowY+snowH);
+    ctx.lineTo(snowL,snowY+snowH);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Individual snow caps on visible post tops.
+  // These are always drawn so vertical runs look like capped palisade posts instead of a sideways strip.
+  // v9.2: skip caps on middle cells of horizontal rows (both E and W neighbors present) —
+  //       there the continuous snow strip on the rail is already the dominant feature, and per-post
+  //       caps on top of it would create a busy double-snow effect.
+  const skipCaps=(nE&&nW);
+  if(!skipCaps) for(let i=0;i<posts.length;i++){
+    const px=posts[i];
+    const localSeed=(seed+i*1013904223)>>>0;
+    const capInset=0.5+((localSeed>>3)%2)*0.5;
+    const capDrop=2.5+((localSeed>>5)%2)*0.5;
+    const capPeak=2.5+((localSeed>>7)%3)*0.35;
+    const left=px-postW/2+capInset;
+    const right=px+postW/2-capInset;
+    ctx.fillStyle='#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(left,postTopY+5);
+    ctx.quadraticCurveTo(px-(postW*.18),postTopY-capPeak,px,postTopY-capPeak-.75);
+    ctx.quadraticCurveTo(px+(postW*.18),postTopY-capPeak,right,postTopY+5);
+    ctx.lineTo(right,postTopY+capDrop);
+    ctx.quadraticCurveTo(px,postTopY+capDrop+1.25+bump*.15,left,postTopY+capDrop);
+    ctx.closePath();
+    ctx.fill();
   }
 }
 function drawStructure(s,sx,sy){ const sprite=images[s.type]; if(sprite&&sprite.loaded&&s.type!=='wall'){ ctx.save(); drawSpriteFit(sprite,sx,sy+23,GRID*1.25,GRID*1.95,'bottom'); ctx.restore(); } else { if(s.type==='wall'){ drawWallPalisade(s,sx,sy); } else if(s.type==='ice_tower'){ ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(sx,sy+12,24,10,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#0284c7';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(sx-14,sy+12);ctx.lineTo(sx-7,sy-22);ctx.moveTo(sx+14,sy+12);ctx.lineTo(sx+7,sy-22);ctx.stroke();ctx.fillStyle='#0284c7';ctx.fillRect(sx-18,sy-28,36,12);ctx.fillStyle='#e0f2fe';ctx.beginPath();ctx.arc(sx,sy-32,7,0,Math.PI*2);ctx.fill(); } else { ctx.fillStyle='rgba(0,0,0,.22)';ctx.beginPath();ctx.ellipse(sx,sy+12,24,10,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#3e220f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(sx-14,sy+12);ctx.lineTo(sx-7,sy-22);ctx.moveTo(sx+14,sy+12);ctx.lineTo(sx+7,sy-22);ctx.stroke();const g=ctx.createLinearGradient(sx-18,sy-28,sx+18,sy-16);g.addColorStop(0,'#b7791f');g.addColorStop(1,'#78350f');ctx.fillStyle=g;ctx.fillRect(sx-18,sy-28,36,12);ctx.fillStyle='#eff6ff';ctx.beginPath();ctx.moveTo(sx,sy-50);ctx.lineTo(sx+24,sy-34);ctx.lineTo(sx-24,sy-34);ctx.closePath();ctx.fill(); }} if(s.hp<s.maxHP){ const bw=GRID-6; ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(sx-bw/2,sy+16,bw,4);ctx.fillStyle=s.type.includes('tower')?'#60a5fa':'#22c55e';ctx.fillRect(sx-bw/2,sy+16,bw*(s.hp/s.maxHP),4); }}
@@ -1208,7 +1358,7 @@ function drawPlayer(sx,sy){
     ctx.restore();
   }
 }
-function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){ ctx.save(); ctx.translate(sx,0); ctx.scale((s.face??1)<0?-1:1,1); drawSpriteFit(images.survivor,0,sy+18+bob,34,46,'bottom'); ctx.restore(); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob); ctx.scale((s.face??1)<0?-1:1,1); ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
+function drawSurvivor(s,cx,cy){ const sx=s.x+cx,sy=s.y+cy,bob=Math.sin(s.walkCycle)*2.5; ctx.fillStyle='rgba(15,35,60,.18)';ctx.beginPath();ctx.ellipse(sx,sy+10,12,4.5,0,0,Math.PI*2);ctx.fill(); if(images.survivor.loaded){ ctx.save(); ctx.translate(sx,0); ctx.scale((s.face??1)<0?-1:1,1); drawSpriteFit(images.survivor,0,sy+18+bob,34,46,'bottom'); ctx.restore(); if(s.woodCarried>0){ctx.font='12px system-ui';ctx.fillText('🪵',sx-6,sy-34+bob);} else if(s.mode==='repair_walk'||s.mode==='repairing'){ctx.font='12px system-ui';ctx.fillText('🛠️',sx-6,sy-34+bob);}} else {ctx.save();ctx.translate(sx,sy+bob); ctx.scale((s.face??1)<0?-1:1,1); ctx.fillStyle='#d97706';ctx.beginPath();ctx.arc(0,2,9,0,Math.PI*2);ctx.fill();ctx.restore();}}
 
 function drawSmallAxeSprite(size=18){
   const axeSprite=images.axe;
@@ -1510,7 +1660,7 @@ function triggerVictory(){
 }
 function respawn(){state.hp=statValue('maxHP');state.wave=Math.max(1,state.wave-1);beasts.length=0;drops.length=0;projectiles.length=0;player.x=0;player.y=0;waveActive=false;waveCleared=false;interWaveTimer=4;gameOver=false;document.getElementById('game-over').classList.remove('show');syncSurvivors(true);saveGame();updateHUD();}
 document.getElementById('respawn-btn').addEventListener('click',respawn);
-function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${(u.key==='survivors'||u.key==='hunters')?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){const mult=s.type==='tower'?1.35:(s.type==='ice_tower'?1.2:1);s.maxHP=statValue('wallHP')*mult;s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); if(u.key==='hunters') syncHunters(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
+function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${(u.key==='survivors'||u.key==='hunters')?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){s.maxHP=desiredStructureMaxHP(s.type);s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); if(u.key==='hunters') syncHunters(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
 document.getElementById('repair-btn-action').addEventListener('click',()=>{const cost=calculateRepairCost(); if(state.money>=cost&&cost>0){state.money-=cost;for(const s of state.structures) s.hp=s.maxHP;playSound('upgrade');addText(player.x,player.y-30,'Kamp gerepareerd!','#60a5fa',-25,1);saveGame();renderUpgrades();updateHUD();}});
 const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },

@@ -1,0 +1,13 @@
+Frostfall v9.3 — Reinforced Repairs
+
+- Structures are tougher by default.
+- Wall/Tower HP base increased from 120 to 160.
+- Tower HP multipliers adjusted: tower 1.45x, ice tower 1.30x.
+- Existing saved structures migrate to the stronger max HP while preserving their damage percentage.
+- Villagers can now repair damaged structures using wood.
+- Repair priority rule: structures below 50% HP take priority over wood gathering.
+- Otherwise villagers keep prioritizing resource gathering.
+- Repair costs 1 wood per tick and restores 22 HP.
+- Villagers show a small repair icon when repairing.
+- SAVE_KEY: frostfall-save-v9-3-reinforced-repairs.
+- Service worker cache: frostfall-v9-3.

@@ -226,7 +226,7 @@ De game is bewust nog compact en single-file gehouden. Dat maakt hem makkelijk t
 
 
 ## Latest version
-Current packaged build: **v9 — Meat Stockpiles**.
+Current packaged build: **v9.3 — Reinforced Repairs**.
 
 ## v8.7 — Hunters & Compass
 
@@ -240,6 +240,15 @@ Current packaged build: **v9 — Meat Stockpiles**.
 
 
 
+
+## v9.3 Reinforced Repairs
+
+- Structures zijn sterker gemaakt.
+- Bestaande saves migreren bestaande muren/torens naar de nieuwe HP-balans met behoud van schadepercentage.
+- Villagers repareren nu automatisch structures onder 50% HP.
+- Repareren kost hout: 1 hout per reparatie-tick voor 22 HP herstel.
+- Als er niets onder 50% HP is, blijven villagers primair hout verzamelen.
+
 ## v9 Meat Stockpiles
 
 - Vleesopslag in het kamp gebruikt nu vier visuele niveaus, passend bij de bestaande hout- en goudstapels.
@@ -252,3 +261,8 @@ Current packaged build: **v9 — Meat Stockpiles**.
   - ranged arrow/spear projectiles;
   - korte spinning-axe melee animatie met vier bijlen.
 - De v8.8 palisade walls blijven de standaard wall-rendering.
+
+
+## v9.4 note — villager auto-repair balance
+
+Villagers can help save damaged structures, but they remain resource gatherers first. They only auto-repair structures below 50% HP, protect a 25 wood reserve, work in short bursts, and stop around 70% HP. Full repairs still use the player-controlled money repair option in the Tactical Forge.

@@ -1,5 +1,45 @@
 # Frostfall changelog
 
+## v9.4 — Balanced Villager Repairs
+
+- Auto-repair is now limited so villagers remain primarily resource gatherers.
+- Structures below 25% HP count as emergency repair targets; at most 2 villagers can be diverted globally.
+- Structures between 25% and 50% HP count as maintenance targets; at most 1 villager can be diverted globally.
+- Villagers only start/continue auto-repairs while wood is above a protected 25 wood reserve.
+- Villager repair now happens in short bursts: max 4 ticks, 18 HP per tick, 1 wood per tick.
+- Auto-repair stops at roughly 70% structure HP; full repair remains a player choice through the money-only repair button.
+- Save key and service worker cache bumped to v9.4.
+
+
+## v9.3 — Reinforced Repairs
+
+### [ChatGPT]
+
+- Structures versterkt: basiswaarde van **Muur/Toren HP** verhoogd van 120 naar 160.
+- Toren-HP multipliers aangescherpt: gewone torens gebruiken nu 1.45× wall HP, ijstorens 1.30× wall HP.
+- Bestaande saves worden bij eerste start gemigreerd: bestaande structuren krijgen de nieuwe maximale HP met behoud van hun relatieve schadepercentage.
+- Villagers/dorpsbewoners kunnen nu beschadigde structuren repareren met hout.
+- Reparatie-AI: als een structure onder 50% HP komt, krijgt reparatie prioriteit boven hout verzamelen.
+- Is er geen structure onder 50% HP, dan blijft resource gathering prioriteit.
+- Villager repair kost 1 hout per reparatie-tick en herstelt 22 HP per tick.
+- Villagers tonen een klein 🛠️-icoon wanneer ze onderweg zijn naar een reparatie of aan het repareren zijn.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v9-3-reinforced-repairs`.
+- Service-worker cache bijgewerkt naar `frostfall-v9-3`.
+
+## v9.2 — Quiet Row Caps
+
+- Per-post snow caps worden niet meer getekend op middencellen van horizontale muurrijen (cellen met zowel een E- als W-buur).
+- De doorlopende sneeuwstrook op de horizontale rail is daar al de dominante visuele laag; losse caps erbovenop zorgden voor een drukke "dubbele sneeuw"-uitstraling.
+- Uiteinden, hoeken, T-stuk-koppen en alle verticale/solo paaltjes behouden hun cap.
+- Geen gameplay- of asset-wijzigingen. Pure render-tweak op `drawWallPalisade`.
+- Service-worker cache bijgewerkt naar `frostfall-v9-2`. SAVE_KEY ongewijzigd.
+
+## v9.1 — Wall Snow Cap Fix
+
+- Snow-cap rendering op muren herzien: de doorlopende sneeuwstrook wordt nu alleen getekend wanneer er een horizontale rail-verbinding is (E- of W-buur).
+- Verticale runs en solo-paaltjes krijgen elk hun eigen, individueel gevormde cap met seeded variatie (capInset, capDrop, capPeak) zodat geen twee caps identiek zijn.
+- Service-worker cache bijgewerkt naar `frostfall-v9-1`.
+
 ## v9 — Meat Stockpiles
 
 - Vleesopslag vervangen door vier schaalbare sprite-niveaus:
@@ -43,7 +83,7 @@
 - Updated save/cache versioning for v8.7.
 
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v9**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v9.3**.
 
 Attributie-conventie:
 
