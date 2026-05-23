@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v8.4 - Brute Beasts</title>
+<title>Frostfall v8.5 - Exchange & Mobile QoL</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,17 +34,17 @@
   @keyframes pulseGlow { from { text-shadow:0 0 2px #d97706; } to { text-shadow:0 0 10px #fbbf24; } }
   .circle-btn { position:fixed; bottom:env(safe-area-inset-bottom,24px); width:64px; height:64px; border-radius:50%; border:3px solid rgba(255,255,255,.9); color:white; font-size:26px; font-weight:900; cursor:pointer; z-index:11; display:flex; align-items:center; justify-content:center; pointer-events:auto; box-shadow:0 10px 25px rgba(0,0,0,.42), inset 0 -4px 0 rgba(0,0,0,.22); transition:transform .1s; }
   .circle-btn:active { transform:scale(.92); }
-  #upgrade-btn { left:24px; background:linear-gradient(135deg,#22c55e,#15803d); }
+  #upgrade-btn { left:42px; bottom:calc(env(safe-area-inset-bottom,24px) + 14px); background:linear-gradient(135deg,#22c55e,#15803d); }
   #upgrade-btn.pulse { animation:btnPulse 1.5s infinite; }
   @keyframes btnPulse { 0%,100% { transform:scale(1); box-shadow:0 10px 25px rgba(34,197,94,.4); } 50% { transform:scale(1.07); box-shadow:0 14px 30px rgba(34,197,94,.62); } }
-  #build-btn { left:104px; background:linear-gradient(135deg,#e67e22,#d35400); }
+  #build-btn { left:122px; bottom:calc(env(safe-area-inset-bottom,24px) + 14px); background:linear-gradient(135deg,#e67e22,#d35400); }
   #build-btn.active { background:linear-gradient(135deg,#f1c40f,#f39c12); box-shadow:0 0 20px #f1c40f; }
   #build-hint { position:fixed; top:110px; left:50%; transform:translateX(-50%); z-index:11; display:none; pointer-events:auto; padding:11px 22px; border-radius:28px; text-align:center; color:white; font-weight:800; font-size:13px; background:rgba(211,84,0,.95); border:1px solid rgba(255,255,255,.22); box-shadow:0 8px 20px rgba(0,0,0,.33); }
   #build-hint.show { display:block; }
   .build-options { display:flex; gap:8px; justify-content:center; margin:7px 0 4px; flex-wrap:wrap; }
   .build-choice { pointer-events:auto; cursor:pointer; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:7px 10px; background:rgba(255,255,255,.08); color:white; font-size:12px; font-weight:900; }
   .build-choice.active { background:#fef3c7; color:#78350f; box-shadow:0 0 12px rgba(253,230,138,.55); }
-  #joystick { position:fixed; bottom:env(safe-area-inset-bottom,30px); right:30px; width:120px; height:120px; border-radius:50%; background:rgba(11,22,44,.5); border:2px solid rgba(255,255,255,.2); z-index:11; pointer-events:auto; touch-action:none; backdrop-filter:blur(4px); box-shadow:0 8px 24px rgba(0,0,0,.33); }
+  #joystick { position:fixed; bottom:calc(env(safe-area-inset-bottom,30px) + 16px); right:54px; width:120px; height:120px; border-radius:50%; background:rgba(11,22,44,.5); border:2px solid rgba(255,255,255,.2); z-index:11; pointer-events:auto; touch-action:none; backdrop-filter:blur(4px); box-shadow:0 8px 24px rgba(0,0,0,.33); }
   #joystick-knob { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg,#fff,#cbd5e1); border:1px solid white; pointer-events:none; box-shadow:0 4px 10px rgba(0,0,0,.42); }
   @media (hover:hover) and (pointer:fine) { #joystick { display:none; } }
   #panel { position:fixed; inset:0; z-index:20; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(5,10,20,.86); backdrop-filter:blur(12px); }
@@ -72,15 +72,23 @@
   .upgrade.maxed .upgrade-cost { background:#475569; color:white; }
   .zone-btn { width:100%; margin-bottom:8px; padding:16px; border:0; border-radius:14px; cursor:pointer; color:white; font-size:15px; font-weight:800; background:linear-gradient(135deg,#3b82f6,#1d4ed8); box-shadow:0 4px 14px rgba(59,130,246,.3); }
   .zone-btn:disabled { background:#334155; opacity:.55; cursor:not-allowed; box-shadow:none; }
+  .exchange-note { margin-bottom:12px; padding:12px; border-radius:14px; background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.22); color:rgba(255,255,255,.78); font-size:12px; line-height:1.45; }
+  .exchange-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; padding:13px; border-radius:16px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.065); }
+  .exchange-row.affordable { border-color:rgba(251,191,36,.38); background:rgba(251,191,36,.035); }
+  .exchange-info { flex:1; }
+  .exchange-name { font-weight:900; font-size:14px; margin-bottom:3px; }
+  .exchange-rate { font-size:12px; opacity:.68; font-variant-numeric:tabular-nums; }
+  .exchange-action { border:0; border-radius:10px; padding:8px 11px; background:#fbbf24; color:#1f1300; font-weight:900; font-size:12px; cursor:pointer; white-space:nowrap; }
+  .exchange-action:disabled { background:rgba(255,255,255,.09); color:rgba(255,255,255,.42); cursor:not-allowed; }
   #game-over { position:fixed; inset:0; z-index:30; display:none; align-items:center; justify-content:center; flex-direction:column; gap:20px; color:white; text-align:center; background:rgba(6,11,22,.96); backdrop-filter:blur(10px); }
   #game-over.show { display:flex; }
   #game-over h2 { font-size:36px; font-weight:900; color:#ef4444; text-shadow:0 0 20px rgba(239,68,68,.45); }
   #game-over p { opacity:.7; line-height:1.55; padding:0 20px; }
   #respawn-btn { border:0; color:white; padding:16px 40px; border-radius:14px; cursor:pointer; font-size:16px; font-weight:800; background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 10px 25px rgba(34,197,94,.32); }
-  #pause-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 92px); left:calc(50% - 54px); transform:translateX(-50%); z-index:18; width:auto; min-width:74px; padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.9); background:rgba(11,22,44,.72); box-shadow:0 8px 22px rgba(0,0,0,.28); backdrop-filter:blur(8px); font-size:11px; font-weight:900; letter-spacing:.8px; cursor:pointer; }
-  #pause-btn:active { transform:translateX(-50%) scale(.96); }
-  #music-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 92px); left:calc(50% + 58px); transform:translateX(-50%); z-index:18; width:auto; min-width:86px; padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.9); background:rgba(11,22,44,.72); box-shadow:0 8px 22px rgba(0,0,0,.28); backdrop-filter:blur(8px); font-size:11px; font-weight:900; letter-spacing:.8px; cursor:pointer; }
-  #music-btn:active { transform:translateX(-50%) scale(.96); }
+  #pause-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 112px); right:34px; z-index:18; width:auto; min-width:132px; padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.9); background:rgba(11,22,44,.72); box-shadow:0 8px 22px rgba(0,0,0,.28); backdrop-filter:blur(8px); font-size:11px; font-weight:900; letter-spacing:.8px; cursor:pointer; }
+  #pause-btn:active { transform:scale(.96); }
+  #music-btn { position:fixed; top:calc(env(safe-area-inset-top,16px) + 150px); right:34px; z-index:18; width:auto; min-width:132px; padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.18); color:rgba(255,255,255,.9); background:rgba(11,22,44,.72); box-shadow:0 8px 22px rgba(0,0,0,.28); backdrop-filter:blur(8px); font-size:11px; font-weight:900; letter-spacing:.8px; cursor:pointer; }
+  #music-btn:active { transform:scale(.96); }
   #music-btn.muted { color:rgba(255,255,255,.55); background:rgba(15,23,42,.56); }
   .menu-modal { position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(5,10,20,.94); backdrop-filter:blur(12px); color:white; text-align:center; }
   .menu-card { max-width:390px; width:100%; padding:26px 24px; border-radius:22px; background:linear-gradient(145deg,#132239,#0a111e); border:1px solid rgba(255,255,255,.12); box-shadow:0 20px 50px rgba(0,0,0,.62); }
@@ -255,12 +263,14 @@
     <div class="tabs">
       <div class="tab active" data-tab="upgrades">Upgrades</div>
       <div class="tab" data-tab="zones">Bestiary</div>
+      <div class="tab" data-tab="exchange">Exchange</div>
     </div>
     <div id="tab-upgrades">
       <div class="repair-box"><span style="font-size:13px;font-weight:800;">🛠️ Fortificaties repareren</span><button id="repair-btn-action">Repareer Alles ($0)</button></div>
       <div id="upgrade-list-container"></div>
     </div>
     <div id="tab-zones" style="display:none"></div>
+    <div id="tab-exchange" style="display:none"></div>
   </div>
 </div>
 <div id="game-over">
@@ -276,8 +286,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v8-4-brute-beasts';
-const LEGACY_KEYS=['frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v8-5-exchange-qol';
+const LEGACY_KEYS=['frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
@@ -1234,8 +1244,68 @@ function renderZones(){
     section.appendChild(btn);
   }
 }
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const tab=t.dataset.tab;document.getElementById('tab-upgrades').style.display=tab==='upgrades'?'block':'none';document.getElementById('tab-zones').style.display=tab==='zones'?'block':'none';}));
-const panel=document.getElementById('panel'); document.getElementById('upgrade-btn').addEventListener('click',()=>{initAudio();renderUpgrades();renderZones();panel.classList.add('open');}); document.getElementById('close-panel').addEventListener('click',closePanel); panel.addEventListener('click',e=>{if(e.target===panel) closePanel();}); function closePanel(){panel.classList.remove('open');}
+
+const EXCHANGE_RECIPES=[
+  {id:'wood_to_money', icon:'🪵→💰', name:'Verkoop hout', rate:'300 hout → $90', cost:{wood:300}, gain:{money:90}},
+  {id:'meat_to_money', icon:'🥩→💰', name:'Verkoop vlees', rate:'75 vlees → $120', cost:{meat:75}, gain:{money:120}},
+  {id:'money_to_wood', icon:'💰→🪵', name:'Koop hout', rate:'$250 → 120 hout', cost:{money:250}, gain:{wood:120}},
+  {id:'money_to_meat', icon:'💰→🥩', name:'Koop vlees', rate:'$250 → 40 vlees', cost:{money:250}, gain:{meat:40}},
+  {id:'wood_to_meat', icon:'🪵→🥩', name:'Ruil hout voor vlees', rate:'220 hout → 35 vlees', cost:{wood:220}, gain:{meat:35}},
+  {id:'meat_to_wood', icon:'🥩→🪵', name:'Ruil vlees voor hout', rate:'50 vlees → 150 hout', cost:{meat:50}, gain:{wood:150}}
+];
+function resourceLabel(obj){
+  const parts=[];
+  if(obj.money) parts.push(`$${obj.money}`);
+  if(obj.meat) parts.push(`${obj.meat}🥩`);
+  if(obj.wood) parts.push(`${obj.wood}🪵`);
+  return parts.join(' + ') || '0';
+}
+function canAffordCost(cost){
+  return (state.money >= (cost.money||0)) && (state.meat >= (cost.meat||0)) && (state.wood >= (cost.wood||0));
+}
+function applyExchange(recipe){
+  if(!canAffordCost(recipe.cost)) return;
+  state.money -= recipe.cost.money || 0;
+  state.meat -= recipe.cost.meat || 0;
+  state.wood -= recipe.cost.wood || 0;
+  state.money += recipe.gain.money || 0;
+  state.meat += recipe.gain.meat || 0;
+  state.wood += recipe.gain.wood || 0;
+  playSound('upgrade');
+  addText(player.x, player.y - 36, `${resourceLabel(recipe.cost)} → ${resourceLabel(recipe.gain)}`, '#fbbf24', -24, 1.2);
+  saveGame(); updateHUD(); renderExchange(); renderUpgrades(); renderZones();
+}
+function renderExchange(){
+  const section=document.getElementById('tab-exchange');
+  if(!section) return;
+  section.innerHTML='';
+  const note=document.createElement('div');
+  note.className='exchange-note';
+  note.innerHTML=`<strong>⚖️ Resource Exchange</strong><br>Ruil overschotten met verlies om, zodat hout/vlees in de late game nuttig blijven en je gericht goud kunt maken voor dure upgrades.`;
+  section.appendChild(note);
+  const summary=document.createElement('div');
+  summary.style.cssText='margin-bottom:12px;font-size:12px;opacity:.72;text-align:center;font-variant-numeric:tabular-nums';
+  summary.textContent=`Beschikbaar: $${Math.floor(state.money)} · ${Math.floor(state.meat)}🥩 · ${Math.floor(state.wood)}🪵`;
+  section.appendChild(summary);
+  for(const r of EXCHANGE_RECIPES){
+    const affordable=canAffordCost(r.cost);
+    const row=document.createElement('div');
+    row.className='exchange-row'+(affordable?' affordable':'');
+    row.innerHTML=`<div style="font-size:25px;width:44px;text-align:center">${r.icon}</div><div class="exchange-info"><div class="exchange-name">${r.name}</div><div class="exchange-rate">${r.rate}</div></div><button class="exchange-action" ${affordable?'':'disabled'}>Ruil</button>`;
+    row.querySelector('button').addEventListener('click',()=>applyExchange(r));
+    section.appendChild(row);
+  }
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const tab=t.dataset.tab;
+  document.getElementById('tab-upgrades').style.display=tab==='upgrades'?'block':'none';
+  document.getElementById('tab-zones').style.display=tab==='zones'?'block':'none';
+  document.getElementById('tab-exchange').style.display=tab==='exchange'?'block':'none';
+  if(tab==='exchange') renderExchange();
+}));
+const panel=document.getElementById('panel'); document.getElementById('upgrade-btn').addEventListener('click',()=>{initAudio();renderUpgrades();renderZones();renderExchange();panel.classList.add('open');}); document.getElementById('close-panel').addEventListener('click',closePanel); panel.addEventListener('click',e=>{if(e.target===panel) closePanel();}); function closePanel(){panel.classList.remove('open');}
 const pauseModal=document.getElementById('pause-modal');
 const resetModal=document.getElementById('reset-modal');
 let paused=false;

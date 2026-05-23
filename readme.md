@@ -14,6 +14,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes, inclusief Brute Frost Wolf en Brute Yeti.
+- Exchange-tab in de Tactical Forge voor resource-omzetting met verlies.
 - Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
 - Yeti-waves met één grote Yeti plus snelle Brute Yeti-support enemies.
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
@@ -68,6 +69,7 @@ De app gebruikt `apple-touch-icon.png` en de PWA-iconen uit het manifest.
 - Tik op **⏸ PAUZE** bovenin om het spel tijdelijk stil te zetten of veilig opnieuw te starten.
 - Tik op **🔊 GELUID** / **🔇 GELUID** om zowel achtergrondmuziek als sound effects aan of uit te zetten.
 - Tik op de groene upgradeknop linksonder om de Tactical Forge te openen.
+- Gebruik de **Exchange**-tab om hout/vlees/geld met verlies om te zetten wanneer één resource de bottleneck wordt.
 - Tik op de oranje buildknop om build mode aan of uit te zetten.
 - Kies in build mode wat je wilt plaatsen: muur, toren of ijstoren.
 - Tik op de kaart om te bouwen.

@@ -1,6 +1,6 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.4**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.5**.
 
 Attributie-conventie:
 
@@ -8,6 +8,26 @@ Attributie-conventie:
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
+
+
+## v8.5 — Exchange & Mobile QoL
+
+- Build- en upgradeknoppen iets verder van de schermrand geplaatst: klein stukje naar rechts en omhoog, zodat ze op mobiel/iPad prettiger te raken zijn.
+- Touch joystick iets naar links en omhoog verplaatst, zodat hij minder tegen de browser-/safe-area-rand zit.
+- Pauze- en GELUID-knoppen opnieuw gepositioneerd: ze staan nu onder elkaar onder het wave/statusveld rechtsboven.
+- Nieuwe **Exchange**-tab toegevoegd aan de Tactical Forge.
+- Exchange maakt resource-omzetting met verlies mogelijk:
+  - hout naar geld
+  - vlees naar geld
+  - geld naar hout
+  - geld naar vlees
+  - hout naar vlees
+  - vlees naar hout
+- Hiermee blijven hout en vlees in de late game nuttig wanneer geld de bottleneck wordt.
+- Exchange beïnvloedt de lifetime collection stats niet; het is omzetting van bestaande voorraad, geen nieuw verzamelde resource.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-5-exchange-qol`; v8.4 saves migreren automatisch via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-5`.
+- `v8.5_changes.txt` en `release_notes_v8.5.md` toegevoegd.
 
 
 ## v8.4 — Brute Beasts

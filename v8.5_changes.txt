@@ -1,0 +1,9 @@
+Frostfall v8.5 — Exchange & Mobile QoL
+
+- Build/upgrades buttons moved slightly inward and upward for easier mobile tapping.
+- Touch joystick moved slightly left and upward.
+- Pause and master sound buttons moved to a vertical stack under the wave/status card.
+- Tactical Forge now has a third tab: Exchange.
+- Exchange allows lossy conversion between wood, meat and money, so late-game surplus resources remain useful.
+- SAVE_KEY bumped to frostfall-save-v8-5-exchange-qol with v8.4 save migration.
+- Service-worker cache bumped to frostfall-v8-5.
