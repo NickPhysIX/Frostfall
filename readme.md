@@ -21,6 +21,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Pauzescherm met veilige reset-flow.
 - Achtergrondmuziek met aparte main, boss en victory tracks.
 - Geluidsknop om muziek én sound effects aan/uit te zetten, met opgeslagen voorkeur.
+- Audio-lifecycle fix: muziek en SFX stoppen wanneer de browser/tab of iOS/iPadOS web-app naar de achtergrond gaat.
 - Sample-gebaseerde sound effects voor houthakken en bijl-aanvallen, met synth-fallback.
 
 - Endgame-finale vanaf wave 50: **Winter’s End**.

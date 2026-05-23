@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v8.2 - Audio Polish</title>
+<title>Frostfall v8.3 - Audio Lifecycle Fix</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -276,8 +276,8 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
   });
 }
-const SAVE_KEY='frostfall-save-v8-2-audio-polish';
-const LEGACY_KEYS=['frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
+const SAVE_KEY='frostfall-save-v8-3-audio-lifecycle';
+const LEGACY_KEYS=['frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
 const SPRITE_LIST=['player','survivor','bear','brute','wolf','yeti','tree','tower','ice_tower','meat','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
@@ -355,6 +355,7 @@ function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
 let audioCtx=null;
 let sfxLoadingStarted=false;
+const activeAudioNodes=new Set();
 const SFX_SAMPLES={
   chop:{src:'sfx_chop.mp3',buffer:null,gain:.48,minGap:.13,last:-999,pitchJitter:.05},
   hit:{src:'sfx_axe_hit.mp3',buffer:null,gain:.54,minGap:.085,last:-999,pitchJitter:.035}
@@ -387,6 +388,8 @@ function playSampleSfx(type){
     src.playbackRate.value=1+((Math.random()-.5)*2*(s.pitchJitter||0));
     gain.gain.value=s.gain;
     src.connect(gain); gain.connect(audioCtx.destination);
+    activeAudioNodes.add(src);
+    src.onended=()=>activeAudioNodes.delete(src);
     src.start(now);
     return true;
   }catch(e){return false;}
@@ -397,6 +400,8 @@ function playSynthSound(type){
     const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
     const now=audioCtx.currentTime;
+    activeAudioNodes.add(osc);
+    osc.onended=()=>activeAudioNodes.delete(osc);
     if(type==='chop'){osc.type='triangle';osc.frequency.setValueAtTime(140,now);osc.frequency.exponentialRampToValueAtTime(45,now+.10);gain.gain.setValueAtTime(.20,now);gain.gain.exponentialRampToValueAtTime(.01,now+.10);osc.start(now);osc.stop(now+.10);}
     else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.14,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);}
     else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);}
@@ -405,7 +410,7 @@ function playSynthSound(type){
   }catch(e){}
 }
 function playSound(type){
-  if(!audioCtx || musicMuted) return;
+  if(!audioCtx || musicMuted || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)) return;
   if((type==='chop'||type==='hit')&&playSampleSfx(type)) return;
   playSynthSound(type);
 }
@@ -453,6 +458,7 @@ function desiredMusicKey(){
   return 'main';
 }
 function switchMusic(key,force=false){
+  if(audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)){ updateMusicButton(); return; }
   if(!musicUnlocked || musicMuted){ if(musicMuted) pauseAllMusic(false); updateMusicButton(); return; }
   if(!key){ pauseAllMusic(false); updateMusicButton(); return; }
   if(currentMusicKey===key && !force && !musicTracks[key].paused){ updateMusicButton(); return; }
@@ -496,11 +502,60 @@ function setMusicMuted(value){
     localStorage.setItem(AUDIO_PREF_KEY,musicMuted?'1':'0');
     localStorage.setItem(MUSIC_PREF_KEY,musicMuted?'1':'0');
   }catch(e){}
-  if(musicMuted) pauseAllMusic(false); else {musicUnlocked=true; loadSfxBuffers(); updateMusicForState(true);}
+  if(musicMuted) pauseAllMusic(false); else {musicUnlocked=true; loadSfxBuffers(); if(!audioPausedForBackground && !(typeof document !== 'undefined' && document.hidden)) updateMusicForState(true);}
   updateMusicButton();
 }
 window.addEventListener('pointerdown',unlockMusic,{once:true,passive:true});
 window.addEventListener('keydown',unlockMusic,{once:true});
+
+// --- AUDIO LIFECYCLE FIX (v8.3) ---
+// iOS/Safari/PWA can keep HTMLAudio alive when the page is backgrounded.
+// Pause music + SFX explicitly when the document is hidden, page-hidden, or frozen.
+let audioPausedForBackground=false;
+let audioWasPlayingBeforeHidden=false;
+function isAnyMusicPlaying(){
+  return Object.values(musicTracks).some(track=>track && !track.paused && !track.ended);
+}
+function stopActiveAudioNodes(){
+  for(const node of Array.from(activeAudioNodes)){
+    try{ node.stop(0); }catch(e){}
+  }
+  activeAudioNodes.clear();
+}
+function pauseAudioForBackground(){
+  if(!audioPausedForBackground){
+    audioWasPlayingBeforeHidden=isAnyMusicPlaying();
+  }
+  audioPausedForBackground=true;
+  if(musicFadeTimer){clearInterval(musicFadeTimer);musicFadeTimer=null;}
+  for(const track of Object.values(musicTracks)){
+    try{ track.pause(); }catch(e){}
+  }
+  stopActiveAudioNodes();
+  if(audioCtx && audioCtx.state==='running'){
+    audioCtx.suspend().catch(()=>{});
+  }
+  updateMusicButton();
+}
+function resumeAudioAfterReturn(){
+  if(!audioPausedForBackground) return;
+  audioPausedForBackground=false;
+  if(audioCtx && audioCtx.state==='suspended'){
+    audioCtx.resume().catch(()=>{});
+  }
+  if(!musicMuted && musicUnlocked && audioWasPlayingBeforeHidden){
+    updateMusicForState(true);
+  }
+  audioWasPlayingBeforeHidden=false;
+  updateMusicButton();
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) pauseAudioForBackground();
+  else resumeAudioAfterReturn();
+});
+window.addEventListener('pagehide',pauseAudioForBackground);
+document.addEventListener('freeze',pauseAudioForBackground);
+window.addEventListener('pageshow',()=>{ if(!document.hidden) resumeAudioAfterReturn(); });
 
 function loadGame(){ let saved=null; try{saved=localStorage.getItem(SAVE_KEY);}catch(e){} if(!saved){ for(const key of LEGACY_KEYS){ try{saved=localStorage.getItem(key);}catch(e){} if(saved) break; }} if(!saved) return; try{ const parsed=JSON.parse(saved); if(Array.isArray(parsed.walls)||Array.isArray(parsed.towers)){ parsed.structures=[...(parsed.walls||[]).map(w=>({...w,type:'wall'})),...(parsed.towers||[]).map(t=>({...t,type:'tower',shootCD:t.shootCD||0}))]; delete parsed.walls; delete parsed.towers; } state={...state,...parsed}; state.upgrades={...state.upgrades,...(parsed.upgrades||{})}; if(state.upgrades.survis!==undefined && !state.upgrades.survivors) state.upgrades.survivors=state.upgrades.survis; for(const u of UPGRADES) if(state.upgrades[u.key]===undefined) state.upgrades[u.key]=0; if(!Array.isArray(state.structures)) state.structures=[]; if(!Array.isArray(state.zonesUnlocked)) state.zonesUnlocked=[true,false,false]; }catch(e){ console.warn('Save load failed:',e); } }
 function saveGame(){ try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){} }

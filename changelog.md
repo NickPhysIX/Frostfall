@@ -1,6 +1,6 @@
 # Frostfall changelog
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.2**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v8.3**.
 
 Attributie-conventie:
 
@@ -8,6 +8,20 @@ Attributie-conventie:
 - Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
 
+
+
+## v8.3 — Audio Lifecycle Fix
+
+- Audio-lifecycle afhandeling toegevoegd voor iOS/iPadOS/Safari/PWA-gedrag waarbij muziek kan blijven doorspelen nadat de browser-tab of homescreen web-app wordt verlaten.
+- `visibilitychange`, `pagehide`, `freeze` en `pageshow` handlers toegevoegd.
+- Achtergrondmuziek pauzeert nu expliciet zodra de pagina/app naar de achtergrond gaat of wordt gesloten.
+- Actieve Web Audio one-shot SFX worden gestopt bij backgrounding.
+- De Web Audio context wordt gesuspendeerd zolang de app op de achtergrond staat.
+- Bij terugkeer hervat de muziek alleen als die vóór het verlaten van de app daadwerkelijk speelde.
+- Master mute blijft leidend: als geluid uit stond, wordt er niets automatisch hervat.
+- `SAVE_KEY` bijgewerkt naar `frostfall-save-v8-3-audio-lifecycle`; v8.2 saves migreren automatisch via `LEGACY_KEYS`.
+- `sw.js` cache-versie bijgewerkt naar `frostfall-v8-3`.
+- `v8.3_changes.txt` en `release_notes_v8.3.md` toegevoegd.
 
 
 ## v8.2 — Audio Polish
