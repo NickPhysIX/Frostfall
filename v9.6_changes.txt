@@ -1,0 +1,7 @@
+v9.6 — Arrow Towers & Full Compass
+- regular towers shoot arrows instead of orange orb shots
+- ice towers remain blue projectile towers
+- enemy compass limit removed
+- off-screen enemy arrows scale/fade by distance
+- alpha/boss arrows remain slightly larger/more visible
+- cache version bumped to frostfall-v9-6

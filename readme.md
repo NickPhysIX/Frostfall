@@ -268,6 +268,14 @@ Current packaged build: **v9.3 — Reinforced Repairs**.
 Villagers can help save damaged structures, but they remain resource gatherers first. They only auto-repair structures below 50% HP, protect a 25 wood reserve, work in short bursts, and stop around 70% HP. Full repairs still use the player-controlled money repair option in the Tactical Forge.
 
 
+## v9.7 note — Crow Thief
+
+A new nuisance enemy can now appear when the camp has enough meat. The crow flies toward the meat stockpile, steals 1 meat, and attempts to escape. If it is shot down after stealing, it drops the meat back as a pickup. This is meant as light resource pressure rather than a full combat threat.
+
+## v9.6 note — arrow towers & full compass
+
+Regular towers now visually fire arrows instead of orange orbs, matching the hunter/ranged-defense language more closely while ice towers keep their blue slow shot. The compass system also now shows all off-screen enemies rather than a small capped subset, with distance-scaled red arrows so far threats stay subtle and nearby threats read clearly.
+
 ## v9.5 note — palisade snow polish
 
 The palisade wall renderer received a visual-only cleanup. Horizontal beams and their snow strips now stop cleanly at the center of end/corner posts, while individual procedural snow caps remain on visible posts. No gameplay or save-data changes.

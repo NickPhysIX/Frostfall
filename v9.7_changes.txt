@@ -1,0 +1,6 @@
+v9.7 — Crow Thief
+- added crow.png
+- crows spawn when meat >=25
+- crows steal 1 meat and escape
+- stolen meat drops back if killed
+- cache bumped to frostfall-v9-7
