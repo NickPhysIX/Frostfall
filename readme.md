@@ -284,3 +284,10 @@ The palisade wall renderer received a visual-only cleanup. Horizontal beams and 
 
 De Crow Thief staat nu ook in de Bestiary-tab. Hij wordt zichtbaar zodra je 25+ vlees hebt of lifetime 25+ vlees hebt verzameld.
 
+
+## v9.7.2 — Crow Heist Tuning
+- Crow timing adjusted: first crow check after ~45 seconds once you have 25+ meat; successful crow spawns then recur roughly every 75–120 seconds, with only one active crow at a time.
+- Crows are now protected during the approach phase: player axes, towers and hunters ignore/avoid damaging them until they have stolen meat.
+- After stealing meat, the crow becomes vulnerable and can be shot down to recover the stolen meat.
+- Crow Bestiary text updated to explain the heist behavior.
+- Service-worker cache bumped to `frostfall-v9-7-2`.

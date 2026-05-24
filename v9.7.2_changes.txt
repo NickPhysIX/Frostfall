@@ -1,0 +1,9 @@
+v9.7.2 — Crow Heist Tuning
+- crow first check ~45s after enough meat
+- later successful spawns every ~75-120s
+- only one active crow
+- crows cannot be killed before stealing meat
+- towers/hunters/player do not damage/target approach-phase crows
+- after stealing meat, crow becomes vulnerable
+- bestiary text updated
+- cache bumped to frostfall-v9-7-2

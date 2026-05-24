@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.7.1 - Crow Bestiary Fix</title>
+<title>Frostfall v9.7.2 - Crow Heist Tuning</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -814,7 +814,7 @@ function syncHunters(reset=false){
 function findHunterTarget(h){
   let best=null,score=Infinity;
   for(const b of beasts){
-    if(!b||b.hp<=0) continue;
+    if(!b||b.hp<=0||!canTargetBeast(b)) continue;
     const d=Math.hypot(b.x-h.x,b.y-h.y);
     if(d>HUNTER_DETECT_RANGE) continue;
     const priority=(b.isBoss||b.alpha?0.65:1) * (b.baseKind==='wolf'?0.85:1);
@@ -836,7 +836,7 @@ function updateHunters(dt){
     h.meleeSpinTimer=Math.max(0,(h.meleeSpinTimer||0)-dt);
     h.meleeSpinAngle=(h.meleeSpinAngle||0)+dt*(18+statValue('attackSpeed')*2.2);
 
-    if(!h.target || !beasts.includes(h.target) || h.target.hp<=0 || Math.hypot(h.target.x-h.x,h.target.y-h.y)>HUNTER_DETECT_RANGE*1.25){
+    if(!h.target || !beasts.includes(h.target) || h.target.hp<=0 || !canTargetBeast(h.target) || Math.hypot(h.target.x-h.x,h.target.y-h.y)>HUNTER_DETECT_RANGE*1.25){
       h.target=findHunterTarget(h);
     }
     if(h.target){
@@ -994,10 +994,12 @@ function spawnBeast(kind='bear'){
 }
 function spawnWolfPack(){ const count=1+Math.floor(Math.random()*2); for(let i=0;i<count;i++) spawnBeast('wolf'); }
 
-let crowSpawnTimer=120;
+let crowSpawnTimer=45;
 const CROW_MEAT_THRESHOLD=25;
 const CROW_MEAT_X=92, CROW_MEAT_Y=-28;
 function hasActiveCrow(){ return beasts.some(b=>b.kind==='crow'); }
+function canDamageBeast(b){ return !(b&&b.kind==='crow'&&!b.hasMeat); }
+function canTargetBeast(b){ return !(b&&b.kind==='crow'&&!b.hasMeat); }
 function spawnCrow(){
   if(state.meat<CROW_MEAT_THRESHOLD || hasActiveCrow() || state.victory) return false;
   const a=Math.random()*Math.PI*2;
@@ -1005,7 +1007,7 @@ function spawnCrow(){
   const x=player.x+Math.cos(a)*dist, y=player.y+Math.sin(a)*dist;
   const outward=Math.atan2(y-CROW_MEAT_Y,x-CROW_MEAT_X);
   beasts.push({
-    kind:'crow',baseKind:'crow',isThief:true,hasMeat:false,
+    kind:'crow',baseKind:'crow',isThief:true,hasMeat:false,invulnerable:true,
     x,y,escapeX:x+Math.cos(outward)*1550,escapeY:y+Math.sin(outward)*1550-260,
     hp:Math.max(12,statValue('damage')*.38),maxHP:Math.max(12,statValue('damage')*.38),
     speed:1.95,baseSpeed:1.95,slowTimer:0,slowResist:.25,
@@ -1018,7 +1020,7 @@ function spawnCrow(){
 function updateCrowSpawner(dt){
   crowSpawnTimer-=dt;
   if(crowSpawnTimer<=0){
-    crowSpawnTimer=spawnCrow()?120+Math.random()*60:10;
+    crowSpawnTimer=spawnCrow()?75+Math.random()*45:10;
   }
 }
 function updateCrow(b,dt){
@@ -1032,6 +1034,7 @@ function updateCrow(b,dt){
     if(state.meat>=1){
       state.meat-=1;
       b.hasMeat=true;
+      b.invulnerable=false;
       const out=Math.atan2(b.y-CROW_MEAT_Y,b.x-CROW_MEAT_X);
       b.escapeX=b.x+Math.cos(out)*1550;
       b.escapeY=b.y+Math.sin(out)*1550-360;
@@ -1039,6 +1042,7 @@ function updateCrow(b,dt){
       saveGame(); updateHUD();
     } else {
       b.hasMeat=true;
+      b.invulnerable=false;
       b.escapeX=b.x+(b.x>0?1500:-1500);
       b.escapeY=b.y-1400;
     }
@@ -1118,9 +1122,9 @@ function findBruteTarget(b){ let best=null,score=Infinity; for(const s of state.
 function update(dt){ updateCrowSpawner(dt); let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!blocksFriendlyAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!blocksFriendlyAtWorld(nx,player.y)) player.x=nx; if(!blocksFriendlyAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5; player.axeSpin+=dt*statValue('attackSpeed')*10;
 const enemyChopThreshSq=ENEMY_CHOP_INTERRUPT_RADIUS*ENEMY_CHOP_INTERRUPT_RADIUS; const enemyTooClose=beasts.some(b=>{const dx=b.x-player.x,dy=b.y-player.y;return dx*dx+dy*dy<enemyChopThreshSq;}); player.chopping=null; if(!isMoving&&!enemyTooClose){ let nearest=null,nearestD=PLAYER_CHOP_RADIUS; for(const t of trees){ if(!t.alive) continue; const d=Math.hypot(t.x-player.x,t.y-player.y); if(d<nearestD){nearestD=d;nearest=t;} } if(nearest){ player.chopping=nearest; nearest.hp-=PLAYER_CHOP_DPS*statValue('chopSpeed')*dt; if(Math.random()<.35){addParticle(nearest.x+(Math.random()-.5)*12,nearest.y,'#a05a2c','wood');playSound('chop');} if(nearest.hp<=0){nearest.alive=false;nearest.regrowTimer=TREE_REGROW_TIME;nearest.hp=0;state.wood+=TREE_WOOD;state.stats.woodCollected+=TREE_WOOD;addText(nearest.x,nearest.y-22,`+${TREE_WOOD}🪵`,'#d97706',-35,1);player.chopping=null;saveGame();}}}
 document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt); updateHunters(dt);
-const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
-for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') continue; s.shootCD=Math.max(0,(s.shootCD||0)-dt); if(s.shootCD>0||beasts.length===0) continue; const tx=s.gx*GRID, ty=s.gy*GRID-24; let target=null,best=TOWER_RANGE; for(const b of beasts){ const d=Math.hypot(b.x-tx,b.y-ty); if(d<best){best=d;target=b;}} if(target){ const dmg=damage*(s.type==='ice_tower'?ICE_TOWER_DAMAGE_FACTOR:TOWER_DAMAGE_FACTOR); projectiles.push({x:tx,y:ty,target,speed:430,dmg,type:s.type,life:1.4}); playSound('shoot'); s.shootCD=TOWER_BASE_COOLDOWN/Math.sqrt(statValue('attackSpeed')); }}
-for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.angle=Math.atan2(dy,dx); p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4*(1-(p.target.slowResist||0)); for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); projectiles.splice(i,1); }}
+const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(canDamageBeast(b)&&Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
+for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') continue; s.shootCD=Math.max(0,(s.shootCD||0)-dt); if(s.shootCD>0||beasts.length===0) continue; const tx=s.gx*GRID, ty=s.gy*GRID-24; let target=null,best=TOWER_RANGE; for(const b of beasts){ if(!canTargetBeast(b)) continue; const d=Math.hypot(b.x-tx,b.y-ty); if(d<best){best=d;target=b;}} if(target){ const dmg=damage*(s.type==='ice_tower'?ICE_TOWER_DAMAGE_FACTOR:TOWER_DAMAGE_FACTOR); projectiles.push({x:tx,y:ty,target,speed:430,dmg,type:s.type,life:1.4}); playSound('shoot'); s.shootCD=TOWER_BASE_COOLDOWN/Math.sqrt(statValue('attackSpeed')); }}
+for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.angle=Math.atan2(dy,dx); p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ if(canDamageBeast(p.target)){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4*(1-(p.target.slowResist||0)); for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); } projectiles.splice(i,1); }}
 for(let i=beasts.length-1;i>=0;i--){
   const b=beasts[i];
   if(b.slowTimer>0){b.slowTimer-=dt;b.speed=b.baseSpeed*(.6+(b.slowResist||0)*.4);} else b.speed=b.baseSpeed;
@@ -1821,7 +1825,7 @@ document.getElementById('repair-btn-action').addEventListener('click',()=>{const
 const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },
   { kind:'brute', name:'Brute Bear', icon:'💢', desc:'Taai en traag, maar slaat muren met 2.5x kracht en kiest zwakste muur.', unlockedFrom:'Vanaf Wave 8' },
-  { kind:'crow', name:'Crow Thief', icon:'🐦‍⬛', desc:'Fragiele maar snelle dief. Verschijnt af en toe zodra je genoeg vlees hebt, steelt 1 vlees uit het kamp en probeert te ontsnappen. Schiet hem neer om het vlees terug te krijgen.', unlockedFrom:'Vanaf 25 vlees' },
+  { kind:'crow', name:'Crow Thief', icon:'🐦‍⬛', desc:'Snelle dief. Verschijnt af en toe zodra je genoeg vlees hebt, vliegt eerst veilig naar de vleesopslag, steelt 1 vlees en is pas daarna neer te schieten om het vlees terug te krijgen.', unlockedFrom:'Vanaf 25 vlees' },
   { kind:'wolf', name:'Frost Wolf', icon:'🐺', desc:'Snel, lager HP, jaagt meestal solo of met één extra wolf. Minder muurschade, maar kan je verrassen door snelheid.', unlockedFrom:'Glacial Forest', zoneIdx:1 },
   { kind:'brute_wolf', name:'Brute Frost Wolf', icon:'🟣', desc:'Sterker en taaier dan een gewone wolf, maar iets langzamer. Verschijnt pas na enkele waves in Glacial Forest.', unlockedFrom:'Glacial Forest + Wave 14', zoneIdx:1 },
   { kind:'yeti', name:'Yeti', icon:'❄️', desc:'Boss-event. Verschijnt vanaf wave 25 elke 10e wave in Ice Caves. Massief, maar iets eerlijker gebalanceerd. Geeft hoge, maar niet economie-brekende beloning.', unlockedFrom:'Ice Caves (elke 10e wave)', zoneIdx:2 },
