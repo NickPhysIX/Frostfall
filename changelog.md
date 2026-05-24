@@ -1,5 +1,13 @@
 # Frostfall changelog
 
+## v9.7.3 — Crow Escape Balance
+
+- Crow Thief opnieuw gebalanceerd: na de diefstal krijgt hij meer HP en een korte ontsnappings-grace, zodat hij zichtbaar met vlees wegvliegt voordat hij kwetsbaar wordt.
+- Crow blijft tijdens de approach veilig, maar wordt na de diefstal targetbaar zodra de korte grace is verlopen.
+- Bij het stelen speelt de nieuwe crow-caw SFX 2–3 keer kort achter elkaar af.
+- Crow SFX toegevoegd als asset (`crow_caw.mp3`) en gekoppeld aan de bestaande algemene mute-knop.
+- Service-worker cache gebumpt naar `frostfall-v9-7-3`.
+
 ## v9.7.1 — Crow Bestiary Fix
 
 - Crow Thief toegevoegd aan de Bestiary-tab.

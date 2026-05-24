@@ -291,3 +291,12 @@ De Crow Thief staat nu ook in de Bestiary-tab. Hij wordt zichtbaar zodra je 25+ 
 - After stealing meat, the crow becomes vulnerable and can be shot down to recover the stolen meat.
 - Crow Bestiary text updated to explain the heist behavior.
 - Service-worker cache bumped to `frostfall-v9-7-2`.
+
+
+## v9.7.3 — Crow Escape Balance
+
+- Crow Thief krijgt na het stelen van vlees een hogere HP-pool en korte ontsnappings-grace.
+- Hierdoor is de vlucht met het gestolen vlees zichtbaar en wordt de kraai niet meer meteen in de vleesstapel verwijderd.
+- Nieuwe `crow_caw.mp3` SFX toegevoegd; bij de diefstal klinkt 2–3× een kraai.
+- De bestaande geluid/mute-knop blijft master mute voor muziek én SFX.
+- Service-worker cache bumped to `frostfall-v9-7-3`.

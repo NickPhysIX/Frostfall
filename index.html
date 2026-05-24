@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.7.2 - Crow Heist Tuning</title>
+<title>Frostfall v9.7.3 - Crow Escape Balance</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -383,7 +383,8 @@ let sfxLoadingStarted=false;
 const activeAudioNodes=new Set();
 const SFX_SAMPLES={
   chop:{src:'sfx_chop.mp3',buffer:null,gain:.48,minGap:.13,last:-999,pitchJitter:.05},
-  hit:{src:'sfx_axe_hit.mp3',buffer:null,gain:.54,minGap:.085,last:-999,pitchJitter:.035}
+  hit:{src:'sfx_axe_hit.mp3',buffer:null,gain:.54,minGap:.085,last:-999,pitchJitter:.035},
+  crow:{src:'crow_caw.mp3',buffer:null,gain:.58,minGap:.25,last:-999,pitchJitter:.045}
 };
 function initAudio(){
   if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
@@ -431,12 +432,13 @@ function playSynthSound(type){
     else if(type==='hit'){osc.type='sawtooth';osc.frequency.setValueAtTime(220,now);osc.frequency.linearRampToValueAtTime(80,now+.12);gain.gain.setValueAtTime(.14,now);gain.gain.exponentialRampToValueAtTime(.01,now+.12);osc.start(now);osc.stop(now+.12);}
     else if(type==='upgrade'){osc.type='sine';osc.frequency.setValueAtTime(300,now);osc.frequency.setValueAtTime(450,now+.08);osc.frequency.setValueAtTime(600,now+.16);gain.gain.setValueAtTime(.13,now);gain.gain.exponentialRampToValueAtTime(.01,now+.28);osc.start(now);osc.stop(now+.28);}
     else if(type==='shoot'){osc.type='sine';osc.frequency.setValueAtTime(400,now);osc.frequency.exponentialRampToValueAtTime(150,now+.15);gain.gain.setValueAtTime(.08,now);gain.gain.exponentialRampToValueAtTime(.01,now+.15);osc.start(now);osc.stop(now+.15);}
+    else if(type==='crow'){osc.type='sawtooth';osc.frequency.setValueAtTime(620,now);osc.frequency.exponentialRampToValueAtTime(260,now+.18);gain.gain.setValueAtTime(.11,now);gain.gain.exponentialRampToValueAtTime(.01,now+.18);osc.start(now);osc.stop(now+.18);}
     else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);}
   }catch(e){}
 }
 function playSound(type){
   if(!audioCtx || musicMuted || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)) return;
-  if((type==='chop'||type==='hit')&&playSampleSfx(type)) return;
+  if((type==='chop'||type==='hit'||type==='crow')&&playSampleSfx(type)) return;
   playSynthSound(type);
 }
 
@@ -997,9 +999,14 @@ function spawnWolfPack(){ const count=1+Math.floor(Math.random()*2); for(let i=0
 let crowSpawnTimer=45;
 const CROW_MEAT_THRESHOLD=25;
 const CROW_MEAT_X=92, CROW_MEAT_Y=-28;
+const CROW_STEAL_GRACE=1.8;
 function hasActiveCrow(){ return beasts.some(b=>b.kind==='crow'); }
-function canDamageBeast(b){ return !(b&&b.kind==='crow'&&!b.hasMeat); }
-function canTargetBeast(b){ return !(b&&b.kind==='crow'&&!b.hasMeat); }
+function canDamageBeast(b){ return !(b&&b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0)); }
+function canTargetBeast(b){ return !(b&&b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0)); }
+function playCrowHeistCaws(){
+  const count=2+Math.floor(Math.random()*2);
+  for(let i=0;i<count;i++) setTimeout(()=>playSound('crow'), i*520);
+}
 function spawnCrow(){
   if(state.meat<CROW_MEAT_THRESHOLD || hasActiveCrow() || state.victory) return false;
   const a=Math.random()*Math.PI*2;
@@ -1009,10 +1016,10 @@ function spawnCrow(){
   beasts.push({
     kind:'crow',baseKind:'crow',isThief:true,hasMeat:false,invulnerable:true,
     x,y,escapeX:x+Math.cos(outward)*1550,escapeY:y+Math.sin(outward)*1550-260,
-    hp:Math.max(12,statValue('damage')*.38),maxHP:Math.max(12,statValue('damage')*.38),
-    speed:1.95,baseSpeed:1.95,slowTimer:0,slowResist:.25,
+    hp:Math.max(80,statValue('damage')*3.2),maxHP:Math.max(80,statValue('damage')*3.2),
+    speed:2.10,baseSpeed:2.10,slowTimer:0,slowResist:.35,
     dmg:0,wallDmgMult:0,size:14,moneyMult:0,meatMult:0,
-    attackCD:0,isBoss:false,hitFlash:0,target:null,targetCD:0,legCycle:0,face:x<CROW_MEAT_X?1:-1
+    attackCD:0,isBoss:false,hitFlash:0,target:null,targetCD:0,legCycle:0,stealGrace:0,face:x<CROW_MEAT_X?1:-1
   });
   addText(CROW_MEAT_X,CROW_MEAT_Y-40,'kraai!','#cbd5e1',-18,1.2);
   return true;
@@ -1026,6 +1033,7 @@ function updateCrowSpawner(dt){
 function updateCrow(b,dt){
   b.legCycle+=dt*b.speed*20;
   b.hitFlash=Math.max(0,b.hitFlash-dt);
+  b.stealGrace=Math.max(0,(b.stealGrace||0)-dt);
   const tx=b.hasMeat?b.escapeX:CROW_MEAT_X;
   const ty=b.hasMeat?b.escapeY:CROW_MEAT_Y;
   const dx=tx-b.x, dy=ty-b.y, dist=Math.hypot(dx,dy)||1;
@@ -1035,10 +1043,13 @@ function updateCrow(b,dt){
       state.meat-=1;
       b.hasMeat=true;
       b.invulnerable=false;
+      b.stealGrace=CROW_STEAL_GRACE;
+      b.hp=b.maxHP;
       const out=Math.atan2(b.y-CROW_MEAT_Y,b.x-CROW_MEAT_X);
       b.escapeX=b.x+Math.cos(out)*1550;
       b.escapeY=b.y+Math.sin(out)*1550-360;
-      addText(b.x,b.y-20,'-1🥩','#f87171',-30,1.5);
+      addText(b.x,b.y-20,'-1🥩  CAW!','#f87171',-30,1.5);
+      playCrowHeistCaws();
       saveGame(); updateHUD();
     } else {
       b.hasMeat=true;
@@ -1050,7 +1061,8 @@ function updateCrow(b,dt){
     b.x+=dx/dist*b.speed*60*dt;
     b.y+=dy/dist*b.speed*60*dt;
   }
-  return b.hasMeat && dist<55;
+  const escapeDist=b.hasMeat?Math.hypot(b.escapeX-b.x,b.escapeY-b.y):dist;
+  return b.hasMeat && escapeDist<55;
 }
 function killCrowAt(index,b){
   if(b.hasMeat) drops.push({x:b.x,y:b.y-10,type:'meat',value:1,life:0,vy:-6});
