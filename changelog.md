@@ -1,6 +1,17 @@
 # Frostfall changelog
 
+## v9.8.5b — Changelog Attribution Backfill
+
+*ChatGPT-documentatie-update op verzoek van Niels en op voorstel van Claude.*
+
+- Cursieve attributie-regels toegevoegd onder v9.8.1, v9.8.2, v9.8.3, v9.8.4, v9.8.5 en v9.8.5a.
+- Footer-tekst en attributie-conventie-bullets bijgewerkt: bullet-prefix-stijl gold tot v9.3, cursieve-regel-stijl vanaf v9.4.
+- Zip-package opgeschoond volgens nieuwe package-afspraak: oude v7/v8 `*_changes.txt`-bestanden niet meer meegenomen; v9.x change files blijven aanwezig.
+- Geen code-, gameplay-, save- of cache-impact.
+
 ## v9.8.5a — Credits / Asset Notes
+
+*ChatGPT-documentatie-update.*
 
 - Documentatie-update toegevoegd met credits en asset-herkomst.
 - `CREDITS.md` toegevoegd.
@@ -8,6 +19,8 @@
 - Geen gameplay-, code-, save- of cache-impact.
 
 ## v9.8.5 — Sequential Mixed-Wave Audio Cues
+
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT.*
 
 - Elke wave speelt nu een cue af voor elk uniek enemy-cue-resultaat dat in de wave verschijnt, niet alleen voor de eerste vijand.
 - Cues worden sequentieel afgespeeld met minimaal 1.2s spacing via een queue-mechanisme, zodat howl/growl-cues niet over elkaar heen vallen.
@@ -20,6 +33,8 @@
 
 ## v9.8.4 — Brute Wolf Audio Differentiation
 
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT.*
+
 - Brute-wolf-waves spelen de wolf-howl af op `playbackRate 0.78` voor een dieper, langzamer geluid.
 - Bear-brute-waves spelen de bear-growl af op `playbackRate 0.82`.
 - Normale wolf/bear/yeti-waves en alpha-bosses blijven op normale pitch.
@@ -29,6 +44,8 @@
 - Geen save-impact en geen extra audio-assets. Service-worker cache gebumpt naar `frostfall-v9-8-4` als tussenstap.
 
 ## v9.8.3 — Animal Audio Cues
+
+*ChatGPT-uitbreiding op verzoek van Niels.*
 
 - Nieuwe event-SFX toegevoegd:
   - `wolf_howl.mp3` voor wolf/brute-wolf waves.
@@ -47,6 +64,8 @@
 
 ## v9.8.2 — Crow Caw Audibility
 
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT.*
+
 - Crow-caw SFX-gain verhoogd van 0.58 naar 0.95.
 - Audio-buffers laden nu vroeg, op `DOMContentLoaded`, zodat de eerste crow-event minder snel terugvalt op de synth-fallback.
 - `AudioContext` wordt vroeg gecreëerd in `suspended`-state; daadwerkelijke playback blijft achter de eerste user-gesture zitten zodat browser autoplay-policy gerespecteerd blijft.
@@ -55,6 +74,8 @@
 - Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-2`.
 
 ## v9.8.1 — Wolf Hunt-Rat Cap
+
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT.*
 
 - Maximaal 2 wolven, inclusief Brute Wolves, jagen tegelijk op dezelfde rat-met-vlees.
 - Als meer wolven in range zijn, worden de 2 dichtstbijzijnde wolven toegewezen aan de rat; de rest blijft normaal speler/structures aanvallen.
@@ -170,13 +191,14 @@
 - Updated save/cache versioning for v8.7.
 
 
-Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling tot en met **v9.3**.
+Dit changelog is samengesteld op basis van de versies, codefragmenten, assets en parallelle AI-feedback die in deze ontwikkelsessie zichtbaar waren. Het is dus geen volledige Git-geschiedenis, maar een zo eerlijk mogelijke reconstructie van de ontwikkeling. De bullet-prefix-conventie (`[Claude]`, `[Gemini]`) is gebruikt tot en met **v9.3**. Vanaf **v9.4** worden patches per entry geattribueerd met een cursieve attributie-regel direct onder de versie-titel.
 
 Attributie-conventie:
 
-- Items zonder prefix: ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
-- Items met **[Claude]**: bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
+- Items zonder prefix (v9.3 en eerder): ontstaan in deze ChatGPT-sessie of via Niels' eigen werk, keuzes, uploads en sprite generation.
+- Items met **[Claude]** (v9.3 en eerder): bijdragen vanuit een parallelle Claude-sessie, met name PoC-architectuur, bugfixes, system design, service-worker/loading-infrastructuur, Bestiary/wolf/yeti logic en reset/pauze-flow.
 - Items met **[Gemini]**: stilistische bijdragen en feature-implementaties vanuit de initiële AI-assistent, met name visual upgrades, Web Audio, tactische features, sprite rendering en victory-screen voorstel.
+- Vanaf v9.4 wordt elke entry waar dat van toepassing is voorzien van een cursieve attributie-regel. Mogelijke vormen: *Voorgesteld door Claude, geïmplementeerd door ChatGPT*, *ChatGPT-uitbreiding*, *ChatGPT-documentatie-update*, of een andere expliciete formulering.
 
 
 

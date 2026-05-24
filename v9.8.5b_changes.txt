@@ -1,0 +1,5 @@
+v9.8.5b — Changelog Attribution Backfill
+- added attribution lines under recent v9.8.x changelog entries
+- clarified changelog attribution convention from v9.4 onward
+- removed old v7/v8 *_changes.txt files from this zip package
+- documentation/package-only update; no code, gameplay, save, or cache impact
