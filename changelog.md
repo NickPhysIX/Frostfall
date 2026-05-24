@@ -1,5 +1,33 @@
 # Frostfall changelog
 
+## v9.8.5a — Credits / Asset Notes
+
+- Documentatie-update toegevoegd met credits en asset-herkomst.
+- `CREDITS.md` toegevoegd.
+- README aangevuld met: SFX van Pixabay, muziekloops gemaakt met Gemini, pixel-art gemaakt met hulp van Gemini/ChatGPT, kleurvariaties aangepast in Apple Photos.
+- Geen gameplay-, code-, save- of cache-impact.
+
+## v9.8.5 — Sequential Mixed-Wave Audio Cues
+
+- Elke wave speelt nu een cue af voor elk uniek enemy-cue-resultaat dat in de wave verschijnt, niet alleen voor de eerste vijand.
+- Cues worden sequentieel afgespeeld met minimaal 1.2s spacing via een queue-mechanisme, zodat howl/growl-cues niet over elkaar heen vallen.
+- Wave-start opener blijft op de vooraf gekozen eerste vijand; de eerste daadwerkelijke spawn van hetzelfde type triggert niet dubbel.
+- Deduplicatie gebeurt op `sfx + pitch`, zodat een normale wolf-howl en een diepere brute-wolf-howl allebei hoorbaar kunnen zijn.
+- `waveAnimalCuePlayed` vervangen door `waveCuePlayedKeys`, `waveCueQueue` en `waveCueQueueTimer`.
+- Yeti-finale-opening en alpha-boss-cues blijven hun dramatische losse cues gebruiken, met schone queue-state per finale-boss.
+- Bij mute/background-state wordt de cue-queue geleegd zonder playback, zodat er geen achterstallige howl/growl-cues afspelen bij unmute of terugkeer.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-5`.
+
+## v9.8.4 — Brute Wolf Audio Differentiation
+
+- Brute-wolf-waves spelen de wolf-howl af op `playbackRate 0.78` voor een dieper, langzamer geluid.
+- Bear-brute-waves spelen de bear-growl af op `playbackRate 0.82`.
+- Normale wolf/bear/yeti-waves en alpha-bosses blijven op normale pitch.
+- `playSampleSfx`, `playSound` en `playEventSfx` accepteren nu een optionele `pitchBase`-parameter, backwards-compatible met bestaande calls.
+- Pitch-jitter wordt vermenigvuldigd met de pitchBase, zodat variatie behouden blijft bovenop de diepere brute-cue.
+- Duck-duur schaalt mee met lagere playback-rate zodat de muziek niet te vroeg terugkomt.
+- Geen save-impact en geen extra audio-assets. Service-worker cache gebumpt naar `frostfall-v9-8-4` als tussenstap.
+
 ## v9.8.3 — Animal Audio Cues
 
 - Nieuwe event-SFX toegevoegd:

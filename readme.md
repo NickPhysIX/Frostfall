@@ -25,19 +25,28 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Achtergrondmuziek met aparte main, boss en victory tracks.
 - Geluidsknop om muziek én sound effects aan/uit te zetten, met opgeslagen voorkeur.
 - Audio-lifecycle fix: muziek en SFX stoppen wanneer de browser/tab of iOS/iPadOS web-app naar de achtergrond gaat.
-- Sample-gebaseerde sound effects voor houthakken, bijl-aanvallen, crow-caw events, wave-start dierengeluiden, rat squeaks en player death, met synth-fallback waar relevant.
-- Belangrijke event-SFX gebruiken tijdelijke music-ducking zodat kraaien, ratten, wave-start dierencues en player death hoorbaar blijven over de muziek.
+- Sample-gebaseerde sound effects voor houthakken, bijl-aanvallen, crow-caw events, wave-start dierengeluiden, sequentiële mixed-wave cues, rat squeaks en player death, met synth-fallback waar relevant.
+- Belangrijke event-SFX gebruiken tijdelijke music-ducking zodat kraaien, ratten, wave-start dierencues en player death hoorbaar blijven over de muziek. Brute Wolves en bear-brutes gebruiken lagere playback-rate cues, en mixed waves kunnen sequentiële, gededupliceerde dierengeluiden afspelen wanneer nieuwe vijandtypes verschijnen.
 
 - Endgame-finale vanaf wave 50: **Winter’s End**.
 - Sequentiële Alpha Boss Rush: Alpha Wolf, Alpha Brute Bear en Alpha Yeti.
 - Victory-scherm met run-statistieken en een veilige Nieuwe Run-knop.
 
+## Credits / asset notes
+
+- Sound effects were sourced by Niels from Pixabay.
+- Music loops were created by Niels with Gemini.
+- Pixel-art assets were made with help from Gemini and ChatGPT.
+- Color variations were adjusted by Niels in Apple Photos.
+- See `CREDITS.md` for the fuller attribution/asset note.
+
 ## Huidige release-notes
 
 De meest recente samenvatting staat in:
 
-- `release_notes_v9.8.3.md` — korte release notes voor de laatste wijziging.
-- `FROSTFALL_RELEASE_NOTES_THROUGH_V9_8_3.md` — samenvatting van de ontwikkeling tot en met de Animal Audio Cues-update.
+- `release_notes_v9.8.5.md` — korte release notes voor de laatste wijziging.
+- `FROSTFALL_RELEASE_NOTES_THROUGH_V9_8_5.md` — samenvatting van de ontwikkeling tot en met de Sequential Mixed-Wave Audio Cues-update.
+- `CREDITS.md` — korte credits en asset-herkomstnotitie.
 
 ## Starten
 

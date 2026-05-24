@@ -1,0 +1,7 @@
+v9.8.5 — Sequential Mixed-Wave Audio Cues
+- Mixed waves can now play sequential cues for each unique enemy-cue result.
+- Cue deduplication uses sfx + pitch.
+- Wave-start opener remains tied to the preselected first enemy.
+- Cue queue prevents howl/growl overlap.
+- Includes v9.8.4 brute pitch differentiation.
+- No save impact; service-worker cache bumped to frostfall-v9-8-5.

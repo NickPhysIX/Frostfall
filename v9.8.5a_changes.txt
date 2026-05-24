@@ -1,0 +1,6 @@
+v9.8.5a — Credits / Asset Notes
+- Added CREDITS.md
+- README credits section added
+- Changelog and release notes updated
+- Notes: SFX from Pixabay; music loops by Niels with Gemini; pixel art with Gemini/ChatGPT; color variations in Apple Photos
+- No code/gameplay/save/cache changes

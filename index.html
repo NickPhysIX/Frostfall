@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.8.3 - Animal Audio Cues</title>
+<title>Frostfall v9.8.5 - Sequential Mixed-Wave Audio Cues</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -423,7 +423,7 @@ function loadSfxBuffers(){
       .catch(()=>{});
   }
 }
-function playSampleSfx(type){
+function playSampleSfx(type,pitchBase=1){
   const s=SFX_SAMPLES[type];
   if(!audioCtx||!s||!s.buffer) return false;
   const now=audioCtx.currentTime;
@@ -433,7 +433,8 @@ function playSampleSfx(type){
     const src=audioCtx.createBufferSource();
     const gain=audioCtx.createGain();
     src.buffer=s.buffer;
-    src.playbackRate.value=1+((Math.random()-.5)*2*(s.pitchJitter||0));
+    const jitter=(Math.random()-.5)*2*(s.pitchJitter||0);
+    src.playbackRate.value=Math.max(.25,pitchBase*(1+jitter));
     gain.gain.value=s.gain;
     src.connect(gain); gain.connect(audioCtx.destination);
     activeAudioNodes.add(src);
@@ -458,15 +459,15 @@ function playSynthSound(type){
     else if(type==='gameover'){osc.type='sawtooth';osc.frequency.setValueAtTime(180,now);osc.frequency.linearRampToValueAtTime(60,now+.6);gain.gain.setValueAtTime(.30,now);gain.gain.exponentialRampToValueAtTime(.01,now+.6);osc.start(now);osc.stop(now+.6);}
   }catch(e){}
 }
-function playSound(type){
+function playSound(type,pitchBase=1){
   if(!audioCtx || musicMuted || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)) return;
-  if(SFX_SAMPLES[type]&&playSampleSfx(type)) return;
+  if(SFX_SAMPLES[type]&&playSampleSfx(type,pitchBase)) return;
   playSynthSound(type);
 }
 
-function playEventSfx(type,durationSec=1.6,duckFactor=.24){
+function playEventSfx(type,durationSec=1.6,duckFactor=.24,pitchBase=1){
   duckMusicForEvent(durationSec,duckFactor);
-  playSound(type);
+  playSound(type,pitchBase);
 }
 
 // --- MASTER AUDIO / BACKGROUND MUSIC (v8.2) ---
@@ -928,7 +929,8 @@ function updateHunters(dt){
   }
 }
 
-let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5,waveIsYeti=false,waveYetiSpawned=false,waveBruteYetiRemaining=0,waveAnimalCuePlayed=false,waveFirstKindOverride=null;
+let waveBeastsRemaining=0,waveSpawnTimer=0,waveActive=false,waveCleared=false,interWaveTimer=1.5,waveIsYeti=false,waveYetiSpawned=false,waveBruteYetiRemaining=0,waveCuePlayedKeys=new Set(),waveCueQueue=[],waveCueQueueTimer=0,waveFirstKindOverride=null;
+const WAVE_CUE_MIN_GAP=1.2;
 const FINAL_WAVE=50;
 const FINALE_BOSSES=['alpha_wolf','alpha_brute','alpha_yeti'];
 const FINALE_NAMES={alpha_wolf:'Alpha Wolf',alpha_brute:'Alpha Brute',alpha_yeti:'Alpha Yeti'};
@@ -937,19 +939,46 @@ const FINALE_ANNOUNCE={alpha_wolf:'🐺 ALPHA WOLF NADERT',alpha_brute:'🐻 ALP
 function baseKindFor(kind){ return kind==='alpha_wolf'?'wolf':(kind==='alpha_brute'?'brute':(kind==='alpha_yeti'?'yeti':kind)); }
 function isAlphaKind(kind){ return typeof kind==='string' && kind.startsWith('alpha_'); }
 function waveSfxForKind(kind){
+  // Returns {sfx, pitch} or null. Brute wolf/bear variants use the same
+  // samples at lower playback rates so they sound heavier without extra assets.
   const base=kind==='boss'?'bear':baseKindFor(kind);
-  if(base==='wolf'||base==='brute_wolf') return 'wolf_howl';
-  if(base==='yeti'||base==='brute_yeti') return 'yeti_growl';
-  if(base==='bear'||base==='brute') return 'bear_growl';
+  if(base==='wolf'||base==='brute_wolf'){
+    return {sfx:'wolf_howl', pitch:base==='brute_wolf' && !isAlphaKind(kind) ? .78 : 1};
+  }
+  if(base==='yeti'||base==='brute_yeti'){
+    return {sfx:'yeti_growl', pitch:1};
+  }
+  if(base==='bear'||base==='brute'){
+    return {sfx:'bear_growl', pitch:base==='brute' && !isAlphaKind(kind) ? .82 : 1};
+  }
   return null;
 }
+function waveCueKeyFor(kind){
+  const cue=waveSfxForKind(kind);
+  if(!cue) return null;
+  return cue.sfx+'@'+(cue.pitch||1).toFixed(2);
+}
 function playWaveAnimalCue(kind){
-  if(waveAnimalCuePlayed) return;
-  const sfx=waveSfxForKind(kind);
-  if(!sfx) return;
-  waveAnimalCuePlayed=true;
+  const key=waveCueKeyFor(kind);
+  if(!key || waveCuePlayedKeys.has(key)) return;
+  waveCuePlayedKeys.add(key);
+  waveCueQueue.push(kind);
+}
+function updateWaveCueQueue(dt){
+  if(musicMuted || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)){
+    waveCueQueue.length=0; waveCueQueueTimer=0; return;
+  }
+  if(waveCueQueueTimer>0){ waveCueQueueTimer-=dt; return; }
+  if(waveCueQueue.length===0) return;
+  const kind=waveCueQueue.shift();
+  const cue=waveSfxForKind(kind);
+  if(!cue) return;
+  const sfx=cue.sfx;
+  const pitch=cue.pitch||1;
   const settings={wolf_howl:[2.6,.20],bear_growl:[2.0,.22],yeti_growl:[3.0,.18]}[sfx]||[1.8,.24];
-  playEventSfx(sfx,settings[0],settings[1]);
+  const durationScale=pitch<1?1/pitch:1;
+  playEventSfx(sfx,settings[0]*durationScale,settings[1],pitch);
+  waveCueQueueTimer=Math.max(WAVE_CUE_MIN_GAP,settings[0]*durationScale*.55);
 }
 function getActiveZoneIndex(){ const arr=Array.isArray(state.zonesUnlocked)?state.zonesUnlocked:[true,false,false]; let hi=0; for(let i=0;i<arr.length && i<ZONES.length;i++) if(arr[i]) hi=i; return Math.max(0,Math.min(ZONES.length-1,Math.max(hi,Number(state.currentZone)||0))); }
 function getActiveZone(){ return ZONES[getActiveZoneIndex()]; }
@@ -958,13 +987,14 @@ function startFinale(){
   state.finaleStarted=true; state.finaleStage=0; state.finaleBossActive=false; state.currentZone=2;
   waveActive=false; waveCleared=false; waveBeastsRemaining=0; waveSpawnTimer=0; interWaveTimer=2.2;
   beasts.length=0; projectiles.length=0;
+  waveCuePlayedKeys.clear(); waveCueQueue.length=0; waveCueQueueTimer=0;
   addText(player.x,player.y-95,"❄️ WINTER’S END ❄️",'#e0f2fe',-14,3.0);
   playEventSfx('yeti_growl',2.8,.18); saveGame();
 }
 function spawnFinaleBoss(){
   const kind=FINALE_BOSSES[state.finaleStage] || 'alpha_yeti';
   addText(player.x,player.y-85,FINALE_ANNOUNCE[kind]||'ALPHA NADERT','#a78bfa',-16,2.3);
-  waveAnimalCuePlayed=false;
+  waveCuePlayedKeys.clear(); waveCueQueue.length=0; waveCueQueueTimer=0;
   playWaveAnimalCue(kind);
   spawnBeast(kind);
   state.finaleBossActive=true;
@@ -1209,7 +1239,7 @@ function killCrowAt(index,b){
   addText(b.x,b.y-18,b.hasMeat?'+1🥩':'kraai','#e5e7eb',-25,1.0);
   beasts.splice(index,1);
 }
-function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); waveAnimalCuePlayed=false; waveFirstKindOverride=null; if(yeti){ waveBruteYetiRemaining=state.wave>=35?5:4; waveBeastsRemaining=1+waveBruteYetiRemaining; addText(player.x,player.y-80,'❄️ YETI + BRUTE YETI PACK ❄️','#67e8f9',-15,2.5); playWaveAnimalCue('yeti'); } else { waveBruteYetiRemaining=0; waveBeastsRemaining=boss?1:(3+Math.floor(state.wave*.60)); waveFirstKindOverride=boss?'boss':pickBeastKind(); playWaveAnimalCue(waveFirstKindOverride); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
+function startWave(){ const boss=state.wave%5===0&&!isYetiWave(); const yeti=isYetiWave(); waveCuePlayedKeys.clear(); waveCueQueue.length=0; waveCueQueueTimer=0; waveFirstKindOverride=null; if(yeti){ waveBruteYetiRemaining=state.wave>=35?5:4; waveBeastsRemaining=1+waveBruteYetiRemaining; addText(player.x,player.y-80,'❄️ YETI + BRUTE YETI PACK ❄️','#67e8f9',-15,2.5); playWaveAnimalCue('yeti'); } else { waveBruteYetiRemaining=0; waveBeastsRemaining=boss?1:(3+Math.floor(state.wave*.60)); waveFirstKindOverride=boss?'boss':pickBeastKind(); playWaveAnimalCue(waveFirstKindOverride); } waveSpawnTimer=0; waveActive=true; waveCleared=false; waveIsYeti=yeti; waveYetiSpawned=false; }
 function updateWaves(dt){
   if(state.victory) return;
   if(state.finaleStarted){
@@ -1233,13 +1263,14 @@ function updateWaves(dt){
     waveSpawnTimer-=dt;
     if(waveSpawnTimer<=0){
       if(waveIsYeti){
-        if(!waveYetiSpawned){ spawnBeast('yeti'); waveYetiSpawned=true; waveBeastsRemaining--; }
-        else if(waveBruteYetiRemaining>0){ spawnBeast('brute_yeti'); waveBruteYetiRemaining--; waveBeastsRemaining--; }
+        if(!waveYetiSpawned){ spawnBeast('yeti'); playWaveAnimalCue('yeti'); waveYetiSpawned=true; waveBeastsRemaining--; }
+        else if(waveBruteYetiRemaining>0){ spawnBeast('brute_yeti'); playWaveAnimalCue('brute_yeti'); waveBruteYetiRemaining--; waveBeastsRemaining--; }
         else { waveBeastsRemaining=0; }
       } else {
         const kind=waveFirstKindOverride || (state.wave%5===0?'boss':pickBeastKind());
         waveFirstKindOverride=null;
         if(kind==='wolf') spawnWolfPack(); else spawnBeast(kind);
+        playWaveAnimalCue(kind);
         waveBeastsRemaining--;
       }
       waveSpawnTimer=Math.max(.62,1.50-state.wave*.018);
@@ -2209,7 +2240,7 @@ window.addEventListener('keydown',e=>{
 });
 document.getElementById('reset-confirm').addEventListener('click',resetAllProgress);
 document.getElementById('victory-reset-btn').addEventListener('click',resetAllProgress);
-let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!state.victory&&!paused&&!panel.classList.contains('open')&&resetModal.style.display!=='flex'){updateWaves(dt);update(dt);} else updateHUD(); updateMusicForState(); render(); requestAnimationFrame(loop);} syncSurvivors(true); syncHunters(true); updateHUD(); if(state.victory) setTimeout(triggerVictory,250); requestAnimationFrame(loop);
+let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!state.victory&&!paused&&!panel.classList.contains('open')&&resetModal.style.display!=='flex'){updateWaves(dt);updateWaveCueQueue(dt);update(dt);} else updateHUD(); updateMusicForState(); render(); requestAnimationFrame(loop);} syncSurvivors(true); syncHunters(true); updateHUD(); if(state.victory) setTimeout(triggerVictory,250); requestAnimationFrame(loop);
 </script>
 </body>
 </html>
