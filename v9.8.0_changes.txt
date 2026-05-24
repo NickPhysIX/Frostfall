@@ -1,0 +1,9 @@
+v9.8.0 — Rat Scavenger Ecosystem
+- added rat.png
+- rat spawns after wolves / Glacial Forest are unlocked
+- rat steals 1 meat and attempts to escape
+- rat is immune to player, towers, and hunters
+- wolves and brute wolves hunt meat-carrying rats
+- if a wolf catches a rat, the stolen meat drops back into the world
+- rat added to Bestiary
+- release notes updated through v9.8.0

@@ -1,0 +1,11 @@
+v9.8.3 — Animal Audio Cues
+- added wolf_howl.mp3, bear_growl.mp3, yeti_growl.mp3, rat_squeak.mp3 and female_scream.mp3
+- one matching animal cue plays at wave start
+- normal waves preselect the first spawn so cue and first enemy match
+- Yeti waves use a Yeti growl instead of the old synth gameover cue
+- Alpha finale bosses use matching animal cues
+- rat plays 1–2 squeaks when escaping with meat
+- player death plays female scream SFX
+- music ducking added around major cues
+- all new SFX respect master mute and audio lifecycle rules
+- service-worker cache bumped to frostfall-v9-8-3

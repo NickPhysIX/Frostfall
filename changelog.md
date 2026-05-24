@@ -1,5 +1,22 @@
 # Frostfall changelog
 
+## v9.8.3 — Animal Audio Cues
+
+- Nieuwe event-SFX toegevoegd:
+  - `wolf_howl.mp3` voor wolf/brute-wolf waves.
+  - `bear_growl.mp3` voor bear/brute/boss-bear waves.
+  - `yeti_growl.mp3` voor Yeti/Brute Yeti en Alpha Yeti momenten.
+  - `rat_squeak.mp3` voor ratten die met vlees wegschieten.
+  - `female_scream.mp3` voor player death.
+- Bij de start van een wave wordt nu precies één passende dierencue afgespeeld. Voor normale waves wordt de eerste spawn vooraf gekozen zodat de wave-cue overeenkomt met de eerste vijand die daadwerkelijk verschijnt.
+- Yeti-waves gebruiken een duidelijke Yeti-growl in plaats van de oude synth-gameover cue.
+- Finale Alpha Bosses krijgen ook passende dierencues: Alpha Wolf = howl, Alpha Brute = bear growl, Alpha Yeti = Yeti growl.
+- Ratten spelen 1–2 squeaks wanneer ze vlees stelen en ermee wegvluchten.
+- Player death gebruikt nu de female scream SFX in plaats van alleen de synth-gameover toon.
+- Alle nieuwe SFX vallen onder de bestaande master mute-knop en gebruiken dezelfde audio lifecycle/background-pause regels.
+- Muziek wordt kort geduckt tijdens belangrijke dierencues zodat de clips hoorbaar blijven over de soundtrack.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-3`.
+
 ## v9.8.2 — Crow Caw Audibility
 
 - Crow-caw SFX-gain verhoogd van 0.58 naar 0.95.
