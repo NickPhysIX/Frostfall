@@ -1,0 +1,7 @@
+v9.8.1 — Wolf Hunt-Rat Cap
+
+- Caps wolf/brute-wolf rat hunting to 2 wolves per rat-with-meat.
+- Chooses the nearest eligible wolves within 450px.
+- Other wolves continue normal player/structure AI.
+- No save-format change and no save reset required.
+- Service-worker cache bumped to frostfall-v9-8-1.

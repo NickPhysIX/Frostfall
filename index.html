@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.7.3 - Crow Escape Balance</title>
+<title>Frostfall v9.8.2 - Crow Caw Audibility</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -291,7 +291,7 @@ if ('serviceWorker' in navigator) {
 const SAVE_KEY='frostfall-save-v9-4-balanced-repairs';
 const LEGACY_KEYS=['frostfall-save-v9-3-reinforced-repairs','frostfall-save-v9-meat-stockpiles','frostfall-save-v8-9-hunter-combat-polish','frostfall-save-v8-8-palisade','frostfall-save-v8-7-hunters-compass','frostfall-save-v8-6-exchange-all','frostfall-save-v8-5-exchange-qol','frostfall-save-v8-4-brute-beasts','frostfall-save-v8-3-audio-lifecycle','frostfall-save-v8-2-audio-polish','frostfall-save-v8-1-sfx','frostfall-save-v8-0-music','frostfall-save-v7-8-lifetime-stats','frostfall-save-v7-7-victory-screen','frostfall-save-v7-6-winters-end','frostfall-save-v7-5-pause-fair-scaling','frostfall-save-v7-4-adaptive-scaling','frostfall-save-v7-3-resource-sprites','frostfall-save-v7-2-balance-hotfix','frostfall-save-v6-7-sprite-axes','frostfall-save-v6-6-camp-decor','frostfall-save-v6-5','frostfall-save-v6-4-sprites','frostfall-save-v6-2-polish','frostfall-save-v6-0-tactics','frostfall-save-v5-2-timber','frostfall-save-v5-1','frostfall-save-v5-final','frostfall-save-v4-1'];
 const images={};
-const SPRITE_LIST=['player','survivor','hunter','crow','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','meat_pile_1','meat_pile_2','meat_pile_3','meat_pile_4','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
+const SPRITE_LIST=['player','survivor','hunter','crow','rat','bear','brute','wolf','brute_wolf','yeti','brute_yeti','tree','tower','ice_tower','meat','meat_pile_1','meat_pile_2','meat_pile_3','meat_pile_4','campfire','mat_meat','axe','wood_pile_1','wood_pile_2','wood_pile_3','wood_pile_4','money_pile_1','money_pile_2','money_pile_3','money_pile_4','stump_1','stump_2','stump_3'];
 let spritesLoaded=0;
 const spritesTotal=SPRITE_LIST.length;
 function updateLoadingProgress(){
@@ -384,12 +384,29 @@ const activeAudioNodes=new Set();
 const SFX_SAMPLES={
   chop:{src:'sfx_chop.mp3',buffer:null,gain:.48,minGap:.13,last:-999,pitchJitter:.05},
   hit:{src:'sfx_axe_hit.mp3',buffer:null,gain:.54,minGap:.085,last:-999,pitchJitter:.035},
-  crow:{src:'crow_caw.mp3',buffer:null,gain:.58,minGap:.25,last:-999,pitchJitter:.045}
+  crow:{src:'crow_caw.mp3',buffer:null,gain:.95,minGap:.25,last:-999,pitchJitter:.045}
 };
+function ensureAudioContext(){
+  if(!audioCtx){
+    try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+    catch(e){ return false; }
+  }
+  return !!audioCtx;
+}
 function initAudio(){
-  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(!ensureAudioContext()) return;
+  if(audioCtx.state==='suspended'){
+    audioCtx.resume().catch(()=>{});
+  }
   loadSfxBuffers();
 }
+function preloadAudioBuffers(){
+  // Pre-load SFX buffers as early as possible without resuming the context.
+  // Playback remains gated behind the first user gesture, respecting autoplay rules.
+  if(!ensureAudioContext()) return;
+  loadSfxBuffers();
+}
+window.addEventListener('DOMContentLoaded',()=>{ preloadAudioBuffers(); });
 function loadSfxBuffers(){
   if(!audioCtx||sfxLoadingStarted) return;
   sfxLoadingStarted=true;
@@ -470,6 +487,7 @@ function updateMusicButton(){
 }
 function pauseAllMusic(reset=false){
   if(musicFadeTimer){clearInterval(musicFadeTimer);musicFadeTimer=null;}
+  if(musicDuckRestoreTimer){clearTimeout(musicDuckRestoreTimer);musicDuckRestoreTimer=null;musicDuckUntil=0;}
   for(const track of Object.values(musicTracks)){
     track.pause();
     if(reset){try{track.currentTime=0;}catch(e){}}
@@ -518,6 +536,28 @@ function updateMusicForState(force=false){
   if(!musicUnlocked || musicMuted){ updateMusicButton(); return; }
   switchMusic(desiredMusicKey(),force);
 }
+let musicDuckUntil=0;
+let musicDuckRestoreTimer=null;
+function duckMusicForEvent(durationSec=1.6, duckFactor=.35){
+  // Temporarily lower music for important event-SFX such as the crow-caw burst.
+  // Skip during fade transitions so this does not fight switchMusic's volume writes.
+  if(musicMuted || !currentMusicKey || musicFadeTimer || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)) return;
+  const track=musicTracks[currentMusicKey];
+  if(!track) return;
+  const duckedKey=currentMusicKey;
+  const baseVol=MUSIC_VOLUME[duckedKey]||.4;
+  const now=Date.now();
+  musicDuckUntil=Math.max(musicDuckUntil,now+durationSec*1000);
+  track.volume=baseVol*duckFactor;
+  if(musicDuckRestoreTimer) clearTimeout(musicDuckRestoreTimer);
+  musicDuckRestoreTimer=setTimeout(()=>{
+    musicDuckRestoreTimer=null;
+    if(musicFadeTimer || !currentMusicKey || currentMusicKey!==duckedKey || musicMuted || audioPausedForBackground || (typeof document !== 'undefined' && document.hidden)) return;
+    const t=musicTracks[currentMusicKey];
+    if(t) t.volume=MUSIC_VOLUME[currentMusicKey]||.4;
+    musicDuckUntil=0;
+  },durationSec*1000);
+}
 function unlockMusic(){
   if(musicUnlocked) return;
   musicUnlocked=true;
@@ -550,6 +590,7 @@ function stopActiveAudioNodes(){
   activeAudioNodes.clear();
 }
 function pauseAudioForBackground(){
+  if(musicDuckRestoreTimer){clearTimeout(musicDuckRestoreTimer);musicDuckRestoreTimer=null;musicDuckUntil=0;}
   if(!audioPausedForBackground){
     audioWasPlayingBeforeHidden=isAnyMusicPlaying();
   }
@@ -1001,10 +1042,12 @@ const CROW_MEAT_THRESHOLD=25;
 const CROW_MEAT_X=92, CROW_MEAT_Y=-28;
 const CROW_STEAL_GRACE=1.8;
 function hasActiveCrow(){ return beasts.some(b=>b.kind==='crow'); }
-function canDamageBeast(b){ return !(b&&b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0)); }
-function canTargetBeast(b){ return !(b&&b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0)); }
+function canDamageBeast(b){ return !(b&&((b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0))||b.kind==='rat')); }
+function canTargetBeast(b){ return !(b&&((b.kind==='crow'&&(!b.hasMeat||(b.stealGrace||0)>0))||b.kind==='rat')); }
 function playCrowHeistCaws(){
   const count=2+Math.floor(Math.random()*2);
+  // Duck duration covers all caws plus a short tail.
+  duckMusicForEvent(count*.52+.6,.30);
   for(let i=0;i<count;i++) setTimeout(()=>playSound('crow'), i*520);
 }
 function spawnCrow(){
@@ -1064,6 +1107,69 @@ function updateCrow(b,dt){
   const escapeDist=b.hasMeat?Math.hypot(b.escapeX-b.x,b.escapeY-b.y):dist;
   return b.hasMeat && escapeDist<55;
 }
+
+let ratSpawnTimer=80;
+const RAT_MEAT_X=CROW_MEAT_X, RAT_MEAT_Y=CROW_MEAT_Y;
+const WOLF_HUNT_RAT_CAP=2;
+const WOLF_HUNT_RAT_RANGE=450;
+function hasActiveRat(){ return beasts.some(b=>b.kind==='rat'); }
+function spawnRat(){
+  if(!state.zonesUnlocked[1] || state.meat<1 || hasActiveRat() || state.victory) return false;
+  const a=Math.random()*Math.PI*2;
+  const dist=Math.max(W,H)*.70+100;
+  const x=player.x+Math.cos(a)*dist, y=player.y+Math.sin(a)*dist;
+  beasts.push({
+    kind:'rat',baseKind:'rat',isThief:true,hasMeat:false,invulnerable:true,
+    x,y,escapeX:0,escapeY:0,
+    hp:10,maxHP:10,
+    speed:1.15,baseSpeed:1.15,slowTimer:0,slowResist:.10,
+    dmg:0,wallDmgMult:0,size:12,moneyMult:0,meatMult:0,
+    attackCD:0,isBoss:false,hitFlash:0,target:null,targetCD:0,legCycle:0,face:Math.cos(a)<0?1:-1
+  });
+  addText(RAT_MEAT_X,RAT_MEAT_Y-24,'rat!','#d1d5db',-15,1.0);
+  return true;
+}
+function updateRatSpawner(dt){
+  ratSpawnTimer-=dt;
+  if(ratSpawnTimer<=0){
+    ratSpawnTimer=spawnRat()?90+Math.random()*60:15;
+  }
+}
+function updateRat(b,dt){
+  b.legCycle+=dt*b.speed*25;
+  b.hitFlash=Math.max(0,b.hitFlash-dt);
+  const tx=b.hasMeat?b.escapeX:RAT_MEAT_X;
+  const ty=b.hasMeat?b.escapeY:RAT_MEAT_Y;
+  const dx=tx-b.x, dy=ty-b.y, dist=Math.hypot(dx,dy)||1;
+  if(Math.abs(dx)>.1) b.face=dx>0?1:-1;
+  if(!b.hasMeat && dist<20){
+    if(state.meat>=1){
+      state.meat-=1;
+      b.hasMeat=true;
+      const out=Math.atan2(b.y-RAT_MEAT_Y,b.x-RAT_MEAT_X);
+      b.escapeX=b.x+Math.cos(out)*1500;
+      b.escapeY=b.y+Math.sin(out)*1500;
+      addText(b.x,b.y-15,'-1🥩 (Rat)','#f87171',-30,1.5);
+      saveGame(); updateHUD();
+    } else {
+      b.hasMeat=true;
+      b.escapeX=b.x+1500;
+      b.escapeY=b.y-1500;
+    }
+  } else {
+    b.x+=dx/dist*b.speed*60*dt;
+    b.y+=dy/dist*b.speed*60*dt;
+  }
+  const escapeDist=b.hasMeat?Math.hypot(b.escapeX-b.x,b.escapeY-b.y):dist;
+  return b.hasMeat && escapeDist<50;
+}
+function killRatAt(index,b){
+  if(b.hasMeat) drops.push({x:b.x,y:b.y-10,type:'meat',value:1,life:0,vy:-6});
+  for(let k=0;k<5;k++) addParticle(b.x,b.y,'#71717a','blood');
+  addText(b.x,b.y-15,b.hasMeat?'+1🥩':'rat','#e5e7eb',-25,1.0);
+  beasts.splice(index,1);
+}
+
 function killCrowAt(index,b){
   if(b.hasMeat) drops.push({x:b.x,y:b.y-10,type:'meat',value:1,life:0,vy:-6});
   state.stats.kills++;
@@ -1131,12 +1237,29 @@ canvas.addEventListener('click',e=>{ if(!buildMode) return; const p=canvasToWorl
 canvas.addEventListener('touchend',e=>{ if(!buildMode||e.changedTouches.length===0) return; const t=e.changedTouches[0], target=document.elementFromPoint(t.clientX,t.clientY); if(target&&(target.tagName==='BUTTON'||target.closest('#build-hint'))) return; updateBuildPointer(t.clientX,t.clientY); const p=canvasToWorld(t.clientX,t.clientY); placeStructure(p.x,p.y); },{passive:false});
 function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) return null; const dx=player.x-b.x,dy=player.y-b.y,steps=Math.ceil(distToPlayer/GRID); for(let i=1;i<steps;i++){ const t=i/steps, gx=Math.round((b.x+dx*t)/GRID), gy=Math.round((b.y+dy*t)/GRID), s=structureAtGrid(gx,gy); if(s) return s; } return null; }
 function findBruteTarget(b){ let best=null,score=Infinity; for(const s of state.structures){ const sx=s.gx*GRID, sy=s.gy*GRID, d=Math.hypot(sx-b.x,sy-b.y); if(d>540) continue; const weak=s.hp/Math.max(1,s.maxHP), sc=d*.65+weak*180; if(sc<score){score=sc;best=s;} } return best; }
-function update(dt){ updateCrowSpawner(dt); let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!blocksFriendlyAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!blocksFriendlyAtWorld(nx,player.y)) player.x=nx; if(!blocksFriendlyAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5; player.axeSpin+=dt*statValue('attackSpeed')*10;
+function update(dt){ updateCrowSpawner(dt); updateRatSpawner(dt); let mx=0,my=0; if(keys.arrowup||keys.w) my-=1; if(keys.arrowdown||keys.s) my+=1; if(keys.arrowleft||keys.a) mx-=1; if(keys.arrowright||keys.d) mx+=1; if(joy.active){mx=joy.dx;my=joy.dy;} const len=Math.hypot(mx,my); if(len>0){mx/=len;my/=len;player.walkCycle+=dt*12;if(Math.abs(mx)>.12) player.face=mx<0?-1:1;} const isMoving=len>.08, move=statValue('moveSpeed')*60*dt, nx=player.x+mx*move, ny=player.y+my*move; if(!blocksFriendlyAtWorld(nx,ny)){player.x=nx;player.y=ny;} else {if(!blocksFriendlyAtWorld(nx,player.y)) player.x=nx; if(!blocksFriendlyAtWorld(player.x,ny)) player.y=ny;} if(len>0) player.angle=Math.atan2(my,mx); const maxHP=statValue('maxHP'); state.hp=Math.min(maxHP,state.hp+statValue('regen')*dt); player.hitFlash=Math.max(0,player.hitFlash-dt); player.axeAngle+=dt*statValue('attackSpeed')*5.5; player.axeSpin+=dt*statValue('attackSpeed')*10;
 const enemyChopThreshSq=ENEMY_CHOP_INTERRUPT_RADIUS*ENEMY_CHOP_INTERRUPT_RADIUS; const enemyTooClose=beasts.some(b=>{const dx=b.x-player.x,dy=b.y-player.y;return dx*dx+dy*dy<enemyChopThreshSq;}); player.chopping=null; if(!isMoving&&!enemyTooClose){ let nearest=null,nearestD=PLAYER_CHOP_RADIUS; for(const t of trees){ if(!t.alive) continue; const d=Math.hypot(t.x-player.x,t.y-player.y); if(d<nearestD){nearestD=d;nearest=t;} } if(nearest){ player.chopping=nearest; nearest.hp-=PLAYER_CHOP_DPS*statValue('chopSpeed')*dt; if(Math.random()<.35){addParticle(nearest.x+(Math.random()-.5)*12,nearest.y,'#a05a2c','wood');playSound('chop');} if(nearest.hp<=0){nearest.alive=false;nearest.regrowTimer=TREE_REGROW_TIME;nearest.hp=0;state.wood+=TREE_WOOD;state.stats.woodCollected+=TREE_WOOD;addText(nearest.x,nearest.y-22,`+${TREE_WOOD}🪵`,'#d97706',-35,1);player.chopping=null;saveGame();}}}
 document.getElementById('chop-indicator').classList.toggle('show',!!player.chopping); for(const t of trees) if(!t.alive){t.regrowTimer-=dt; if(t.regrowTimer<=0){t.alive=true;t.hp=t.maxHP;}} updateSurvivors(dt); updateHunters(dt);
 const range=statValue('range'), damage=statValue('damage'); player.attackTimer-=dt; if(player.attackTimer<=0){ let hitAny=false; for(const b of beasts){ if(canDamageBeast(b)&&Math.hypot(b.x-player.x,b.y-player.y)<range+b.size){ b.hp-=damage; b.hitFlash=.15; hitAny=true; for(let i=0;i<4;i++) addParticle(b.x,b.y-b.size*.3,'#f59e0b','spark'); }} if(hitAny) playSound('hit'); player.attackTimer=1/statValue('attackSpeed'); }
 for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') continue; s.shootCD=Math.max(0,(s.shootCD||0)-dt); if(s.shootCD>0||beasts.length===0) continue; const tx=s.gx*GRID, ty=s.gy*GRID-24; let target=null,best=TOWER_RANGE; for(const b of beasts){ if(!canTargetBeast(b)) continue; const d=Math.hypot(b.x-tx,b.y-ty); if(d<best){best=d;target=b;}} if(target){ const dmg=damage*(s.type==='ice_tower'?ICE_TOWER_DAMAGE_FACTOR:TOWER_DAMAGE_FACTOR); projectiles.push({x:tx,y:ty,target,speed:430,dmg,type:s.type,life:1.4}); playSound('shoot'); s.shootCD=TOWER_BASE_COOLDOWN/Math.sqrt(statValue('attackSpeed')); }}
 for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.angle=Math.atan2(dy,dx); p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ if(canDamageBeast(p.target)){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4*(1-(p.target.slowResist||0)); for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); } projectiles.splice(i,1); }}
+// Pre-pass: per rat-with-meat, assign only the nearest wolves/brute-wolves as hunters.
+// This keeps the wolf-rat ecosystem readable without letting one rat pull an entire pack away.
+const ratHunters=new Map();
+const ratsWithMeat=beasts.filter(r=>r.kind==='rat'&&r.hasMeat&&r.hp>0);
+if(ratsWithMeat.length>0){
+  const wolfCandidates=beasts.filter(b=>(b.baseKind==='wolf'||b.baseKind==='brute_wolf')&&b.hp>0);
+  for(const rat of ratsWithMeat){
+    const ranked=wolfCandidates
+      .filter(w=>!ratHunters.has(w))
+      .map(w=>({w,d:Math.hypot(w.x-rat.x,w.y-rat.y)}))
+      .filter(o=>o.d<WOLF_HUNT_RAT_RANGE)
+      .sort((a,b)=>a.d-b.d)
+      .slice(0,WOLF_HUNT_RAT_CAP);
+    for(const {w} of ranked) ratHunters.set(w,rat);
+  }
+}
+
 for(let i=beasts.length-1;i>=0;i--){
   const b=beasts[i];
   if(b.slowTimer>0){b.slowTimer-=dt;b.speed=b.baseSpeed*(.6+(b.slowResist||0)*.4);} else b.speed=b.baseSpeed;
@@ -1146,10 +1269,31 @@ for(let i=beasts.length-1;i>=0;i--){
     if(updateCrow(b,dt)){ beasts.splice(i,1); continue; }
     continue;
   }
+  if(b.kind==='rat'){
+    if(b.hp<=0){ killRatAt(i,b); continue; }
+    if(updateRat(b,dt)){ beasts.splice(i,1); continue; }
+    continue;
+  }
 
   const dx=player.x-b.x,dy=player.y-b.y,distToPlayer=Math.hypot(dx,dy)||1;
   b.legCycle+=dt*b.speed*15;
   b.hitFlash=Math.max(0,b.hitFlash-dt);
+
+  const huntRat=ratHunters.get(b);
+  if(huntRat && huntRat.hp>0){
+    const rdx=huntRat.x-b.x, rdy=huntRat.y-b.y, rdist=Math.hypot(rdx,rdy)||1;
+    if(Math.abs(rdx)>1) b.face=rdx>0?1:-1;
+    b.x+=rdx/rdist*b.speed*65*dt;
+    b.y+=rdy/rdist*b.speed*65*dt;
+    if(rdist<b.size+huntRat.size+5){
+      huntRat.hp=0;
+      b.hitFlash=.2;
+      addText(b.x,b.y-20,'🐺 Pakt Rat!','#fbbf24',-20,1.2);
+      playSound('hit');
+    }
+    continue;
+  }
+
   b.targetCD-=dt;
   if(b.targetCD<=0){ b.target=(b.kind==='brute'||b.kind==='alpha_brute')?(findBruteTarget(b)||findBlockingStructure(b,distToPlayer)):findBlockingStructure(b,distToPlayer); b.targetCD=.25; }
   if(b.target&&b.target.hp>0){
@@ -1610,7 +1754,7 @@ function drawBeast(b,sx,sy){
   // Pick sprite by kind
   const baseKind=b.baseKind||baseKindFor(b.kind);
   const isAlpha=!!b.alpha||isAlphaKind(b.kind);
-  const sprite=baseKind==='crow'?images.crow:(baseKind==='brute'?images.brute:(baseKind==='brute_wolf'?images.brute_wolf:(baseKind==='wolf'?images.wolf:(baseKind==='brute_yeti'?images.brute_yeti:(baseKind==='yeti'?images.yeti:images.bear)))));
+  const sprite=baseKind==='rat'?images.rat:(baseKind==='crow'?images.crow:(baseKind==='brute'?images.brute:(baseKind==='brute_wolf'?images.brute_wolf:(baseKind==='wolf'?images.wolf:(baseKind==='brute_yeti'?images.brute_yeti:(baseKind==='yeti'?images.yeti:images.bear))))));
   const faceRight=(b.face ?? (player.x>b.x?1:-1))>0;
 
   if(sprite&&sprite.loaded){
@@ -1620,7 +1764,7 @@ function drawBeast(b,sx,sy){
     else if(b.slowTimer>0) ctx.filter='hue-rotate(120deg) saturate(1.5) brightness(1.1)';
 
     // Per-kind render scale: makes yeti look genuinely massive, wolf compact-but-long
-    const renderScale=(isAlpha?1.25:1)*(baseKind==='yeti'?1.45:(baseKind==='brute_yeti'?1.18:(baseKind==='brute_wolf'?1.12:(baseKind==='brute'?1.08:(baseKind==='wolf'?1.05:1)))));
+    const renderScale=(isAlpha?1.25:1)*(baseKind==='rat'?0.92:(baseKind==='yeti'?1.45:(baseKind==='brute_yeti'?1.18:(baseKind==='brute_wolf'?1.12:(baseKind==='brute'?1.08:(baseKind==='wolf'?1.05:1))))));
     const spriteW=b.size*2.35*renderScale;
     const spriteH=b.size*2.05*renderScale;
     if(faceRight){
@@ -1634,6 +1778,10 @@ function drawBeast(b,sx,sy){
     if(baseKind==='crow' && b.hasMeat && images.meat && images.meat.loaded){
       const dir=faceRight?1:-1;
       drawSpriteFit(images.meat,sx+dir*16,sy-4+legBob*.3,14,14,'center');
+    }
+    if(baseKind==='rat' && b.hasMeat && images.meat && images.meat.loaded){
+      const dir=faceRight?1:-1;
+      drawSpriteFit(images.meat,sx+dir*16,sy-2+legBob*.3,12,12,'center');
     }
   } else {
     // Vector fallback - distinct silhouettes per kind
@@ -1651,6 +1799,15 @@ function drawBeast(b,sx,sy){
       ctx.fillStyle='#94a3b8'; ctx.beginPath(); ctx.moveTo(dir*b.size*.82,-b.size*.38); ctx.lineTo(dir*b.size*1.35,-b.size*.20); ctx.lineTo(dir*b.size*.82,-b.size*.12); ctx.closePath(); ctx.fill();
       ctx.fillStyle='#fde047'; ctx.beginPath(); ctx.arc(dir*b.size*.66,-b.size*.48,1.8,0,Math.PI*2); ctx.fill();
       if(b.hasMeat && images.meat && images.meat.loaded) drawSpriteFit(images.meat,dir*b.size*1.25,-b.size*.02,12,12,'center');
+    } else if(baseKind==='rat'){
+      const body=b.hitFlash>0?'#ef4444':(b.slowTimer>0?'#a5f3fc':'#4b5563');
+      const headColor=b.hitFlash>0?'#dc2626':'#374151';
+      const eyeColor='#ef4444';
+      ctx.fillStyle=body; ctx.beginPath(); ctx.ellipse(0,-4,b.size,b.size*.5,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=headColor; ctx.beginPath(); ctx.ellipse(dir*b.size*.7,-b.size*.2,b.size*.4,b.size*.25,0,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#f472b6'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(-dir*b.size*.8,-4); ctx.quadraticCurveTo(-dir*b.size*1.5,-b.size*.6,-dir*b.size*1.8,0); ctx.stroke();
+      ctx.fillStyle=eyeColor; ctx.beginPath(); ctx.arc(dir*b.size*.8,-b.size*.3,1.5,0,Math.PI*2); ctx.fill();
+      if(b.hasMeat && images.meat && images.meat.loaded) drawSpriteFit(images.meat,dir*b.size*1.1,-4,10,10,'center');
     } else {
     let body, headColor, eyeColor;
     if(baseKind==='brute'){ body=isAlpha?'#6d28d9':'#9a3412'; headColor=isAlpha?'#4c1d95':'#7c2d12'; eyeColor='#fbbf24'; }
@@ -1742,7 +1899,7 @@ function drawBeast(b,sx,sy){
   ctx.fillStyle='rgba(0,0,0,.6)';
   ctx.fillRect(sx-bw/2,sy-b.size-14,bw,5);
   // HP bar color per kind
-  const hpColor=baseKind==='crow'?'#cbd5e1':(isAlpha?'#c084fc':(baseKind==='brute_yeti'?'#e879f9':(baseKind==='yeti'?'#67e8f9':(baseKind==='brute_wolf'?'#c084fc':(baseKind==='brute'?'#ef4444':(baseKind==='wolf'?'#fde047':'#22c55e'))))));
+  const hpColor=baseKind==='crow'?'#cbd5e1':(baseKind==='rat'?'#d1d5db':(isAlpha?'#c084fc':(baseKind==='brute_yeti'?'#e879f9':(baseKind==='yeti'?'#67e8f9':(baseKind==='brute_wolf'?'#c084fc':(baseKind==='brute'?'#ef4444':(baseKind==='wolf'?'#fde047':'#22c55e')))))));
   ctx.fillStyle=hpColor;
   ctx.fillRect(sx-bw/2,sy-b.size-14,bw*Math.max(0,b.hp/b.maxHP),5);
   if(isAlpha){
@@ -1838,6 +1995,7 @@ const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },
   { kind:'brute', name:'Brute Bear', icon:'💢', desc:'Taai en traag, maar slaat muren met 2.5x kracht en kiest zwakste muur.', unlockedFrom:'Vanaf Wave 8' },
   { kind:'crow', name:'Crow Thief', icon:'🐦‍⬛', desc:'Snelle dief. Verschijnt af en toe zodra je genoeg vlees hebt, vliegt eerst veilig naar de vleesopslag, steelt 1 vlees en is pas daarna neer te schieten om het vlees terug te krijgen.', unlockedFrom:'Vanaf 25 vlees' },
+  { kind:'rat', name:'Meat Rat', icon:'🐀', desc:'Kleine vleesdief. Verschijnt pas zodra wolven zijn ontgrendeld. Is immuun voor speler, torens en jagers, maar wolven met een rat met vlees in de buurt geven daar tijdelijk prioriteit aan.', unlockedFrom:'Glacial Forest + vleesvoorraad', zoneIdx:1 },
   { kind:'wolf', name:'Frost Wolf', icon:'🐺', desc:'Snel, lager HP, jaagt meestal solo of met één extra wolf. Minder muurschade, maar kan je verrassen door snelheid.', unlockedFrom:'Glacial Forest', zoneIdx:1 },
   { kind:'brute_wolf', name:'Brute Frost Wolf', icon:'🟣', desc:'Sterker en taaier dan een gewone wolf, maar iets langzamer. Verschijnt pas na enkele waves in Glacial Forest.', unlockedFrom:'Glacial Forest + Wave 14', zoneIdx:1 },
   { kind:'yeti', name:'Yeti', icon:'❄️', desc:'Boss-event. Verschijnt vanaf wave 25 elke 10e wave in Ice Caves. Massief, maar iets eerlijker gebalanceerd. Geeft hoge, maar niet economie-brekende beloning.', unlockedFrom:'Ice Caves (elke 10e wave)', zoneIdx:2 },
@@ -1847,6 +2005,7 @@ function isBestiaryUnlocked(entry){
   if(entry.kind==='bear') return true;
   if(entry.kind==='brute') return state.wave>=8 || state.upgrades.damage>0; // visible once met or close
   if(entry.kind==='crow') return state.meat>=CROW_MEAT_THRESHOLD || ((state.stats&&state.stats.meatCollected)||0)>=CROW_MEAT_THRESHOLD;
+  if(entry.kind==='rat') return !!state.zonesUnlocked[1];
   if(entry.kind==='brute_wolf') return !!state.zonesUnlocked[1] && state.wave>=14;
   if(entry.kind==='brute_yeti') return !!state.zonesUnlocked[2];
   if(entry.zoneIdx!==undefined) return !!state.zonesUnlocked[entry.zoneIdx];
@@ -1854,7 +2013,7 @@ function isBestiaryUnlocked(entry){
 }
 function renderZones(){
   const section=document.getElementById('tab-zones');
-  section.innerHTML='<div style="margin-bottom:12px;font-size:13px;opacity:.65;line-height:1.5">Vijanden en bijzondere dreigingen die in jouw huidige of toekomstige spel kunnen verschijnen. Nieuwe vijanden zijn grotendeels zone-gebonden; de kraai is een resource-event zodra je vleesvoorraad interessant genoeg is.</div>';
+  section.innerHTML='<div style="margin-bottom:12px;font-size:13px;opacity:.65;line-height:1.5">Vijanden en bijzondere dreigingen die in jouw huidige of toekomstige spel kunnen verschijnen. Nieuwe vijanden zijn grotendeels zone-gebonden; de kraai en rat zijn resource-events zodra je vleesvoorraad interessant genoeg is.</div>';
   // Bestiary entries
   for(const entry of BESTIARY){
     const unlocked=isBestiaryUnlocked(entry);

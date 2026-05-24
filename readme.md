@@ -13,7 +13,8 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Build mode met muren, torens en ijstorens. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap) en zijn doorloopbaar voor speler, survivors en jagers, maar blokkeren vijanden.
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
-- Bestiary met vijandtypes, inclusief Brute Frost Wolf en Brute Yeti.
+- Bestiary met vijandtypes, inclusief Brute Frost Wolf, Brute Yeti, Crow Thief en Rat Scavenger.
+- Speciale resource-dreigingen: kraaien kunnen vlees stelen en wegvliegen; ratten kunnen vlees stelen, maar worden door maximaal twee wolven tegelijk bejaagd zodat één rat niet de hele wolfpack afleidt.
 - Exchange-tab in de Tactical Forge voor resource-omzetting met verlies, inclusief **Ruil 1×** en **Ruil alles**.
 - Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
 - Yeti-waves met één grote Yeti plus snelle Brute Yeti-support enemies.
@@ -24,11 +25,19 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Achtergrondmuziek met aparte main, boss en victory tracks.
 - Geluidsknop om muziek én sound effects aan/uit te zetten, met opgeslagen voorkeur.
 - Audio-lifecycle fix: muziek en SFX stoppen wanneer de browser/tab of iOS/iPadOS web-app naar de achtergrond gaat.
-- Sample-gebaseerde sound effects voor houthakken en bijl-aanvallen, met synth-fallback.
+- Sample-gebaseerde sound effects voor houthakken, bijl-aanvallen en crow-caw events, met synth-fallback.
+- Crow-caw event-SFX gebruikt tijdelijke music-ducking zodat het stelen van vlees beter hoorbaar is.
 
 - Endgame-finale vanaf wave 50: **Winter’s End**.
 - Sequentiële Alpha Boss Rush: Alpha Wolf, Alpha Brute Bear en Alpha Yeti.
 - Victory-scherm met run-statistieken en een veilige Nieuwe Run-knop.
+
+## Huidige release-notes
+
+De meest recente samenvatting staat in:
+
+- `release_notes_v9.8.2.md` — korte release notes voor de laatste wijziging.
+- `FROSTFALL_RELEASE_NOTES_THROUGH_V9_8_2.md` — samenvatting van de ontwikkeling tot en met de Crow Caw Audibility-update.
 
 ## Starten
 
@@ -300,3 +309,18 @@ De Crow Thief staat nu ook in de Bestiary-tab. Hij wordt zichtbaar zodra je 25+ 
 - Nieuwe `crow_caw.mp3` SFX toegevoegd; bij de diefstal klinkt 2–3× een kraai.
 - De bestaande geluid/mute-knop blijft master mute voor muziek én SFX.
 - Service-worker cache bumped to `frostfall-v9-7-3`.
+
+## v9.8.1 — Wolf Hunt-Rat Cap
+
+- Wolf/rat-ecosysteem gebalanceerd: maximaal twee wolven of Brute Wolves mogen tegelijk achter dezelfde rat met vlees aan.
+- Bij meer kandidaten kiezen wolven op afstand: de dichtstbijzijnde twee krijgen de hunting-rol.
+- De overige wolven blijven hun gewone AI volgen en blijven dus relevant als threat voor speler en kamp.
+- Geen save-impact; service-worker cache gebumpt naar `frostfall-v9-8-1`.
+
+## v9.8.0 — Rat Scavenger Ecosystem
+
+- Added a new **rat thief** event that can appear once wolves are unlocked and there is meat to steal.
+- Rats are immune to the player, towers, and hunters.
+- Wolves that spot a rat carrying meat will temporarily prioritize the rat over the player or camp.
+- If a wolf catches the rat, the stolen meat drops back to the ground.
+- Added the new `rat.png` sprite, updated the bestiary, and bumped the service-worker cache to `frostfall-v9-8-0`.

@@ -1,5 +1,23 @@
 # Frostfall changelog
 
+## v9.8.2 — Crow Caw Audibility
+
+- Crow-caw SFX-gain verhoogd van 0.58 naar 0.95.
+- Audio-buffers laden nu vroeg, op `DOMContentLoaded`, zodat de eerste crow-event minder snel terugvalt op de synth-fallback.
+- `AudioContext` wordt vroeg gecreëerd in `suspended`-state; daadwerkelijke playback blijft achter de eerste user-gesture zitten zodat browser autoplay-policy gerespecteerd blijft.
+- Muziek wordt tijdens een crow-caw-burst tijdelijk gedempt en herstelt daarna vloeiend.
+- Ducking wordt overgeslagen tijdens muziek-fade-transities, background/suspended state en mute, zodat er geen volume-conflicten ontstaan.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-2`.
+
+## v9.8.1 — Wolf Hunt-Rat Cap
+
+- Maximaal 2 wolven, inclusief Brute Wolves, jagen tegelijk op dezelfde rat-met-vlees.
+- Als meer wolven in range zijn, worden de 2 dichtstbijzijnde wolven toegewezen aan de rat; de rest blijft normaal speler/structures aanvallen.
+- Hunting-cap geldt per rat, zodat de code klaar is voor eventuele toekomstige multi-rat situaties.
+- Detectierange blijft 450px, maar is nu vastgelegd als `WOLF_HUNT_RAT_RANGE`; de cap is `WOLF_HUNT_RAT_CAP`.
+- Geen save-impact: `SAVE_KEY` en save-format blijven ongewijzigd.
+- Service-worker cache gebumpt naar `frostfall-v9-8-1`.
+
 ## v9.7.3 — Crow Escape Balance
 
 - Crow Thief opnieuw gebalanceerd: na de diefstal krijgt hij meer HP en een korte ontsnappings-grace, zodat hij zichtbaar met vlees wegvliegt voordat hij kwetsbaar wordt.
@@ -602,3 +620,11 @@ Eerste werkende single-file HTML/Canvas prototype, geïnspireerd door Whiteout S
 - PWA/service-worker caching kan bij GitHub Pages soms een harde refresh of cache bump nodig hebben als assets veranderen.
 - `mat_wood.png` en `mat_money.png` zijn sinds v7.3 niet meer functioneel nodig door het tiered pile-systeem, maar kunnen nog in de assets-map staan. Schoonmaak-kandidaat.
 - Vlees-opslag gebruikt nog het oude `mat_meat.png` systeem; consistent zou zijn om dat later ook naar een tiered pile-systeem te brengen.
+
+## v9.8.0 — Rat Scavenger Ecosystem
+
+- Nieuwe **rat thief**-event toegevoegd: verschijnt pas zodra wolven zijn ontgrendeld en er vlees te stelen is.
+- Ratten zijn immuun voor speler, torens en jagers.
+- Wolven die een rat met vlees zien, geven die tijdelijk voorrang boven speler of kamp.
+- Als een wolf de rat vangt, valt het gestolen vlees weer op de grond.
+- Nieuwe `rat.png`-sprite toegevoegd, bestiary bijgewerkt en service-worker cache gebumpt naar `frostfall-v9-8-0`.
