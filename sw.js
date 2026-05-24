@@ -1,6 +1,6 @@
 // Frostfall service worker
 // Cache version - bump this when assets change to force refresh
-const CACHE_VERSION = 'frostfall-v9-7';
+const CACHE_VERSION = 'frostfall-v9-7-1';
 
 // Assets to pre-cache on install
 const ASSETS = [

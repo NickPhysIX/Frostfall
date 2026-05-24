@@ -279,3 +279,8 @@ Regular towers now visually fire arrows instead of orange orbs, matching the hun
 ## v9.5 note — palisade snow polish
 
 The palisade wall renderer received a visual-only cleanup. Horizontal beams and their snow strips now stop cleanly at the center of end/corner posts, while individual procedural snow caps remain on visible posts. No gameplay or save-data changes.
+
+## v9.7.1 note — Crow Bestiary Fix
+
+De Crow Thief staat nu ook in de Bestiary-tab. Hij wordt zichtbaar zodra je 25+ vlees hebt of lifetime 25+ vlees hebt verzameld.
+

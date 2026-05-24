@@ -1,5 +1,13 @@
 # Frostfall changelog
 
+## v9.7.1 — Crow Bestiary Fix
+
+- Crow Thief toegevoegd aan de Bestiary-tab.
+- Bestiary-tekst aangepast zodat ook bijzondere resource-dreigingen onder het overzicht vallen.
+- Crow Thief wordt zichtbaar zodra de speler 25+ vlees heeft of lifetime 25+ vlees heeft verzameld.
+- Service-worker cache gebumpt naar `frostfall-v9-7-1`.
+
+
 ## v9.5 — Palisade Snow Polish
 
 - Palisade horizontal cross-beams now stop at the center of an end/corner post instead of overhanging past it.
