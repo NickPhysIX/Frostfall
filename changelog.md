@@ -1,5 +1,13 @@
 # Frostfall changelog
 
+## v9.5 — Palisade Snow Polish
+
+- Palisade horizontal cross-beams now stop at the center of an end/corner post instead of overhanging past it.
+- Continuous snow strips use the same center-stop logic, removing small floating/overlapping snow fragments at corners and T-junctions.
+- Individual post caps remain procedural, so corners and vertical palisades still read as capped wooden posts rather than sprite overlays.
+- Visual-only update: gameplay and save key remain unchanged from v9.4.
+- Service-worker cache bumped to `frostfall-v9-5`.
+
 ## v9.4 — Balanced Villager Repairs
 
 - Auto-repair is now limited so villagers remain primarily resource gatherers.

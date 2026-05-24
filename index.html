@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.4 - Balanced Repairs</title>
+<title>Frostfall v9.5 - Palisade Snow Polish</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1148,7 +1148,7 @@ function drawWallPalisade(s,sx,sy){
 
   // Horizontal cross-beam (top rail) — extends into N/E neighbors visually.
   if(nE||nW){
-    const beamL=nW?sx-half-1:sx-half+5, beamR=nE?sx+half+1:sx+half-5;
+    const beamL = nW ? sx - half - 1 : sx, beamR = nE ? sx + half + 1 : sx;
     const beamG=ctx.createLinearGradient(0,beamY-3,0,beamY+3);
     beamG.addColorStop(0,'#7a4a22');beamG.addColorStop(1,'#4a2810');
     ctx.fillStyle=beamG; ctx.fillRect(beamL,beamY-3,beamR-beamL,6);
@@ -1205,7 +1205,7 @@ function drawWallPalisade(s,sx,sy){
   // Continuous snow strip only for horizontal joins.
   if(nE||nW){
     const snowY=postTopY+1, snowH=4;
-    const snowL=nW?sx-half-1:sx-half+2, snowR=nE?sx+half+1:sx+half-2;
+    const snowL = nW ? sx - half - 1 : sx, snowR = nE ? sx + half + 1 : sx;
     ctx.fillStyle='#f8fafc';
     ctx.fillRect(snowL,snowY,snowR-snowL,snowH);
     ctx.fillStyle='rgba(255,255,255,.92)';

@@ -266,3 +266,8 @@ Current packaged build: **v9.3 — Reinforced Repairs**.
 ## v9.4 note — villager auto-repair balance
 
 Villagers can help save damaged structures, but they remain resource gatherers first. They only auto-repair structures below 50% HP, protect a 25 wood reserve, work in short bursts, and stop around 70% HP. Full repairs still use the player-controlled money repair option in the Tactical Forge.
+
+
+## v9.5 note — palisade snow polish
+
+The palisade wall renderer received a visual-only cleanup. Horizontal beams and their snow strips now stop cleanly at the center of end/corner posts, while individual procedural snow caps remain on visible posts. No gameplay or save-data changes.
