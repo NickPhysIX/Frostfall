@@ -1,5 +1,22 @@
 # Frostfall changelog
 
+## v9.8.5d — Attribution Clarification
+
+- [ChatGPT] Credits en README verduidelijkt volgens Niels’ gewenste project-attributie.
+- Vastgelegd dat Niels in de director’s seat zat: feature-richting, verzoeken, playtesting, assetselectie, SFX-downloads, QA-coördinatie en releasebeslissingen.
+- Vastgelegd dat het feitelijke build-/implementatiewerk AI-assisted is uitgevoerd, met ChatGPT als primaire package-builder in deze sessie.
+- Claude, Gemini en Grok explicieter beschreven als respectievelijk QA/review-/patchbron, muziek/visuele/code-suggestiebron en aanvullende reviewbron.
+- Verduidelijkt dat sommige geïntegreerde code/snippets afkomstig waren uit voorstellen van Gemini, Claude of Grok, terwijl veel implementatie direct door ChatGPT is geschreven.
+- Geen code-, gameplay-, asset-, save- of cache-impact.
+
+## v9.8.5c — Release Notes Package Cleanup
+
+- [ChatGPT] Zip-package opgeschoond volgens Niels’ nieuwe packaging-afspraak.
+- Release-notesbestanden ouder dan de huidige base major versie verwijderd uit de package.
+- Voor de v9.8.5-lijn blijven alleen v9.x release notes en de actuele aggregate release notes aanwezig.
+- Geen code-, gameplay-, asset-, save- of cache-impact.
+
+
 ## v9.8.5b — Changelog Attribution Backfill
 
 *ChatGPT-documentatie-update op verzoek van Niels en op voorstel van Claude.*
@@ -86,6 +103,8 @@
 
 ## v9.7.3 — Crow Escape Balance
 
+*Crow Thief mechanic bedacht, logica uitgeschreven en pixel-art gegenereerd met Gemini.*
+
 - Crow Thief opnieuw gebalanceerd: na de diefstal krijgt hij meer HP en een korte ontsnappings-grace, zodat hij zichtbaar met vlees wegvliegt voordat hij kwetsbaar wordt.
 - Crow blijft tijdens de approach veilig, maar wordt na de diefstal targetbaar zodra de korte grace is verlopen.
 - Bij het stelen speelt de nieuwe crow-caw SFX 2–3 keer kort achter elkaar af.
@@ -100,7 +119,17 @@
 - Service-worker cache gebumpt naar `frostfall-v9-7-1`.
 
 
+## v9.6 — Arrow towers & full compass
+
+*Wiskunde voor kompas-schaling en toren-pijlen opgelost met Gemini.*
+
+- Gewone torens schieten nu visueel pijlen in plaats van oranje bollen, passend bij de hunter-stijl.
+- Kompas-limiet voor vijanden buiten beeld verwijderd: toont nu alle threats.
+- Rode kompas-pijltjes schalen in grootte en felleheid op basis van de afstand tot de speler om scherm-clutter te voorkomen.
+
 ## v9.5 — Palisade Snow Polish
+
+*Wiskundige fix voor de uitlijning van hoekpalen en sneeuwkappen voorgesteld door Gemini.*
 
 - Palisade horizontal cross-beams now stop at the center of an end/corner post instead of overhanging past it.
 - Continuous snow strips use the same center-stop logic, removing small floating/overlapping snow fragments at corners and T-junctions.
@@ -689,6 +718,8 @@ Eerste werkende single-file HTML/Canvas prototype, geïnspireerd door Whiteout S
 - Vlees-opslag gebruikt nog het oude `mat_meat.png` systeem; consistent zou zijn om dat later ook naar een tiered pile-systeem te brengen.
 
 ## v9.8.0 — Rat Scavenger Ecosystem
+
+*Concept en ecosysteem-logica ontworpen met Gemini.*
 
 - Nieuwe **rat thief**-event toegevoegd: verschijnt pas zodra wolven zijn ontgrendeld en er vlees te stelen is.
 - Ratten zijn immuun voor speler, torens en jagers.

@@ -1,0 +1,6 @@
+v9.8.5d — Attribution Clarification
+- clarified credits/readme: Niels directed the project and made final feature/asset/release decisions
+- clarified ChatGPT as primary package builder in this session
+- clarified Claude/Gemini/Grok roles as QA/proposal/suggestion/review/music/asset support
+- noted some integrated snippets originated from Gemini/Claude/Grok proposals, with much implementation by ChatGPT
+- no code/gameplay/save/cache impact

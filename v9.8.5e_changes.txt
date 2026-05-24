@@ -1,0 +1,4 @@
+v9.8.5e — Changelog Gemini Attribution Update
+- changelog.md bijgewerkt met Gemini-attributie voor Rat Scavenger, Crow Thief, v9.6 Arrow Towers & Full Compass, en Palisade Snow Polish
+- ontbrekende v9.6 changelog-entry toegevoegd
+- geen code-, gameplay-, asset-, save- of cache-impact

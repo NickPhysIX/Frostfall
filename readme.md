@@ -34,11 +34,23 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 
 ## Credits / asset notes
 
+Frostfall was directed by Niels Braakman as an iterative hobby/prototype project. Niels chose the feature direction, requested changes, tested builds, coordinated feedback between AI tools, supplied/downloaded external SFX, and made the final release decisions.
+
+The practical build and documentation work was AI-assisted:
+- ChatGPT acted as the primary package builder in this session, implementing many changes and assembling zip packages.
+- Claude was used by Niels mainly as QA/review partner and for patch proposals, architecture notes and bug diagnoses.
+- Gemini contributed music-loop generation, visual/style ideas, SFX/audio workflow suggestions, code snippets and pixel-art/asset generation support.
+- Grok contributed additional balance/code review and feedback.
+- Some code integrated into the package originated from Gemini, Claude or Grok suggestions; much of the implementation was written directly by ChatGPT.
+- All AI proposals were requested, filtered and directed by Niels.
+
+Asset notes:
 - Sound effects were sourced by Niels from Pixabay.
 - Music loops were created by Niels with Gemini.
-- Pixel-art assets were made with help from Gemini and ChatGPT.
+- Pixel art was created with help from Gemini/ChatGPT.
 - Color variations were adjusted by Niels in Apple Photos.
-- See `CREDITS.md` for the fuller attribution/asset note.
+- See `CREDITS.md` for the fuller attribution note.
+
 
 ## Huidige release-notes
 
