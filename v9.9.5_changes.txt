@@ -1,0 +1,10 @@
+v9.9.5 — NG+ Upgrade Soft Cap
+
+- Added NG_PLUS_MAX_EXTRA_LEVELS=10.
+- Capped upgrades now gain at most +10 extra levels from NG+.
+- Survivors/hunters now gain at most +10 extra cap from NG+.
+- +2 per cycle scaling remains through NG+5.
+- Uncapped upgrades remain uncapped.
+- Tower-cap scaling remains unchanged.
+- Splash/loading version label updated to v9.9.5.
+- Service-worker cache bumped to frostfall-v9-9-5.

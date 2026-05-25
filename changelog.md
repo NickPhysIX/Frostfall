@@ -1,5 +1,19 @@
 # Frostfall changelog
 
+## v9.9.5 — NG+ Upgrade Soft Cap
+
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT op verzoek van Niels.*
+
+- NG+-extra upgrade-levels en NPC-caps zijn nu gecapt op **+10 totaal**.
+- Schaling per cycle blijft **+2**: NG+1 = +2, NG+5+ = +10.
+- Voorkomt exponentieel “god+ tier”-gedrag bij hoge NG+-cycle-aantallen, doordat `statValue()` multiplicatieve groei per level gebruikt.
+- Uncapped upgrades zoals Bijl Kracht en Gezondheid blijven uncapped.
+- Tower-cap-schaling blijft onaangetast: +5 per cycle tot absolute cap 50.
+- Bestaande overcap-saves worden niet teruggedraaid; bestaande levels blijven staan, maar capped upgrades kunnen niet verder worden gekocht zodra ze boven/aan de nieuwe cap zitten.
+- Splash screen / loading screen bijgewerkt naar **v9.9.5 · NG+ Upgrade Soft Cap**.
+- Nieuwe constante `NG_PLUS_MAX_EXTRA_LEVELS=10`.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-9-5`.
+
 ## v9.9.4 — Consecutive NG+ Scaling
 
 *Voorgesteld door Claude, geïmplementeerd door ChatGPT op verzoek van Niels.*

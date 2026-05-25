@@ -1,5 +1,9 @@
 # Frostfall
 
+## v9.9.5 note — New Game+ upgrade soft cap
+
+New Game+ capped-upgrade growth now has a soft ceiling: capped upgrades and survivor/hunter caps still gain **+2 per NG+ cycle**, but stop at **+10 total** from NG+5 onward. This prevents extreme exponential stat growth in high-cycle NG+ while keeping the early NG+ progression intact. Tower caps still scale separately up to 50.
+
 ## v9.9.4 note — consecutive New Game+ scaling
 
 New Game+ now scales per completed NG+ cycle. Capped upgrades and survivor/hunter slots gain **+2 per NG+ run**. Regular tower and ice-tower caps grow by **+5 per NG+ run**, up to an absolute cap of **50**. The loading/splash screen version label has also been updated to v9.9.4.
