@@ -1,0 +1,10 @@
+v9.9.0 — New Game Plus & Pass-through Towers
+
+- Added NEW GAME + option to victory screen.
+- New Game+ restarts at wave 1 while keeping upgrades, hunters, survivors and zone-unlocks.
+- Full reset remains available separately.
+- New Game+ clears active run state: structures, enemies, drops, projectiles, finale/victory flags and resources.
+- Added newGamePlusRuns tracking to save data.
+- Player can now walk through all owned structures, including towers and ice towers.
+- Enemy behavior against structures remains unchanged.
+- Service-worker cache bumped to frostfall-v9-9-0.

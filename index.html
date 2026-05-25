@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.9.3 - Tower Caps Balance</title>
+<title>Frostfall v9.9.4 - Consecutive NG+ Scaling</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -184,7 +184,7 @@
     <img src="icon-192.png" alt="Frostfall" style="width:100%;height:100%;display:block;image-rendering:pixelated;" onerror="this.style.display='none'" />
   </div>
   <div style="font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#fff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">FROSTFALL</div>
-  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v9.3 · Reinforced Repairs</div>
+  <div style="font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:2px;margin-bottom:32px;">v9.9.4 · Consecutive NG+ Scaling</div>
   <div style="width:220px;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
     <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:3px;transition:width .25s ease;"></div>
   </div>
@@ -358,7 +358,7 @@ const UPGRADES=[
 const NG_PLUS_EXTRA_UPGRADE_LEVELS=2;
 const NG_PLUS_EXTRA_NPC_CAP=2;
 const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
-const TOWER_CAP_BASE=25, TOWER_CAP_NG_PLUS=30;
+const TOWER_CAP_BASE=25, TOWER_CAP_PER_NG_PLUS=5, TOWER_CAP_MAX_ABSOLUTE=50;
 const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
 const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
 const HUNTER_DETECT_RANGE=440, HUNTER_RANGED_RANGE=380, HUNTER_MELEE_RANGE=58, HUNTER_PROJECTILE_SPEED=520, HUNTER_HOME_RADIUS=86;
@@ -702,8 +702,10 @@ function upgradeCosts(key){ const u=UPGRADES.find(x=>x.key===key), lvl=state.upg
 function costLabel(c){ return c.meat>0?`$${c.money} + ${c.meat}🥩`:`$${c.money}`; }
 function effectiveUpgradeMax(u){
   if(!u||!u.max) return 0;
-  if((Number(state.newGamePlusRuns)||0)<=0) return u.max;
-  return u.max + ((u.key==='survivors'||u.key==='hunters') ? NG_PLUS_EXTRA_NPC_CAP : NG_PLUS_EXTRA_UPGRADE_LEVELS);
+  const runs=Number(state.newGamePlusRuns)||0;
+  if(runs<=0) return u.max;
+  const perRun=(u.key==='survivors'||u.key==='hunters') ? NG_PLUS_EXTRA_NPC_CAP : NG_PLUS_EXTRA_UPGRADE_LEVELS;
+  return u.max + perRun*runs;
 }
 function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key), max=effectiveUpgradeMax(u); return !!(max && (state.upgrades[key]||0)>=max); }
 function canAffordUpgrade(key){ const c=upgradeCosts(key); return state.money>=c.money && state.meat>=c.meat && !isMaxed(key); }
@@ -1318,7 +1320,8 @@ canvas.addEventListener('pointermove',e=>{if(buildMode) updateBuildPointer(e.cli
 function structureCount(type){ return Array.isArray(state.structures)?state.structures.filter(s=>s.type===type).length:0; }
 function towerCap(type){
   if(type!=='tower'&&type!=='ice_tower') return Infinity;
-  return (Number(state.newGamePlusRuns)||0)>0 ? TOWER_CAP_NG_PLUS : TOWER_CAP_BASE;
+  const runs=Number(state.newGamePlusRuns)||0;
+  return Math.min(TOWER_CAP_MAX_ABSOLUTE, TOWER_CAP_BASE + TOWER_CAP_PER_NG_PLUS*runs);
 }
 function canBuildMoreOfType(type){ return structureCount(type)<towerCap(type); }
 function towerCapLabel(type){ const cap=towerCap(type); return Number.isFinite(cap)?`${structureCount(type)}/${cap}`:'∞'; }

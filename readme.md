@@ -1,5 +1,9 @@
 # Frostfall
 
+## v9.9.4 note — consecutive New Game+ scaling
+
+New Game+ now scales per completed NG+ cycle. Capped upgrades and survivor/hunter slots gain **+2 per NG+ run**. Regular tower and ice-tower caps grow by **+5 per NG+ run**, up to an absolute cap of **50**. The loading/splash screen version label has also been updated to v9.9.4.
+
 ## v9.9.3 note — tower caps
 
 Regular towers and ice towers are now capped to keep late-game and New Game+ balance under control. The base game allows **25** of each tower type; New Game+ allows **30** of each. Palisades remain unlimited, so defensive layout and wall-building stay fully open.

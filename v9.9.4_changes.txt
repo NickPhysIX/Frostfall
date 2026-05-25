@@ -1,0 +1,9 @@
+v9.9.4 — Consecutive NG+ Scaling
+
+- Upgrade-extra levels now scale as +2 per NG+ cycle.
+- Survivor/hunter caps now scale as +2 per NG+ cycle.
+- Regular tower and ice-tower caps now scale as +5 per NG+ cycle.
+- Tower caps have an absolute maximum of 50.
+- Base game and NG+1 remain unchanged from v9.9.3.
+- Loading/splash screen version label updated to v9.9.4.
+- Service-worker cache bumped to frostfall-v9-9-4.

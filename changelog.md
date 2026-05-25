@@ -1,5 +1,18 @@
 # Frostfall changelog
 
+## v9.9.4 — Consecutive NG+ Scaling
+
+*Voorgesteld door Claude, geïmplementeerd door ChatGPT op verzoek van Niels.*
+
+- Upgrade-extra levels schalen nu lineair met het aantal NG+-runs: **+2 per cycle**, ongelimiteerd.
+- NPC-cap extra voor survivors/hunters schaalt nu lineair met het aantal NG+-runs: **+2 per cycle**, ongelimiteerd.
+- Tower-cap voor gewone torens en ijstorens schaalt nu met **+5 per NG+-cycle** vanaf base 25, tot een absolute bovengrens van **50**.
+- Base-game en NG+1 gedragen zich identiek aan v9.9.3; NG+2 en hoger leveren extra ruimte.
+- Wave-counter blijft het NG+-nummer tonen via de bestaande `⭐N`-notatie.
+- Splash screen / loading screen bijgewerkt naar **v9.9.4 · Consecutive NG+ Scaling**.
+- `TOWER_CAP_NG_PLUS` vervangen door `TOWER_CAP_PER_NG_PLUS` en `TOWER_CAP_MAX_ABSOLUTE`.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-9-4`.
+
 ## v9.9.3 — Tower Caps Balance
 
 *ChatGPT-balans/QoL-update op verzoek van Niels.*

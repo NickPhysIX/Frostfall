@@ -1,0 +1,8 @@
+v9.9.1 — New Game+ Progression Polish
+
+- New Game+ now preserves upgrades/hunters/survivors but resets zones to Siberian Camp.
+- Wave counter shows a ⭐ during New Game+ runs.
+- Wave/audio cue queues are cleared when starting New Game+.
+- Crow and rat spawn timers reset to initial values.
+- Victory-screen helper text clarifies that zones are unlocked again.
+- Service-worker cache bumped to frostfall-v9-9-1.
