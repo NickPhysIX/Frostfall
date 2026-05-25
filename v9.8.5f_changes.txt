@@ -1,0 +1,5 @@
+v9.8.5f — Bear Growl Volume Fix
+- raised bear_growl gain from 1.00 to 1.45
+- strengthened music ducking for bear_growl cues
+- bumped service-worker cache to frostfall-v9-8-5f
+- no gameplay/save/asset impact

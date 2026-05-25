@@ -386,7 +386,7 @@ const SFX_SAMPLES={
   hit:{src:'sfx_axe_hit.mp3',buffer:null,gain:.54,minGap:.085,last:-999,pitchJitter:.035},
   crow:{src:'crow_caw.mp3',buffer:null,gain:.95,minGap:.25,last:-999,pitchJitter:.045},
   wolf_howl:{src:'wolf_howl.mp3',buffer:null,gain:1.00,minGap:3.5,last:-999,pitchJitter:.02},
-  bear_growl:{src:'bear_growl.mp3',buffer:null,gain:1.00,minGap:2.6,last:-999,pitchJitter:.018},
+  bear_growl:{src:'bear_growl.mp3',buffer:null,gain:1.45,minGap:2.6,last:-999,pitchJitter:.018},
   yeti_growl:{src:'yeti_growl.mp3',buffer:null,gain:1.00,minGap:3.0,last:-999,pitchJitter:.015},
   rat_squeak:{src:'rat_squeak.mp3',buffer:null,gain:.92,minGap:.12,last:-999,pitchJitter:.055},
   female_scream:{src:'female_scream.mp3',buffer:null,gain:1.00,minGap:5.0,last:-999,pitchJitter:0}
@@ -975,7 +975,7 @@ function updateWaveCueQueue(dt){
   if(!cue) return;
   const sfx=cue.sfx;
   const pitch=cue.pitch||1;
-  const settings={wolf_howl:[2.6,.20],bear_growl:[2.0,.22],yeti_growl:[3.0,.18]}[sfx]||[1.8,.24];
+  const settings={wolf_howl:[2.6,.20],bear_growl:[2.0,.14],yeti_growl:[3.0,.18]}[sfx]||[1.8,.24];
   const durationScale=pitch<1?1/pitch:1;
   playEventSfx(sfx,settings[0]*durationScale,settings[1],pitch);
   waveCueQueueTimer=Math.max(WAVE_CUE_MIN_GAP,settings[0]*durationScale*.55);

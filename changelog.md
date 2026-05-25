@@ -1,5 +1,13 @@
 # Frostfall changelog
 
+## v9.8.5f — Bear Growl Volume Fix
+
+*ChatGPT-audio-tuning op verzoek van Niels.*
+
+- Bear growl-volume verhoogd zodat bear/brute/boss-bear wave-cues beter hoorbaar zijn boven de achtergrondmuziek.
+- Muziek-ducking tijdens bear growls iets sterker gemaakt, zodat de growl duidelijker door de mix snijdt zonder nieuwe audio-assets toe te voegen.
+- Geen gameplay-, asset- of save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-5f`.
+
 ## v9.8.5d — Attribution Clarification
 
 - [ChatGPT] Credits en README verduidelijkt volgens Niels’ gewenste project-attributie.
