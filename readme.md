@@ -1,5 +1,9 @@
 # Frostfall
 
+## v9.9.3 note — tower caps
+
+Regular towers and ice towers are now capped to keep late-game and New Game+ balance under control. The base game allows **25** of each tower type; New Game+ allows **30** of each. Palisades remain unlimited, so defensive layout and wall-building stay fully open.
+
 ## v9.9.2 note — expanded New Game+ progression
 
 New Game+ now opens extra progression after victory: capped upgrades gain **+2 extra levels**, and survivors/hunters can be expanded from 4 to **6** each. Upgrade cards now show `Lv.x/y` for capped upgrades, so the extended cap is visible in NG+.
@@ -26,7 +30,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Mobiele joystick en toetsenbordbesturing.
 - Resources: geld, vlees, hout en HP.
 - Upgradepaneel: **Tactical Forge**.
-- Build mode met muren, torens en ijstorens. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap). De speler kan door eigen structures heen lopen, zodat je jezelf niet meer klem kunt bouwen; vijanden blijven structures wel aanvallen.
+- Build mode met muren, torens en ijstorens. Torens en ijstorens hebben een cap; palisades blijven ongelimiteerd. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap). De speler kan door eigen structures heen lopen, zodat je jezelf niet meer klem kunt bouwen; vijanden blijven structures wel aanvallen.
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes, inclusief Brute Frost Wolf, Brute Yeti, Crow Thief en Rat Scavenger.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.9.2 - New Game+ Expanded Upgrades</title>
+<title>Frostfall v9.9.3 - Tower Caps Balance</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -214,7 +214,7 @@
     <button id="build-tower-choice" class="build-choice">🏹 Toren · 30🪵 20🥩</button>
     <button id="build-ice-choice" class="build-choice">❄️ IJstoren · 40🪵 15🥩</button>
   </div>
-  <span style="font-size:11px;opacity:.82;font-weight:normal">Groen = kan plaatsen. Rood = geblokkeerd/te weinig resources.</span>
+  <span style="font-size:11px;opacity:.82;font-weight:normal">Groen = kan plaatsen. Rood = geblokkeerd/te weinig resources/max torens.</span>
 </div>
 <div id="joystick"><div id="joystick-knob"></div></div>
 <button id="pause-btn" aria-label="Pauze">⏸ PAUZE</button>
@@ -358,6 +358,7 @@ const UPGRADES=[
 const NG_PLUS_EXTRA_UPGRADE_LEVELS=2;
 const NG_PLUS_EXTRA_NPC_CAP=2;
 const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
+const TOWER_CAP_BASE=25, TOWER_CAP_NG_PLUS=30;
 const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
 const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
 const HUNTER_DETECT_RANGE=440, HUNTER_RANGED_RANGE=380, HUNTER_MELEE_RANGE=58, HUNTER_PROJECTILE_SPEED=520, HUNTER_HOME_RADIUS=86;
@@ -1314,9 +1315,51 @@ for(const [id,type] of [['build-wall-choice','wall'],['build-tower-choice','towe
 function canvasToWorld(clientX,clientY){ const r=canvas.getBoundingClientRect(); return {x:(clientX-r.left)-W/2+player.x,y:(clientY-r.top)-H/2+player.y}; }
 function updateBuildPointer(clientX,clientY){ const p=canvasToWorld(clientX,clientY); buildPointer={active:true,x:p.x,y:p.y}; }
 canvas.addEventListener('pointermove',e=>{if(buildMode) updateBuildPointer(e.clientX,e.clientY);}); canvas.addEventListener('pointerleave',()=>{buildPointer.active=false;});
-function buildCostAvailable(type){ if(type==='tower') return state.wood>=TOWER_WOOD_COST&&state.meat>=TOWER_MEAT_COST; if(type==='ice_tower') return state.wood>=ICE_TOWER_WOOD_COST&&state.meat>=ICE_TOWER_MEAT_COST; return state.wood>=WALL_COST; }
+function structureCount(type){ return Array.isArray(state.structures)?state.structures.filter(s=>s.type===type).length:0; }
+function towerCap(type){
+  if(type!=='tower'&&type!=='ice_tower') return Infinity;
+  return (Number(state.newGamePlusRuns)||0)>0 ? TOWER_CAP_NG_PLUS : TOWER_CAP_BASE;
+}
+function canBuildMoreOfType(type){ return structureCount(type)<towerCap(type); }
+function towerCapLabel(type){ const cap=towerCap(type); return Number.isFinite(cap)?`${structureCount(type)}/${cap}`:'∞'; }
+function updateBuildChoiceLabels(){
+  const wall=document.getElementById('build-wall-choice'), tower=document.getElementById('build-tower-choice'), ice=document.getElementById('build-ice-choice');
+  if(wall) wall.textContent=`🧱 Muur · ${WALL_COST}🪵`;
+  if(tower) tower.textContent=`🏹 Toren · ${TOWER_WOOD_COST}🪵 ${TOWER_MEAT_COST}🥩 · ${towerCapLabel('tower')}`;
+  if(ice) ice.textContent=`❄️ IJstoren · ${ICE_TOWER_WOOD_COST}🪵 ${ICE_TOWER_MEAT_COST}🥩 · ${towerCapLabel('ice_tower')}`;
+}
+function buildCostAvailable(type){ if(type==='tower') return canBuildMoreOfType(type)&&state.wood>=TOWER_WOOD_COST&&state.meat>=TOWER_MEAT_COST; if(type==='ice_tower') return canBuildMoreOfType(type)&&state.wood>=ICE_TOWER_WOOD_COST&&state.meat>=ICE_TOWER_MEAT_COST; return state.wood>=WALL_COST; }
 function canPlaceAt(gx,gy){ if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return false; if(structureAtGrid(gx,gy)) return false; return buildCostAvailable(buildType); }
-function placeStructure(wx,wy){ const gx=Math.round(wx/GRID), gy=Math.round(wy/GRID); if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return; if(structureAtGrid(gx,gy)) return; if(buildType==='tower'){ if(state.wood<TOWER_WOOD_COST||state.meat<TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 30🪵 + 20🥩','#f87171',-25,1.2);return;} state.wood-=TOWER_WOOD_COST; state.meat-=TOWER_MEAT_COST; const hp=desiredStructureMaxHP('tower'); state.structures.push({type:'tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'🏹 Toren','#60a5fa',-15,.85); } else if(buildType==='ice_tower'){ if(state.wood<ICE_TOWER_WOOD_COST||state.meat<ICE_TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 40🪵 + 15🥩','#f87171',-25,1.2);return;} state.wood-=ICE_TOWER_WOOD_COST; state.meat-=ICE_TOWER_MEAT_COST; const hp=desiredStructureMaxHP('ice_tower'); state.structures.push({type:'ice_tower',gx,gy,hp,maxHP:hp,shootCD:0}); addText(gx*GRID,gy*GRID,'❄️ IJstoren','#38bdf8',-15,.85); } else { if(state.wood<WALL_COST){addText(player.x,player.y-30,'🪵 Te weinig hout!','#f87171',-25,1.2);return;} state.wood-=WALL_COST; const hp=desiredStructureMaxHP('wall'); state.structures.push({type:'wall',gx,gy,hp,maxHP:hp}); addText(gx*GRID,gy*GRID,'🧱 Muur','#fbbf24',-15,.85); } state.stats.structuresBuilt++; playSound('upgrade'); for(let i=0;i<8;i++) addParticle(gx*GRID+(Math.random()-.5)*24,gy*GRID+(Math.random()-.5)*24,'#fff','dust'); saveGame(); updateHUD(); }
+function placeStructure(wx,wy){
+  const gx=Math.round(wx/GRID), gy=Math.round(wy/GRID);
+  if(Math.hypot(gx*GRID-player.x,gy*GRID-player.y)<30) return;
+  if(structureAtGrid(gx,gy)) return;
+  if(buildType==='tower'){
+    if(!canBuildMoreOfType('tower')){addText(player.x,player.y-30,`Max torens bereikt: ${towerCapLabel('tower')}`,'#f87171',-25,1.2);return;}
+    if(state.wood<TOWER_WOOD_COST||state.meat<TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 30🪵 + 20🥩','#f87171',-25,1.2);return;}
+    state.wood-=TOWER_WOOD_COST; state.meat-=TOWER_MEAT_COST;
+    const hp=desiredStructureMaxHP('tower');
+    state.structures.push({type:'tower',gx,gy,hp,maxHP:hp,shootCD:0});
+    addText(gx*GRID,gy*GRID,'🏹 Toren','#60a5fa',-15,.85);
+  } else if(buildType==='ice_tower'){
+    if(!canBuildMoreOfType('ice_tower')){addText(player.x,player.y-30,`Max ijstorens bereikt: ${towerCapLabel('ice_tower')}`,'#f87171',-25,1.2);return;}
+    if(state.wood<ICE_TOWER_WOOD_COST||state.meat<ICE_TOWER_MEAT_COST){addText(player.x,player.y-30,'Nodig: 40🪵 + 15🥩','#f87171',-25,1.2);return;}
+    state.wood-=ICE_TOWER_WOOD_COST; state.meat-=ICE_TOWER_MEAT_COST;
+    const hp=desiredStructureMaxHP('ice_tower');
+    state.structures.push({type:'ice_tower',gx,gy,hp,maxHP:hp,shootCD:0});
+    addText(gx*GRID,gy*GRID,'❄️ IJstoren','#38bdf8',-15,.85);
+  } else {
+    if(state.wood<WALL_COST){addText(player.x,player.y-30,'🪵 Te weinig hout!','#f87171',-25,1.2);return;}
+    state.wood-=WALL_COST;
+    const hp=desiredStructureMaxHP('wall');
+    state.structures.push({type:'wall',gx,gy,hp,maxHP:hp});
+    addText(gx*GRID,gy*GRID,'🧱 Muur','#fbbf24',-15,.85);
+  }
+  state.stats.structuresBuilt++;
+  playSound('upgrade');
+  for(let i=0;i<8;i++) addParticle(gx*GRID+(Math.random()-.5)*24,gy*GRID+(Math.random()-.5)*24,'#fff','dust');
+  saveGame(); updateHUD();
+}
 canvas.addEventListener('click',e=>{ if(!buildMode) return; const p=canvasToWorld(e.clientX,e.clientY); placeStructure(p.x,p.y); });
 canvas.addEventListener('touchend',e=>{ if(!buildMode||e.changedTouches.length===0) return; const t=e.changedTouches[0], target=document.elementFromPoint(t.clientX,t.clientY); if(target&&(target.tagName==='BUTTON'||target.closest('#build-hint'))) return; updateBuildPointer(t.clientX,t.clientY); const p=canvasToWorld(t.clientX,t.clientY); placeStructure(p.x,p.y); },{passive:false});
 function findBlockingStructure(b,distToPlayer){ if(state.structures.length===0) return null; const dx=player.x-b.x,dy=player.y-b.y,steps=Math.ceil(distToPlayer/GRID); for(let i=1;i<steps;i++){ const t=i/steps, gx=Math.round((b.x+dx*t)/GRID), gy=Math.round((b.y+dy*t)/GRID), s=structureAtGrid(gx,gy); if(s) return s; } return null; }
@@ -1444,6 +1487,7 @@ function updateHUD(){
   else if(waveCleared||interWaveTimer>0) status.textContent=`Prep ${Math.ceil(Math.max(0,interWaveTimer))}s`;
   else status.textContent='Ready';
   document.getElementById('upgrade-btn').classList.toggle('pulse',UPGRADES.some(u=>canAffordUpgrade(u.key)));
+  updateBuildChoiceLabels();
   const rc=calculateRepairCost(), rBtn=document.getElementById('repair-btn-action');
   if(rBtn){rBtn.textContent=`Repareer Alles ($${rc})`; rBtn.disabled=rc===0||state.money<rc;}
 }

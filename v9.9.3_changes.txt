@@ -1,0 +1,10 @@
+v9.9.3 — Tower Caps Balance
+
+- Added tower caps for regular towers and ice towers.
+- Base game: max 25 regular towers and max 25 ice towers.
+- New Game+: max 30 regular towers and max 30 ice towers.
+- Palisades/walls remain unlimited.
+- Existing above-cap towers are preserved, but additional builds are blocked.
+- Build buttons show current count/cap.
+- Build preview turns red when capped.
+- Service-worker cache bumped to frostfall-v9-9-3.

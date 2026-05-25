@@ -1,5 +1,19 @@
 # Frostfall changelog
 
+## v9.9.3 — Tower Caps Balance
+
+*ChatGPT-balans/QoL-update op verzoek van Niels.*
+
+- Gewone torens en ijstorens hebben nu elk een bouwlimiet.
+- Base game: maximaal **25 gewone torens** en **25 ijstorens**.
+- New Game+: maximaal **30 gewone torens** en **30 ijstorens**.
+- Palisades/muren blijven **ongelimiteerd**.
+- Bestaande saves worden niet opgeschoond: als een oudere save al boven de cap zit, blijven die torens staan, maar er kunnen geen extra torens van dat type worden gebouwd totdat je onder de cap zit.
+- Build-knoppen tonen nu teller/cap, bijvoorbeeld `🏹 Toren · 30🪵 20🥩 · 18/25`.
+- Build-preview wordt rood wanneer het maximum voor dat torentype bereikt is.
+- Bij bouwen boven de cap verschijnt een floating warning.
+- Geen save reset nodig. Service-worker cache gebumpt naar `frostfall-v9-9-3`.
+
 ## v9.9.2 — New Game+ Expanded Upgrades
 
 *ChatGPT-balans/QoL-update op verzoek van Niels.*
