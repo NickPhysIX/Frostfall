@@ -1,5 +1,21 @@
 # Frostfall
 
+## v9.9.2 note — expanded New Game+ progression
+
+New Game+ now opens extra progression after victory: capped upgrades gain **+2 extra levels**, and survivors/hunters can be expanded from 4 to **6** each. Upgrade cards now show `Lv.x/y` for capped upgrades, so the extended cap is visible in NG+.
+
+## v9.9.1 note — New Game+ progression polish
+
+New Game+ now preserves upgrades, hunters and survivors, but resets zone progression back to Siberian Camp. This keeps the second run powerful without skipping the zone-unlock arc. The wave counter shows a **⭐** during New Game+ runs.
+
+## v9.9.0 note — New Game+ and pass-through towers
+
+The victory screen now offers **NEW GAME +** as an extra option: start again at wave 1 while keeping all upgrades, hunters and survivors. Zone progression resets to Siberian Camp so Glacial Forest and Ice Caves can be unlocked again. A full reset remains available as a separate button. The player can also walk through towers and ice towers, preventing accidental soft-locks from building yourself in.
+
+## v9.8.5g note — meat-thief ecosystem guard
+
+Only wolves and Brute Wolves are allowed to react to rats carrying stolen meat. Bears, brutes, Yeti and Brute Yeti do not pick up meat and do not chase meat thieves.
+
 **Frostfall** is een kleine browsergame / web-app waarin je een kamp in een ijzige wildernis verdedigt tegen steeds zwaardere waves van vijanden. Het spel combineert actie, idle-resource gathering en base defense: je loopt rond, hakt hout, verzamelt resources, bouwt muren en torens, koopt upgrades en probeert de volgende blizzard te overleven.
 
 De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canvas en PNG-sprites. Er is geen serverlogica nodig.
@@ -10,7 +26,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Mobiele joystick en toetsenbordbesturing.
 - Resources: geld, vlees, hout en HP.
 - Upgradepaneel: **Tactical Forge**.
-- Build mode met muren, torens en ijstorens. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap) en zijn doorloopbaar voor speler, survivors en jagers, maar blokkeren vijanden.
+- Build mode met muren, torens en ijstorens. Muren worden als doorlopende palissade getekend (paaltjes, dwarsbalken, sneeuwkap). De speler kan door eigen structures heen lopen, zodat je jezelf niet meer klem kunt bouwen; vijanden blijven structures wel aanvallen.
 - Survivors/dorpsbewoners die automatisch hout verzamelen.
 - Meerdere zones met eigen difficulty en vijand-unlocks.
 - Bestiary met vijandtypes, inclusief Brute Frost Wolf, Brute Yeti, Crow Thief en Rat Scavenger.
@@ -18,6 +34,7 @@ De game draait volledig als statische webpagina met HTML, CSS, JavaScript, canva
 - Exchange-tab in de Tactical Forge voor resource-omzetting met verlies, inclusief **Ruil 1×** en **Ruil alles**.
 - Adaptieve enemy-scaling: vijanden blijven relevant als je damage, attack speed, range en torens sterk hebt opgewaardeerd.
 - Yeti-waves met één grote Yeti plus snelle Brute Yeti-support enemies.
+- Endgame-victory screen met keuze tussen volledige reset en **New Game+**. In NG+ komen extra upgrade-levels en extra survivor/hunter-slots beschikbaar. New Game+ behoudt upgrades/hunters/survivors, maar laat zones opnieuw vrijspelen.
 - Sprite-gebaseerde player, survivors, vijanden, bomen, torens, resources en kampdecoratie.
 - PWA/web-app support met manifest, app iconen en service worker.
 - LocalStorage savegame met backward compatibility voor oudere Frostfall-versies.

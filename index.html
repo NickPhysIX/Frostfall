@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>Frostfall v9.8.5 - Sequential Mixed-Wave Audio Cues</title>
+<title>Frostfall v9.9.2 - New Game+ Expanded Upgrades</title>
 <meta name="theme-color" content="#0b1f3a" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -167,6 +167,12 @@
     text-shadow:1px 1px 0 #1c2e18;
   }
   .victory-reset-btn:active { transform:translateY(2px); box-shadow:0 4px 0 #23361d, 0 8px 18px rgba(0,0,0,.28); }
+  .victory-ng-plus-btn {
+    background:linear-gradient(180deg, #a78bfa 0%, #7c3aed 55%, #4c1d95 100%);
+    border-color:#ddd6fe;
+    box-shadow:0 6px 0 #2e1065, 0 12px 24px rgba(0,0,0,.28);
+  }
+  .victory-small-note { margin-top:8px; font-size:11px; opacity:.78; line-height:1.35; color:#e5e7eb; text-shadow:1px 1px 2px rgba(0,0,0,.55); }
   .victory-caption-snowflake {
     color:#eaf4ff; font-size:16px; margin:0 auto 10px; opacity:.95; text-shadow:0 1px 2px rgba(0,0,0,.35);
   }
@@ -252,7 +258,9 @@
         <div class="victory-stat-row"><span class="victory-stat-label">💰 Goud Verzameld</span><span id="vic-stat-money" class="victory-stat-value">-</span></div>
       </div>
       <div class="menu-stack">
-        <button id="victory-reset-btn" class="victory-reset-btn">NIEUWE RUN STARTEN</button>
+        <button id="victory-ng-plus-btn" class="victory-reset-btn victory-ng-plus-btn">NEW GAME +</button>
+        <div class="victory-small-note">Start opnieuw bij wave 1 met behoud van al je upgrades, hunters en survivors. Zones speel je opnieuw vrij.</div>
+        <button id="victory-reset-btn" class="victory-reset-btn">HELEMAAL OPNIEUW STARTEN</button>
       </div>
     </div>
   </div>
@@ -347,6 +355,8 @@ const UPGRADES=[
 {key:'survivors',icon:'👥',name:'Dorpsbewoners',base:0,mult:1.0,costBase:150,costMult:2.30,meatCostBase:10,meatCostAdd:12,unit:'werker',max:4},
 {key:'hunters',icon:'🏹',name:'Jagers',base:0,mult:1.0,costBase:220,costMult:2.35,meatCostBase:15,meatCostAdd:18,unit:'jager',max:4}
 ];
+const NG_PLUS_EXTRA_UPGRADE_LEVELS=2;
+const NG_PLUS_EXTRA_NPC_CAP=2;
 const GRID=42, WALL_COST=10, TOWER_WOOD_COST=30, TOWER_MEAT_COST=20, ICE_TOWER_WOOD_COST=40, ICE_TOWER_MEAT_COST=15;
 const TOWER_RANGE=275, TOWER_BASE_COOLDOWN=1.12, TOWER_DAMAGE_FACTOR=.85, ICE_TOWER_DAMAGE_FACTOR=.55;
 const TREE_HP=100, TREE_WOOD=12, TREE_REGROW_TIME=24, PLAYER_CHOP_RADIUS=120, PLAYER_CHOP_DPS=38, ENEMY_CHOP_INTERRUPT_RADIUS=82, CULL_MARGIN=260;
@@ -377,7 +387,7 @@ const MEAT_PILE_TIERS=[
 ];
 function pickPileTier(amount,tiers){ return tiers.find(t=>amount>=t.min)||null; }
 function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0,hunters:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
+let state={money:0,meat:0,wood:0,wave:1,currentZone:0,zonesUnlocked:[true,false,false],upgrades:{damage:0,attackSpeed:0,range:0,moveSpeed:0,maxHP:0,regen:0,chopSpeed:0,wallHP:0,meatValue:0,moneyMult:0,survivors:0,hunters:0},hp:100,structures:[],finaleStarted:false,finaleStage:0,finaleBossActive:false,victory:false,newGamePlusRuns:0,stats:{kills:0,woodCollected:0,meatCollected:0,moneyCollected:0,structuresBuilt:0,wavesCompleted:0,_v78Lifetime:true},_v64StartGrant:false};
 let audioCtx=null;
 let sfxLoadingStarted=false;
 const activeAudioNodes=new Set();
@@ -680,6 +690,7 @@ function ensureStateDefaults(){
   state.finaleStage=Number(state.finaleStage)||0;
   state.finaleBossActive=!!state.finaleBossActive;
   state.victory=!!state.victory;
+  state.newGamePlusRuns=Number(state.newGamePlusRuns)||0;
 }
 ensureStateDefaults();
 if(!state._v64StartGrant){ state.wood=Math.max(Number(state.wood)||0,20); state.meat=Math.max(Number(state.meat)||0,5); state._v64StartGrant=true; saveGame(); }
@@ -688,7 +699,12 @@ function structureHPMultiplier(type){ return STRUCTURE_HP_MULT[type]||1; }
 function desiredStructureMaxHP(type){ return statValue('wallHP')*structureHPMultiplier(type); }
 function upgradeCosts(key){ const u=UPGRADES.find(x=>x.key===key), lvl=state.upgrades[key]||0; return {money:Math.floor(u.costBase*Math.pow(u.costMult,lvl)), meat:u.meatCostBase!==undefined?Math.floor(u.meatCostBase+(u.meatCostAdd||0)*lvl):0}; }
 function costLabel(c){ return c.meat>0?`$${c.money} + ${c.meat}🥩`:`$${c.money}`; }
-function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key); return !!(u.max && (state.upgrades[key]||0)>=u.max); }
+function effectiveUpgradeMax(u){
+  if(!u||!u.max) return 0;
+  if((Number(state.newGamePlusRuns)||0)<=0) return u.max;
+  return u.max + ((u.key==='survivors'||u.key==='hunters') ? NG_PLUS_EXTRA_NPC_CAP : NG_PLUS_EXTRA_UPGRADE_LEVELS);
+}
+function isMaxed(key){ const u=UPGRADES.find(x=>x.key===key), max=effectiveUpgradeMax(u); return !!(max && (state.upgrades[key]||0)>=max); }
 function canAffordUpgrade(key){ const c=upgradeCosts(key); return state.money>=c.money && state.meat>=c.meat && !isMaxed(key); }
 function normalizeStructures(){ for(const s of state.structures){ if(!s.type) s.type='wall'; if(!Number.isFinite(s.shootCD)) s.shootCD=0; if(!Number.isFinite(s.maxHP)||!Number.isFinite(s.hp)){ s.maxHP=desiredStructureMaxHP(s.type); s.hp=s.maxHP; } } }
 function applyStructureBalanceV93(){
@@ -731,8 +747,9 @@ function generateTrees(){
 generateTrees();
 function structureAtGrid(gx,gy){ return state.structures.find(s=>s.gx===gx&&s.gy===gy); }
 function structureAtWorld(x,y){ return structureAtGrid(Math.round(x/GRID),Math.round(y/GRID)); }
-// v8.8: friendlies (player) walk through walls but not through towers.
-function blocksFriendlyAtWorld(x,y){ const s=structureAtWorld(x,y); return s && s.type!=='wall' ? s : null; }
+// v9.9: friendlies (player) can walk through all built structures.
+// This prevents soft-locks when a player accidentally boxes themselves in with towers.
+function blocksFriendlyAtWorld(x,y){ return null; }
 function addText(x,y,text,color='#fff',vy=-30,life=1){ floatingTexts.push({x,y,text,color,vy,life}); }
 function addParticle(x,y,color='#fff',type='dust'){ particles.push({x,y,vx:(Math.random()-.5)*90,vy:-25-Math.random()*65,life:.45,maxLife:.45,color,size:2+Math.random()*4,type}); }
 function inView(x,y,margin=CULL_MARGIN){ return x>player.x-W/2-margin && x<player.x+W/2+margin && y>player.y-H/2-margin && y<player.y+H/2+margin; }
@@ -1173,6 +1190,9 @@ let ratSpawnTimer=80;
 const RAT_MEAT_X=CROW_MEAT_X, RAT_MEAT_Y=CROW_MEAT_Y;
 const WOLF_HUNT_RAT_CAP=2;
 const WOLF_HUNT_RAT_RANGE=450;
+// Only wolves participate in the meat-thief ecosystem.
+// Bears, brutes, yeti and brute-yeti must never pick up meat or chase meat thieves.
+function canHuntMeatThief(b){ return !!b && (b.baseKind==='wolf'||b.baseKind==='brute_wolf'); }
 function hasActiveRat(){ return beasts.some(b=>b.kind==='rat'); }
 function spawnRat(){
   if(!state.zonesUnlocked[1] || state.meat<1 || hasActiveRat() || state.victory) return false;
@@ -1309,10 +1329,11 @@ for(const s of state.structures){ if(s.type!=='tower'&&s.type!=='ice_tower') con
 for(let i=projectiles.length-1;i>=0;i--){ const p=projectiles[i]; p.life-=dt; if(p.life<=0||!beasts.includes(p.target)||p.target.hp<=0){projectiles.splice(i,1);continue;} const tx=p.target.x,ty=p.target.y-p.target.size*.25,dx=tx-p.x,dy=ty-p.y,d=Math.hypot(dx,dy)||1; p.angle=Math.atan2(dy,dx); p.x+=dx/d*p.speed*dt; p.y+=dy/d*p.speed*dt; if(d<p.target.size+8){ if(canDamageBeast(p.target)){ p.target.hp-=p.dmg; p.target.hitFlash=.15; if(p.type==='ice_tower'){p.target.slowTimer=2.4*(1-(p.target.slowResist||0)); for(let k=0;k<5;k++) addParticle(p.x,p.y,'#67e8f9','spark');} else for(let k=0;k<3;k++) addParticle(p.x,p.y,'#fbbf24','spark'); } projectiles.splice(i,1); }}
 // Pre-pass: per rat-with-meat, assign only the nearest wolves/brute-wolves as hunters.
 // This keeps the wolf-rat ecosystem readable without letting one rat pull an entire pack away.
+// Explicit rule: bears/brutes/yeti do not pick up meat and do not hunt rats.
 const ratHunters=new Map();
 const ratsWithMeat=beasts.filter(r=>r.kind==='rat'&&r.hasMeat&&r.hp>0);
 if(ratsWithMeat.length>0){
-  const wolfCandidates=beasts.filter(b=>(b.baseKind==='wolf'||b.baseKind==='brute_wolf')&&b.hp>0);
+  const wolfCandidates=beasts.filter(b=>canHuntMeatThief(b)&&b.hp>0);
   for(const rat of ratsWithMeat){
     const ranked=wolfCandidates
       .filter(w=>!ratHunters.has(w))
@@ -1412,7 +1433,9 @@ function updateHUD(){
   document.getElementById('hp').textContent=`${Math.max(0,Math.floor(state.hp))}/${Math.floor(maxHP)}`;
   const yetiNext=getActiveZoneIndex()>=2&&state.wave>=25&&state.wave%10===0;
   const finalNext=isFinaleReady()||state.finaleStarted;
-  document.getElementById('wave').textContent=state.victory?'✓':(state.wave+(finalNext?' ❄️':(yetiNext?' ❄️':(state.wave%5===0?' 👑':''))));
+  const ngPlus=(Number(state.newGamePlusRuns)||0)>0;
+  const waveSuffix=finalNext?' ❄️':(yetiNext?' ❄️':(state.wave%5===0?' 👑':''));
+  document.getElementById('wave').textContent=state.victory?'✓':((ngPlus?'⭐ ':'')+state.wave+waveSuffix);
   document.getElementById('zone-name').textContent=state.victory?'Spring Meadow':(state.finaleStarted?'WINTER\'S END':getActiveZone().name);
   const status=document.getElementById('wave-status');
   if(state.victory) status.textContent='Victory';
@@ -2036,6 +2059,36 @@ function drawDirectionalIndicators(cx,cy){
 function render(){ const z=getActiveZone(),bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,z.bg[0]);bg.addColorStop(1,z.bg[2]);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H); const cx=W/2-player.x,cy=H/2-player.y; for(const s of snowflakes){const sx=((s.x+cx*.4)%2000+2000)%2000-1000+W/2,sy=((s.y+cy*.4+performance.now()*.001*s.speed)%2000+2000)%2000-1000+H/2;ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.arc(sx,sy,s.size,0,Math.PI*2);ctx.fill();} if(buildMode) drawGrid(cx,cy); const renderables=[]; for(const d of getCampDecorations(cx,cy)) renderables.push(d); for(const t of trees) if(inView(t.x,t.y)) renderables.push({y:t.y,draw:()=>drawTree(t,t.x+cx,t.y+cy)}); for(const s of state.structures) if(inView(s.gx*GRID,s.gy*GRID)) renderables.push({y:s.gy*GRID,draw:()=>drawStructure(s,s.gx*GRID+cx,s.gy*GRID+cy)}); for(const d of drops) if(inView(d.x,d.y)) renderables.push({y:d.y,draw:()=>{const sx=d.x+cx,sy=d.y+cy;if(d.type==='meat'&&images.meat.loaded) drawSpriteFit(images.meat,sx,sy+8,16,16,'bottom'); else {ctx.fillStyle=d.type==='money'?'#22c55e':'#ef4444';ctx.beginPath();ctx.arc(sx,sy,6,0,Math.PI*2);ctx.fill();}}}); for(const b of beasts) if(inView(b.x,b.y)) renderables.push({y:b.y,draw:()=>drawBeast(b,b.x+cx,b.y+cy)}); for(const s of survivors) renderables.push({y:s.y,draw:()=>drawSurvivor(s,cx,cy)}); for(const h of hunters) renderables.push({y:h.y,draw:()=>drawHunter(h,cx,cy)}); renderables.push({y:player.y,draw:()=>drawPlayer(W/2,H/2)}); renderables.sort((a,b)=>a.y-b.y); for(const r of renderables) r.draw(); drawBuildPreview(cx,cy); for(const p of projectiles){const sx=p.x+cx,sy=p.y+cy;if(p.type==='hunter'||p.type==='tower'){drawHunterProjectile(p,cx,cy);}else{ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(sx,sy,5,0,Math.PI*2);ctx.fill();}} for(const p of particles){ctx.globalAlpha=p.life/p.maxLife;ctx.fillStyle=p.color;ctx.fillRect(p.x+cx,p.y+cy,p.size,p.size);} ctx.globalAlpha=1; for(const t of floatingTexts){ctx.fillStyle=t.color;ctx.font='900 15px system-ui';ctx.fillText(t.text,t.x+cx,t.y+cy);} drawDirectionalIndicators(cx,cy); if(waveCleared){ctx.fillStyle='rgba(11,22,44,.75)';ctx.fillRect(0,H/2-40,W,80);ctx.fillStyle='#22c55e';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('✓ BLIZZARD OVERLEEFD',W/2,H/2+8);ctx.textAlign='left';}}
 let gameOver=false;
 function resetAllProgress(){ try{localStorage.removeItem(SAVE_KEY);for(const key of LEGACY_KEYS) localStorage.removeItem(key);}catch(e){} location.reload(); }
+function startNewGamePlus(){
+  const keptUpgrades={...state.upgrades};
+  const keptStats={...(state.stats||{})};
+  const keptRuns=(Number(state.newGamePlusRuns)||0)+1;
+
+  state={...state,
+    money:0, meat:0, wood:20,
+    wave:1, currentZone:0, zonesUnlocked:[true,false,false],
+    upgrades:keptUpgrades,
+    hp:100, structures:[],
+    finaleStarted:false, finaleStage:0, finaleBossActive:false, victory:false,
+    newGamePlusRuns:keptRuns,
+    stats:{...keptStats,newGamePlusRuns:keptRuns,_v78Lifetime:true},
+    _v64StartGrant:true
+  };
+  state.hp=statValue('maxHP');
+
+  gameOver=false; paused=false; waveActive=false; waveCleared=false;
+  waveBeastsRemaining=0; waveSpawnTimer=0; interWaveTimer=4;
+  waveIsYeti=false; waveYetiSpawned=false; waveBruteYetiRemaining=0; waveFirstKindOverride=null;
+  waveCuePlayedKeys.clear(); waveCueQueue.length=0; waveCueQueueTimer=0;
+  crowSpawnTimer=45; ratSpawnTimer=80;
+  beasts.length=0; drops.length=0; projectiles.length=0; particles.length=0; floatingTexts.length=0;
+  player.x=0; player.y=0; player.angle=0; player.hitFlash=0; player.chopping=null;
+  generateTrees(); syncSurvivors(true); syncHunters(true);
+  document.getElementById('victory-modal').style.display='none';
+  document.getElementById('game-over').classList.remove('show');
+  playSound('upgrade'); updateMusicForState(true);
+  saveGame(); renderUpgrades(); updateHUD();
+}
 function triggerGameOver(){gameOver=true;pauseAllMusic(false);playEventSfx('female_scream',2.2,.18);document.getElementById('game-over').classList.add('show');}
 function triggerVictory(){
   state.victory=true; paused=true; joyEnd(); beasts.length=0; projectiles.length=0; drops.length=0; saveGame(); updateMusicForState(true);
@@ -2053,7 +2106,7 @@ function triggerVictory(){
 }
 function respawn(){state.hp=statValue('maxHP');state.wave=Math.max(1,state.wave-1);beasts.length=0;drops.length=0;projectiles.length=0;player.x=0;player.y=0;waveActive=false;waveCleared=false;interWaveTimer=4;gameOver=false;document.getElementById('game-over').classList.remove('show');syncSurvivors(true);saveGame();updateHUD();}
 document.getElementById('respawn-btn').addEventListener('click',respawn);
-function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}</span></div><div class="upgrade-stat">${(u.key==='survivors'||u.key==='hunters')?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){s.maxHP=desiredStructureMaxHP(s.type);s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); if(u.key==='hunters') syncHunters(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
+function renderUpgrades(){ const list=document.getElementById('upgrade-list-container'); list.innerHTML=''; for(const u of UPGRADES){ const lvl=state.upgrades[u.key]||0,costs=upgradeCosts(u.key),maxed=isMaxed(u.key),afford=canAffordUpgrade(u.key),val=statValue(u.key); const div=document.createElement('div'); div.className='upgrade'+(afford?' affordable':'')+(maxed?' maxed':''); div.innerHTML=`<div class="upgrade-icon">${u.icon}</div><div class="upgrade-info"><div class="upgrade-name">${u.name} <span style="opacity:.45;font-size:12px">Lv.${lvl}${effectiveUpgradeMax(u)?'/'+effectiveUpgradeMax(u):''}</span></div><div class="upgrade-stat">${(u.key==='survivors'||u.key==='hunters')?val.toFixed(0):val.toFixed(1)} ${u.unit}</div></div><div class="upgrade-cost">${maxed?'MAX':costLabel(costs)}</div>`; if(afford) div.addEventListener('click',()=>{const pay=upgradeCosts(u.key);state.money-=pay.money;state.meat-=pay.meat;const oldVal=statValue(u.key);state.upgrades[u.key]++; if(u.key==='maxHP') state.hp+=statValue('maxHP')-oldVal; if(u.key==='wallHP'){for(const s of state.structures){s.maxHP=desiredStructureMaxHP(s.type);s.hp=s.maxHP;}} if(u.key==='survivors') syncSurvivors(true); if(u.key==='hunters') syncHunters(true); playSound('upgrade');saveGame();renderUpgrades();updateHUD();}); list.appendChild(div);} }
 document.getElementById('repair-btn-action').addEventListener('click',()=>{const cost=calculateRepairCost(); if(state.money>=cost&&cost>0){state.money-=cost;for(const s of state.structures) s.hp=s.maxHP;playSound('upgrade');addText(player.x,player.y-30,'Kamp gerepareerd!','#60a5fa',-25,1);saveGame();renderUpgrades();updateHUD();}});
 const BESTIARY=[
   { kind:'bear', name:'Polar Bear', icon:'🐻‍❄️', desc:'Standaard tegenstander. Komt in elke wave voor.', unlockedFrom:'Start' },
@@ -2240,6 +2293,7 @@ window.addEventListener('keydown',e=>{
 });
 document.getElementById('reset-confirm').addEventListener('click',resetAllProgress);
 document.getElementById('victory-reset-btn').addEventListener('click',resetAllProgress);
+document.getElementById('victory-ng-plus-btn').addEventListener('click',startNewGamePlus);
 let lastTime=performance.now(); function loop(now){const dt=Math.min(.05,(now-lastTime)/1000);lastTime=now;if(!gameOver&&!state.victory&&!paused&&!panel.classList.contains('open')&&resetModal.style.display!=='flex'){updateWaves(dt);updateWaveCueQueue(dt);update(dt);} else updateHUD(); updateMusicForState(); render(); requestAnimationFrame(loop);} syncSurvivors(true); syncHunters(true); updateHUD(); if(state.victory) setTimeout(triggerVictory,250); requestAnimationFrame(loop);
 </script>
 </body>

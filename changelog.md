@@ -1,5 +1,56 @@
 # Frostfall changelog
 
+## v9.9.2 — New Game+ Expanded Upgrades
+
+*ChatGPT-balans/QoL-update op verzoek van Niels.*
+
+- New Game+ opent nu extra progressieruimte na het uitspelen van de game.
+- In NG+ krijgen capped upgrades **+2 extra levels** bovenop hun normale maximum.
+- Survivors/dorpsbewoners krijgen in NG+ **+2 extra slots**: max 4 → max 6.
+- Hunters/jagers krijgen in NG+ **+2 extra slots**: max 4 → max 6.
+- Upgrade-kaarten tonen nu bij capped upgrades `Lv.x/y`, zodat zichtbaar is hoeveel levels nog beschikbaar zijn.
+- Bestaande uncapped upgrades zoals Bijl Kracht en Gezondheid blijven uncapped zoals voorheen.
+- Geen save reset nodig. Service-worker cache gebumpt naar `frostfall-v9-9-2`.
+
+## v9.9.1 — New Game+ Progression Polish
+
+*ChatGPT-polishpatch op verzoek van Niels, naar aanleiding van Claude-QA.*
+
+- New Game+ gebruikt nu **Optie A**:
+  - upgrades blijven behouden;
+  - hunters/survivors blijven behouden via hun upgrade-levels;
+  - zones worden opnieuw vrijgespeeld vanaf Siberian Camp.
+- New Game+ begint daardoor weer met de vroege-zone progressie in plaats van direct als Forgotten Ice Caves-run.
+- Wave-counter toont nu een **⭐** tijdens New Game+ runs.
+- Audio/wave-cue state wordt expliciet opgeschoond bij de start van New Game+, zodat er geen oude queued cues kunnen blijven hangen.
+- Crow/rat spawn-timers worden bij New Game+ teruggezet naar hun startwaarden.
+- Victory button-copy aangepast zodat duidelijk is dat zones opnieuw vrijgespeeld worden.
+- Geen save reset nodig. Service-worker cache gebumpt naar `frostfall-v9-9-1`.
+
+## v9.9.0 — New Game Plus & Pass-through Towers
+
+*ChatGPT-gameplay/QoL-update op verzoek van Niels.*
+
+- Victory screen krijgt nu twee keuzes:
+  - **NEW GAME +**: start opnieuw bij wave 1 met behoud van alle upgrades, hunters, survivors en zone-unlocks.
+  - **HELEMAAL OPNIEUW STARTEN**: wist alles zoals de bestaande volledige reset.
+- New Game+ reset de actieve run-state: wave, enemies, drops, projectiles, structures, finale-state, HP en start-resources worden teruggezet naar een frisse run.
+- Upgrades en zone-unlocks blijven behouden; Ice Caves/Glacial Forest blijven dus beschikbaar.
+- New Game+ wordt als `newGamePlusRuns` in de save bijgehouden.
+- Player collision met towers en ice towers verwijderd: de speler kan nu door alle eigen structures heen lopen, zodat je jezelf niet meer per ongeluk klem kunt bouwen.
+- Vijanden blijven structures wel aanvallen; dit is alleen een friendly/player pass-through QoL-fix.
+- Geen save reset nodig. Service-worker cache gebumpt naar `frostfall-v9-9-0`.
+
+## v9.8.5g — Wolf-only Meat Thief Guard
+
+*ChatGPT-codeclarificatie op verzoek van Niels.*
+
+- Expliciet vastgelegd dat alleen wolves en brute wolves mogen reageren op een rat die vlees draagt.
+- Bears, brutes, yeti en brute-yeti pakken geen vlees op en jagen niet op ratten.
+- Rat-hunterselectie gebruikt nu de helper `canHuntMeatThief()`, zodat toekomstige uitbreidingen minder makkelijk per ongeluk beren of andere vijanden in deze voedselketen trekken.
+- Geen gameplay-wijziging bedoeld ten opzichte van de v9.8.5f-regels; dit is een guard/clarification patch.
+- Geen save-impact. Service-worker cache gebumpt naar `frostfall-v9-8-5g`.
+
 ## v9.8.5f — Bear Growl Volume Fix
 
 *ChatGPT-audio-tuning op verzoek van Niels.*

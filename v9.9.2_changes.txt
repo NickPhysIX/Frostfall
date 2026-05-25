@@ -1,0 +1,8 @@
+v9.9.2 — New Game+ Expanded Upgrades
+
+- New Game+ unlocks +2 extra levels for capped upgrades.
+- Survivors cap increases from 4 to 6 in New Game+.
+- Hunters cap increases from 4 to 6 in New Game+.
+- Upgrade UI now shows Lv.x/y for capped upgrades.
+- No save reset required.
+- Service-worker cache bumped to frostfall-v9-9-2.
